@@ -4,6 +4,7 @@
 \usepackage{graphicx}
 \usepackage{lipsum}
 \usepackage{enumitem}
+\usepackage{eurosym}
 \usepackage[T1]{fontenc}
 
 \usepackage[a4paper, total={14cm, 24cm}]{geometry}
@@ -57,11 +58,11 @@
         \subsubsection{Partie Jeu}
             Nous proposons de développer un jeu basé sur l'Unreal Engine 4. Nous utiliserons l'interface de blueprints proposée par le moteur afin de mettre rapidement en place une maquette fonctionnelle du jeu intégrant les éléments d'interaction principaux : le déplacement de l'avatar, le ramassage d'objets, activations de boutons, ...
             
-            Le système de blueprints correspond à une interface graphique de développement, représentant sous forme de boîtes les concepts de la programmation événementielle. Nous utiliserons cet interface afin de définir notre physique de jeux, les éléments mobiles du décors, ainsi que toute interaction entre l'avatar du joueur et l'environnement de jeu. Les blueprints servirons aussi à mettre en place les intéractions entre le joueur et le jeu. Nous prévoyons une interface manette avec possibilité alternative de jouer au clavier et à la souris.
+            Le système de blueprints correspond à une interface graphique de développement, représentant sous forme de boîtes les concepts de la programmation événementielle. Nous utiliserons cet interface afin de définir notre physique de jeux, les éléments mobiles du décors, ainsi que toute interaction entre l'avatar du joueur et l'environnement de jeu. Les blueprints servirons aussi à mettre en place les interactions entre le joueur et le jeu. Nous prévoyons une interface manette avec possibilité alternative de jouer au clavier et à la souris.
             
-            Nous allons à coté de cela construire une bibliothèque de maillages et de textures, en partie créés au sein de l'équipe et en partie piochés dans des bibliothèques libres de droits déjà existantes. Afin d'offrir un ensemble d'éléments configurables qui pourront être utilisés dans la partie générateur.
+            Nous allons à coté de cela construire une bibliothèque de maillages et de textures, en partie créés au sein de l'équipe et en partie piochés dans des bibliothèques libres de droits déjà existantes, afin d'offrir un ensemble d'éléments configurables qui pourront être utilisés dans la partie générateur.
             
-            Notre jeu final prendra la forme d'un jeu de plate-forme en 3D à la première personne et joué à la manette ou au clavier. Un mode coopération est envisagé si les ressources temporelles sont disponibles.
+            Notre jeu final prendra la forme d'un jeu de plate-forme en 3D à la première personne, potentiellement compatible VR, et joué à la manette ou au clavier. Un mode coopération est envisagé si les ressources temporelles sont disponibles.
             
         \subsubsection{Partie Générateur}
             L'idée de base du générateur est de placer chaque niveau dans un cube, ce cube contenant ainsi toutes les plate-formes permettant de relier le début et la fin du niveau, et permettant au joueur placé au début du niveau de contempler la totalité du niveau autour de lui. 
@@ -69,7 +70,7 @@
             Le niveau en lui même se compose d'un (ou plusieurs) chemin(s) reliant le début à la fin du niveau, composé de sous-niveaux vu comme des boîtes de tailles variables connectés entre elles. Le principe de la génération étant de ne pouvoir passer d'un sous-niveau à un autre seulement si les deux sous-niveaux sont reliés dans la conception du chemin. Par exemple si on a un unique chemin, chacun des sous-niveaux ne sera relié qu'a deux autres. Pour obtenir une impression d'ouverture du niveau, il faut le moins possible cloisonner (avec des murs par exemple) les sous-niveaux. On va donc construire notre chemin en faisant attention à ne pas pouvoir passer entre deux boîtes qui ne sont pas reliés. Ce qui correspond par exemple a suffisamment éloigner verticalement deux sous-niveaux pour que tomber de l'un vers l'autre soit rendu impossible par des dégâts de chute. On arrangera les sous-niveaux en prenant une zone autour d'eux, que l'on nomme zone d'influence, où l'on ne peut pas placer d'autres sous-niveaux qui ne lui sont pas relié. On commencera par définir la zone d'influence seulement en fonction de la forme de la "boîte" contenant le sous-niveau, puis on pourra, de manière plus précise, construire les zones d'influences en fonctions des plate-formes contenues dans le sous-niveaux. On construira le chemin de tel sorte qu'il remplissent le plus possible le cube.
 
             Le problème de la construction du sous-niveaux ressemble fortement à celui du niveau global. Le but est de construire un chemin via des plate-forme dans un espace délimité. Cependant, on doit cette fois-ci créer un chemin allant d'un point fixé à un autre.­
-            Tout d'abord il faut décider si on veut se rendre de l'entrée à la sortie du sous-niveau par un chemin relativement direct, ou en faisant faire des allers-retours au joueur. Une fois que le chemin est défini, il faut doter l'espace de plate-formes permettant au joueur de suivre cette route. Enfin, il faut poser des obstacles. Ces derniers peuvent prendre la forme de chemins n'allant nulle part, de pièges, d'ennemis ou autre.
+            Tout d'abord il faut décider si on veut se rendre de l'entrée à la sortie du sous-niveau par un chemin relativement direct, ou en faisant faire des allers-retours au joueur. Une fois que le chemin est défini, il faut doter l'espace de plate-formes permettant au joueur de suivre cette route. Ensuite, il faut poser des obstacles. Ces derniers peuvent prendre la forme de chemins n'allant nulle part, de pièges, d'ennemis ou autre.
             Enfin toutes ces étapes doivent-être faites en suivant des paramètres de difficulté.
             Le but est donc de générer des sous-niveaux intéressants pour le joueur, à difficulté variable, pouvant même représenter un certain challenge intellectuel.
 
@@ -127,18 +128,31 @@
                 \begin{itemize}
         \renewcommand{\labelitemi}{$\bullet$}
                     \item Qu'est-ce qu'un bon chemin de niveau (\'Equipe générateur)
-                    \item Qu'est-ce qu'un bon sous niveau (Xavier)
+                    \item Qu'est-ce qu'un bon sous niveau (Xavier, Guillaume)
                 \end{itemize}
             \item Construction du niveau
                 \begin{itemize}
         \renewcommand{\labelitemi}{$\bullet$}
                     \item Construction du chemin avec les zones d'influence (fixes puis dépendant des sous-niveaux) (Thomas, Hugo)
-                    \item Construction des sous-niveaux (Xavier)
+                    \item Construction des sous-niveaux (Xavier, Guillaume)
                 \end{itemize}
             \item \'Evaluer le respect de la difficulté (\'Equipe générateur)
             \item Cycle tests et corrections du générateur (\'Equipe générateur)
             \item Cycle tests et corrections du jeu (\'Equipe jeu)
         \end{enumerate}
         
+        \vspace{3mm}
         
+        De plus nous avons nommés un certain nombres de responsables de sous parties:
+        \begin{itemize}
+        \renewcommand{\labelitemi}{$\bullet$}
+            \item Pierre : Responsable Graphismes
+            \item Hugo : Responsable Générateur
+            \item Yannis : Responsable Jeu
+            \item Loïs : Responsable Communication
+        \end{itemize}
+        
+    \subsection{Financement}
+    
+        Dans un cadre où le financement serait disponible, nous envisageons de faire une application compatible Réalité Virtuelle, pour cela il nous faut le financement d'un casque de réalité virtuelle telle que l'HTC vibe ou bien l'oculus rift. L'oculus rift demanderais un budget de 699\euro et l'HTC vibe d'une qualité légèrement meilleure notamment du coté de l'affichage requiert un budget plus élevé de 899\euro.
 \end{document}
