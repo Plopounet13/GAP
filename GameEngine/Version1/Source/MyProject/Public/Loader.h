@@ -15,8 +15,9 @@ class MYPROJECT_API ULoader : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 public:
 		UFUNCTION(BlueprintCallable, Category = "LevelLoader")
-		static bool Load(struct FFilePath InFilename, int & NbPlatOut, TArray<float> &X, TArray<float> &Y, TArray<float> &Z,
+		static bool Load(FString InFilename, int & NbPlatOut, TArray<float> &X, TArray<float> &Y, TArray<float> &Z,
 			TArray<float> &rX, TArray<float> &rY, TArray<float> &rZ,
-			TArray<float> &sX, TArray<float> &sY, TArray<float> &sZ);
+			TArray<float> &sX, TArray<float> &sY, TArray<float> &sZ,
+			TArray<float> &appear, TArray<float> &disappear, TArray<float>& full_4d_start, TArray<float> & full_4d_end);
 	
 };
