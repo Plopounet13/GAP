@@ -18,6 +18,6 @@ public:
 		static bool Load(FString InFilename, int & NbPlatOut, TArray<float> &X, TArray<float> &Y, TArray<float> &Z,
 			TArray<float> &rX, TArray<float> &rY, TArray<float> &rZ,
 			TArray<float> &sX, TArray<float> &sY, TArray<float> &sZ,
-			TArray<float> &appear, TArray<float> &disappear, TArray<float>& full_4d_start, TArray<float> & full_4d_end);
+			TArray<int > &Plat_Type, TArray<int> &Begin4D, TArray<float> &Array_4D);
 	
 };

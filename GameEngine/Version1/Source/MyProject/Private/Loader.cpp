@@ -15,12 +15,10 @@ bool ULoader::Load(
 	TArray<float>& sX, 
 	TArray<float>& sY, 
 	TArray<float>& sZ, 
-	TArray<float>& appear,
-	TArray<float>& disappear,
-	TArray<float>& full_4d_start,
-	TArray<float>& full_4d_end){
-	//IMPORTANT !!!!!
-	const int nb_param = 13;
+	TArray<int>& Plat_Type,
+	TArray<int>& Begin4D,
+	TArray<float>& Array_4D){
+
 
 	TArray<FString> OutStrings;
 
@@ -28,14 +26,13 @@ bool ULoader::Load(
 
 	bool success=FFileHelper::LoadANSITextFileToStrings(*LocalFilePath, NULL, OutStrings);
 
-	NbPlatOut = OutStrings.Num();
-
-	if ( (NbPlatOut% nb_param != 0) || success==false || NbPlatOut<=0) {
-		return false;
-	}
-
+	NbPlatOut = 0;
 	int32 index = 0;
-	while(index < NbPlatOut){
+	Begin4D.Add(0);
+	for (NbPlatOut = 0; index < OutStrings.Num(); NbPlatOut++) {
+		Plat_Type.Add(FCString::Atoi(*OutStrings[index]));
+		index++;
+
 		X.Add(FCString::Atof(*OutStrings[index]));
 		index ++;
 		Y.Add(FCString::Atof(*OutStrings[index]));
@@ -56,18 +53,20 @@ bool ULoader::Load(
 		index++;
 		sZ.Add(FCString::Atof(*OutStrings[index]));
 		index++;
-		
-		appear.Add(FCString::Atof(*OutStrings[index]));
+
+		int32 Nb4D=FCString::Atoi(*OutStrings[index]);
 		index++;
-		disappear.Add(FCString::Atof(*OutStrings[index]));
-		index++;
-		full_4d_start.Add(FCString::Atof(*OutStrings[index]));
-		index++;
-		full_4d_end.Add(FCString::Atof(*OutStrings[index]));
-		index++;
+
+		int32 index_4D;
+		for (index_4D = 0; index_4D < Nb4D; index_4D++) {
+			Array_4D.Add(FCString::Atof(*OutStrings[index]));
+			index++;
+		}
+
+		Begin4D.Add(Array_4D.Num());
 	}
 
-	NbPlatOut = (OutStrings.Num()-1)/nb_param;
+	NbPlatOut--;
 
 	return success;
 }
