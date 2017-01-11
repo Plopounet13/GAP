@@ -17,7 +17,9 @@ public:
     int getY() const;
     int getZ() const;
     int getK() const;
-    int distance(Point const& b) const ;
+    float norm2() const ;
+    float norm3() const ;
+    float norm4() const ;
     virtual ~Point();
     
     
@@ -29,19 +31,13 @@ private:
     
     
 
+friend Point operator-(Point const& a, Point const& b) ;
 friend Point operator+(Point const& a, Point const& b) ;
 friend std::ostream& operator<< (std::ostream& stream, Point const& point) ;
+friend float dist2(Point const& a, Point const& b) ;
 friend float dist3(Point const& a, Point const& b) ;
 friend float dist4(Point const& a, Point const& b) ;
 
 };
 
-
 #endif /* POINT_H */
-
-
-
-/*
-TODO
-distance
-*/

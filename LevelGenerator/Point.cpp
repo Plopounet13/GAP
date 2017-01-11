@@ -35,8 +35,24 @@ int Point::getK() const {
     return m_k ;
 }
 
+float Point::norm2() const {
+    int carre = m_x*m_x + m_y*m_y;
+    return sqrt(carre) ;
+}
+
+float Point::norm3() const {
+    int carre = m_x*m_x + m_y*m_y + m_z*m_z;
+    return sqrt(carre) ;
+}
+
+float Point::norm4() const {
+    int carre = m_x*m_x + m_y*m_y + m_z*m_z + m_k*m_k;
+    return sqrt(carre) ;
+}
+
 Point::~Point() {
 }
+
 
 
 //// Fonctions Friend
@@ -45,10 +61,20 @@ Point operator+(Point const& a, Point const& b) {
     return Point(a.m_x+b.m_x, a.m_y+b.m_y, a.m_z+b.m_z, a.m_k+b.m_k);
 }
 
+Point operator-(Point const& a, Point const& b) {
+    return Point(a.m_x-b.m_x, a.m_y-b.m_y, a.m_z-b.m_z, a.m_k-b.m_k);
+}
+
 std::ostream& operator<< (std::ostream& stream, Point const& point)
 {
     stream << "(" << point.m_x << "," << point.m_y << "," << point.m_z << "," << point.m_k << ")" ;
     return stream;
+}
+
+float dist2(Point const& a, Point const& b) {
+    int x=a.m_x-b.m_x , y=a.m_y-b.m_y;
+    int carre = x*x + y*y;
+    return sqrt(carre) ;
 }
 
 float dist3(Point const& a, Point const& b) {
