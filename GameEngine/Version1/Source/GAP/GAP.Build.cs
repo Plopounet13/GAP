@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class MyProject : ModuleRules
+public class GAP : ModuleRules
 {
-	public MyProject(TargetInfo Target)
+	public GAP(TargetInfo Target)
 	{
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
 

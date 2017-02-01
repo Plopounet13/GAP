@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class MYPROJECT_API ULoader : public UBlueprintFunctionLibrary
+class GAP_API ULoader : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 public:

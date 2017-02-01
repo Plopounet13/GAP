@@ -3,9 +3,9 @@
 using UnrealBuildTool;
 using System.Collections.Generic;
 
-public class MyProjectEditorTarget : TargetRules
+public class GAPEditorTarget : TargetRules
 {
-	public MyProjectEditorTarget(TargetInfo Target)
+	public GAPEditorTarget(TargetInfo Target)
 	{
 		Type = TargetType.Editor;
 	}
@@ -20,6 +20,6 @@ public class MyProjectEditorTarget : TargetRules
 		ref List<string> OutExtraModuleNames
 		)
 	{
-		OutExtraModuleNames.AddRange( new string[] { "MyProject" } );
+		OutExtraModuleNames.AddRange( new string[] { "GAP" } );
 	}
 }

@@ -3,9 +3,9 @@
 using UnrealBuildTool;
 using System.Collections.Generic;
 
-public class MyProjectTarget : TargetRules
+public class GAPTarget : TargetRules
 {
-	public MyProjectTarget(TargetInfo Target)
+	public GAPTarget(TargetInfo Target)
 	{
 		Type = TargetType.Game;
 	}
@@ -20,6 +20,6 @@ public class MyProjectTarget : TargetRules
 		ref List<string> OutExtraModuleNames
 		)
 	{
-		OutExtraModuleNames.AddRange( new string[] { "MyProject" } );
+		OutExtraModuleNames.AddRange( new string[] { "GAP" } );
 	}
 }
