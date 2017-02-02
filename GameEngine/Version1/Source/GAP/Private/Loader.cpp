@@ -3,6 +3,9 @@
 #include "CoreMisc.h"
 #include "Loader.h"
 
+#define print(text) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.5, FColor::White, text)
+//debug print
+
 bool ULoader::Load(
 	FString InFilename, 
 	int & NbPlatOut, 
@@ -25,6 +28,7 @@ bool ULoader::Load(
 	FString LocalFilePath = (FPaths::GameDir() + InFilename);
 
 	bool success=FFileHelper::LoadANSITextFileToStrings(*LocalFilePath, NULL, OutStrings);
+	print(LocalFilePath);
 
 	NbPlatOut = 0;
 	int32 index = 0;
