@@ -3,7 +3,7 @@
 #include "CoreMisc.h"
 #include "Loader.h"
 
-#define print(text) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.5, FColor::White, text)
+#define print(text) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::White, text)
 //debug print
 
 bool ULoader::Load(
@@ -28,7 +28,7 @@ bool ULoader::Load(
 	FString LocalFilePath = (FPaths::GameDir() + InFilename);
 
 	bool success=FFileHelper::LoadANSITextFileToStrings(*LocalFilePath, NULL, OutStrings);
-	print(LocalFilePath);
+	//print(LocalFilePath);
 
 	NbPlatOut = 0;
 	int32 index = 0;
