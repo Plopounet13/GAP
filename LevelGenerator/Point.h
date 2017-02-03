@@ -1,4 +1,3 @@
-
 #ifndef POINT_H
 #define POINT_H
 
@@ -17,9 +16,9 @@ public:
     int getY() const;
     int getZ() const;
     int getK() const;
-    float norm2() const ;
-    float norm3() const ;
-    float norm4() const ;
+    long double norm2() const ;
+    long double norm3() const ;
+    long double norm4() const ;
     virtual ~Point();
     
     
@@ -34,9 +33,13 @@ private:
 friend Point operator-(Point const& a, Point const& b) ;
 friend Point operator+(Point const& a, Point const& b) ;
 friend std::ostream& operator<< (std::ostream& stream, Point const& point) ;
-friend float dist2(Point const& a, Point const& b) ;
-friend float dist3(Point const& a, Point const& b) ;
-friend float dist4(Point const& a, Point const& b) ;
+friend Point bound(Point const& a, Point const& minb, Point const& maxc) ;
+friend long double dist2(Point const& a, Point const& b) ;
+friend long double dist3(Point const& a, Point const& b) ;
+friend long double dist4(Point const& a, Point const& b) ;
+friend long double scal2(Point const& a, Point const& b) ;
+friend long double scal3(Point const& a, Point const& b) ;
+friend long double scal4(Point const& a, Point const& b) ;
 
 };
 
