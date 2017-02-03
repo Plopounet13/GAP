@@ -81,10 +81,10 @@ Platform::Platform(istream& in){
 			}else if (val[0]=="distSorties"){
 				stringstream ss;
 				ss.str(val[1]);
-				int x, y, z, q;
+				int x, y, z;
 				char t;
-				while (ss >> t >> x >> y >> z >> q >> t){
-					distSorties.emplace_back(x, y, z, q);
+				while (ss >> t >> x >> y >> z >> t){
+					distSorties.emplace_back(x, y, z, 0);
 				}
 				
 			}else if (val[0]=="angleSorties"){
