@@ -1,9 +1,0 @@
-ID = 1
-formes = 3
-additiveAcceleration = 0 0 0 0
-multiplicativeAcceleration = 1 1 1 1
-distSorties = (2 0 0) (1 1 1) (1 -1 0)
-size = 2 2 2
-apparitionWeight=5
-angleSorties = 0 1 0
-reshapeAble = true
