@@ -43,7 +43,7 @@ public:
 
 public:
 	/** Returns GravityCharacterMovement subobject **/
-	FORCEINLINE class UGravityCharacterMovementComponent* GetGravityCharacterMovement() const;
+	FORCEINLINE class UGravityMovementComponent* GetGravityCharacterMovement() const;
 
 public:
 	/** Axis name for "move forward/back" control. This should match an Axis Binding in your input settings */

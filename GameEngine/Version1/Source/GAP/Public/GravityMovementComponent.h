@@ -18,7 +18,7 @@ public:
 	/**
 	* Default UObject constructor.
 	*/
-	UGravityCharacterMovementComponent(const FObjectInitializer& ObjectInitializer);
+	UGravityMovementComponent(const FObjectInitializer& ObjectInitializer);
 
 public:
 	/**

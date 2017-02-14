@@ -3,17 +3,19 @@
 #include "GAP.h"
 #include "GravityCharacter.h"
 
+#include "GravityMovementComponent.h"
+
 
 
 DEFINE_LOG_CATEGORY_STATIC(LogCharacter, Log, All);
 
 
 AGravityCharacter::AGravityCharacter(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer.SetDefaultSubobjectClass<UGravityCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
+	: Super(ObjectInitializer.SetDefaultSubobjectClass<UGravityMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
 	// Don't rotate when the controller rotates.
 	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = false;
+	bUseControllerRotationYaw = true;
 	bUseControllerRotationRoll = false;
 
 	// Initialize axis names for controls.
@@ -133,9 +135,9 @@ void AGravityCharacter::LaunchCharacterRotated(FVector LaunchVelocity, bool bHor
 	}
 }
 
-FORCEINLINE class UGravityCharacterMovementComponent* AGravityCharacter::GetGravityCharacterMovement() const
+FORCEINLINE class UGravityMovementComponent* AGravityCharacter::GetGravityCharacterMovement() const
 {
-	return Cast<UGravityCharacterMovementComponent>(GetMovementComponent());
+	return Cast<UGravityMovementComponent>(GetMovementComponent());
 }
 
 void AGravityCharacter::MoveForward(float Value)

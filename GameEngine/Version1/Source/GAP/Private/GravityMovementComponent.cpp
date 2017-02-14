@@ -3,9 +3,10 @@
 #include "GAP.h"
 #include "GravityMovementComponent.h"
 
+
 #include "GameFramework/PhysicsVolume.h"
 #include "GameFramework/GameNetworkManager.h"
-#include "Navigation/PathFollowingComponent.h" // @todo Epic: this is here only due to circular dependency to AIModule.
+#include "Navigation/PathFollowingComponent.h"
 #include "Components/DestructibleComponent.h"
 #include "Engine/Canvas.h"
 #include "PerfCountersHelpers.h"
@@ -24,7 +25,7 @@ const float MAX_STEP_SIDE_Z = 0.08f; // Maximum Z value for the normal on the ve
 const float SWIMBOBSPEED = -80.0f;
 const float VERTICAL_SLOPE_NORMAL_Z = 0.001f; // Slope is vertical if Abs(Normal.Z) <= this threshold. Accounts for precision problems that sometimes angle normals slightly off horizontal for vertical surface.
 
-											  // Statics.
+// Statics.
 namespace CharacterMovementComponentStatics
 {
 	static const FName CrouchTraceName = FName(TEXT("CrouchTrace"));
@@ -58,7 +59,7 @@ namespace CharacterMovementCVars
 }
 
 
-UGravityCharacterMovementComponent::UGravityCharacterMovementComponent(const FObjectInitializer& ObjectInitializer)
+UGravityMovementComponent::UGravityMovementComponent(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	bAlignComponentToFloor = false;
@@ -73,7 +74,7 @@ UGravityCharacterMovementComponent::UGravityCharacterMovementComponent(const FOb
 	OldGravityScale = GravityScale;
 }
 
-bool UGravityCharacterMovementComponent::DoJump(bool bReplayingMoves)
+bool UGravityMovementComponent::DoJump(bool bReplayingMoves)
 {
 	if (CharacterOwner && CharacterOwner->CanJump())
 	{
@@ -96,7 +97,7 @@ bool UGravityCharacterMovementComponent::DoJump(bool bReplayingMoves)
 	return false;
 }
 
-FVector UGravityCharacterMovementComponent::GetImpartedMovementBaseVelocity() const
+FVector UGravityMovementComponent::GetImpartedMovementBaseVelocity() const
 {
 	FVector Result = FVector::ZeroVector;
 	if (CharacterOwner)
@@ -131,7 +132,7 @@ FVector UGravityCharacterMovementComponent::GetImpartedMovementBaseVelocity() co
 	return Result;
 }
 
-void UGravityCharacterMovementComponent::JumpOff(AActor* MovementBaseActor)
+void UGravityMovementComponent::JumpOff(AActor* MovementBaseActor)
 {
 	if (!bPerformingJumpOff)
 	{
@@ -158,7 +159,7 @@ void UGravityCharacterMovementComponent::JumpOff(AActor* MovementBaseActor)
 	}
 }
 
-FVector UGravityCharacterMovementComponent::GetBestDirectionOffActor(AActor* BaseActor) const
+FVector UGravityMovementComponent::GetBestDirectionOffActor(AActor* BaseActor) const
 {
 	// By default, just pick a random direction. Derived character classes can choose to do more complex calculations,
 	// such as finding the shortest distance to move in based on the BaseActor's bounding volume.
@@ -167,7 +168,7 @@ FVector UGravityCharacterMovementComponent::GetBestDirectionOffActor(AActor* Bas
 	return PawnRotation.RotateVector(FVector(FMath::Cos(RandAngle), FMath::Sin(RandAngle), 0.5f).GetSafeNormal());
 }
 
-void UGravityCharacterMovementComponent::SetDefaultMovementMode()
+void UGravityMovementComponent::SetDefaultMovementMode()
 {
 	// Check for water volume.
 	if (CanEverSwim() && IsInWater())
@@ -188,7 +189,7 @@ void UGravityCharacterMovementComponent::SetDefaultMovementMode()
 	}
 }
 
-void UGravityCharacterMovementComponent::OnMovementModeChanged(EMovementMode PreviousMovementMode, uint8 PreviousCustomMode)
+void UGravityMovementComponent::OnMovementModeChanged(EMovementMode PreviousMovementMode, uint8 PreviousCustomMode)
 {
 	if (!HasValidData())
 	{
@@ -199,11 +200,11 @@ void UGravityCharacterMovementComponent::OnMovementModeChanged(EMovementMode Pre
 	if (MovementMode == MOVE_NavWalking)
 	{
 		SetNavWalkingPhysics(true);
-		//		GroundMovementMode = MovementMode;
+//		GroundMovementMode = MovementMode;
 		SetGroundMovementMode(MovementMode); //OVERRIDEN
 
-											 // @todo arbitrary-gravity: NavWalking not supported.
-											 // Walking uses only XY velocity.
+		// @todo arbitrary-gravity: NavWalking not supported.
+		// Walking uses only XY velocity.
 		Velocity.Z = 0.0f;
 	}
 	else if (PreviousMovementMode == MOVE_NavWalking)
@@ -227,10 +228,10 @@ void UGravityCharacterMovementComponent::OnMovementModeChanged(EMovementMode Pre
 	{
 		// Walking must be on a walkable floor, with a base.
 		bCrouchMaintainsBaseLocation = true;
-		//		GroundMovementMode = MovementMode;
+//		GroundMovementMode = MovementMode;
 		SetGroundMovementMode(MovementMode); //OVERRIDEN
 
-											 // Make sure we update our new floor/base on initial entry of the walking physics.
+		// Make sure we update our new floor/base on initial entry of the walking physics.
 		FindFloor(UpdatedComponent->GetComponentLocation(), CurrentFloor, false);
 		UpdateComponentRotation();
 		AdjustFloorHeight();
@@ -268,11 +269,11 @@ void UGravityCharacterMovementComponent::OnMovementModeChanged(EMovementMode Pre
 	}
 
 	CharacterOwner->OnMovementModeChanged(PreviousMovementMode, PreviousCustomMode);
-	//	ensure(GroundMovementMode == MOVE_Walking || GroundMovementMode == MOVE_NavWalking);
+//	ensure(GroundMovementMode == MOVE_Walking || GroundMovementMode == MOVE_NavWalking);
 	ensure(GetGroundMovementMode() == MOVE_Walking || GetGroundMovementMode() == MOVE_NavWalking); //OVERRIDEN
 }
 
-void UGravityCharacterMovementComponent::PerformAirControlForPathFollowing(FVector Direction, float ZDiff)
+void UGravityMovementComponent::PerformAirControlForPathFollowing(FVector Direction, float ZDiff)
 {
 	// Abort if no valid gravity can be obtained.
 	const FVector GravityDir = GetGravityDirection();
@@ -284,7 +285,7 @@ void UGravityCharacterMovementComponent::PerformAirControlForPathFollowing(FVect
 	PerformAirControlForPathFollowingEx(Direction, GravityDir);
 }
 
-void UGravityCharacterMovementComponent::PerformAirControlForPathFollowingEx(const FVector& MoveVelocity, const FVector& GravDir)
+void UGravityMovementComponent::PerformAirControlForPathFollowingEx(const FVector& MoveVelocity, const FVector& GravDir)
 {
 	const float MoveSpeedZ = (MoveVelocity | GravDir) * -1.0f;
 
@@ -323,7 +324,7 @@ void UGravityCharacterMovementComponent::PerformAirControlForPathFollowingEx(con
 	}
 }
 
-FVector UGravityCharacterMovementComponent::ConstrainAnimRootMotionVelocity(const FVector& RootMotionVelocity, const FVector& CurrentVelocity) const
+FVector UGravityMovementComponent::ConstrainAnimRootMotionVelocity(const FVector& RootMotionVelocity, const FVector& CurrentVelocity) const
 {
 	FVector Result = RootMotionVelocity;
 
@@ -337,7 +338,7 @@ FVector UGravityCharacterMovementComponent::ConstrainAnimRootMotionVelocity(cons
 	return Result;
 }
 
-void UGravityCharacterMovementComponent::SimulateMovement(float DeltaSeconds)
+void UGravityMovementComponent::SimulateMovement(float DeltaSeconds)
 {
 	if (!HasValidData() || UpdatedComponent->Mobility != EComponentMobility::Movable || UpdatedComponent->IsSimulatingPhysics())
 	{
@@ -470,7 +471,7 @@ void UGravityCharacterMovementComponent::SimulateMovement(float DeltaSeconds)
 		OnMovementUpdated(DeltaSeconds, OldLocation, OldVelocity);
 	} // End scoped movement update.
 
-	  // Call custom post-movement events. These happen after the scoped movement completes in case the events want to use the current state of overlaps etc.
+	// Call custom post-movement events. These happen after the scoped movement completes in case the events want to use the current state of overlaps etc.
 	CallMovementUpdateDelegate(DeltaSeconds, OldLocation, OldVelocity);
 
 	MaybeSaveBaseLocation();
@@ -482,14 +483,14 @@ void UGravityCharacterMovementComponent::SimulateMovement(float DeltaSeconds)
 	LastUpdateVelocity = Velocity;
 }
 
-void UGravityCharacterMovementComponent::MaybeUpdateBasedMovement(float DeltaSeconds)
+void UGravityMovementComponent::MaybeUpdateBasedMovement(float DeltaSeconds)
 {
 	UpdateGravity(DeltaSeconds);
 
 	Super::MaybeUpdateBasedMovement(DeltaSeconds);
 }
 
-void UGravityCharacterMovementComponent::UpdateBasedMovement(float DeltaSeconds)
+void UGravityMovementComponent::UpdateBasedMovement(float DeltaSeconds)
 {
 	if (!HasValidData())
 	{
@@ -593,15 +594,15 @@ void UGravityCharacterMovementComponent::UpdateBasedMovement(float DeltaSeconds)
 			}
 			else
 			{
-				/* @todo arbitrary-gravity: ugly code that might go away, not worth my time.
+/* @todo arbitrary-gravity: ugly code that might go away, not worth my time.
 				// hack - transforms between local and world space introducing slight error FIXMESTEVE - discuss with engine team: just skip the transforms if no rotation?
 				FVector BaseMoveDelta = NewBaseLocation - OldBaseLocation;
 				if (!bRotationChanged && (BaseMoveDelta.X == 0.f) && (BaseMoveDelta.Y == 0.f))
 				{
-				DeltaPosition.X = 0.f;
-				DeltaPosition.Y = 0.f;
+					DeltaPosition.X = 0.f;
+					DeltaPosition.Y = 0.f;
 				}
-				*/
+*/
 				FHitResult MoveOnBaseHit(1.0f);
 				const FVector OldLocation = UpdatedComponent->GetComponentLocation();
 				MoveUpdatedComponent(DeltaPosition, FinalQuat, true, &MoveOnBaseHit);
@@ -619,7 +620,7 @@ void UGravityCharacterMovementComponent::UpdateBasedMovement(float DeltaSeconds)
 	}
 }
 
-void UGravityCharacterMovementComponent::UpdateBasedRotation(FRotator& FinalRotation, const FRotator& ReducedRotation)
+void UGravityMovementComponent::UpdateBasedRotation(FRotator& FinalRotation, const FRotator& ReducedRotation)
 {
 	AController* Controller = CharacterOwner ? CharacterOwner->Controller : NULL;
 	float ControllerRoll = 0.0f;
@@ -644,7 +645,7 @@ void UGravityCharacterMovementComponent::UpdateBasedRotation(FRotator& FinalRota
 	}
 }
 
-void UGravityCharacterMovementComponent::Crouch(bool bClientSimulation)
+void UGravityMovementComponent::Crouch(bool bClientSimulation)
 {
 	if (!HasValidData())
 	{
@@ -743,7 +744,7 @@ void UGravityCharacterMovementComponent::Crouch(bool bClientSimulation)
 	}
 }
 
-void UGravityCharacterMovementComponent::UnCrouch(bool bClientSimulation)
+void UGravityMovementComponent::UnCrouch(bool bClientSimulation)
 {
 	if (!HasValidData())
 	{
@@ -894,7 +895,7 @@ void UGravityCharacterMovementComponent::UnCrouch(bool bClientSimulation)
 	}
 }
 
-float UGravityCharacterMovementComponent::SlideAlongSurface(const FVector& Delta, float Time, const FVector& InNormal, FHitResult& Hit, bool bHandleImpact)
+float UGravityMovementComponent::SlideAlongSurface(const FVector& Delta, float Time, const FVector& InNormal, FHitResult& Hit, bool bHandleImpact)
 {
 	if (!Hit.bBlockingHit)
 	{
@@ -935,7 +936,7 @@ float UGravityCharacterMovementComponent::SlideAlongSurface(const FVector& Delta
 	return UPawnMovementComponent::SlideAlongSurface(Delta, Time, NewNormal, Hit, bHandleImpact);
 }
 
-void UGravityCharacterMovementComponent::TwoWallAdjust(FVector& Delta, const FHitResult& Hit, const FVector& OldHitNormal) const
+void UGravityMovementComponent::TwoWallAdjust(FVector& Delta, const FHitResult& Hit, const FVector& OldHitNormal) const
 {
 	const FVector InDelta = Delta;
 	UPawnMovementComponent::TwoWallAdjust(Delta, Hit, OldHitNormal);
@@ -973,7 +974,7 @@ void UGravityCharacterMovementComponent::TwoWallAdjust(FVector& Delta, const FHi
 	}
 }
 
-FVector UGravityCharacterMovementComponent::HandleSlopeBoosting(const FVector& SlideResult, const FVector& Delta, const float Time, const FVector& Normal, const FHitResult& Hit) const
+FVector UGravityMovementComponent::HandleSlopeBoosting(const FVector& SlideResult, const FVector& Delta, const float Time, const FVector& Normal, const FHitResult& Hit) const
 {
 	const FVector CapsuleUp = GetComponentAxisZ();
 	FVector Result = SlideResult;
@@ -1009,7 +1010,7 @@ FVector UGravityCharacterMovementComponent::HandleSlopeBoosting(const FVector& S
 	return Result;
 }
 
-float UGravityCharacterMovementComponent::ImmersionDepth() const
+float UGravityMovementComponent::ImmersionDepth() const
 {
 	float Depth = 0.0f;
 
@@ -1042,7 +1043,7 @@ float UGravityCharacterMovementComponent::ImmersionDepth() const
 	return Depth;
 }
 
-void UGravityCharacterMovementComponent::RequestDirectMove(const FVector& MoveVelocity, bool bForceMaxSpeed)
+void UGravityMovementComponent::RequestDirectMove(const FVector& MoveVelocity, bool bForceMaxSpeed)
 {
 	if (MoveVelocity.SizeSquared() < KINDA_SMALL_NUMBER)
 	{
@@ -1071,7 +1072,7 @@ void UGravityCharacterMovementComponent::RequestDirectMove(const FVector& MoveVe
 	}
 }
 
-float UGravityCharacterMovementComponent::GetMaxJumpHeight() const
+float UGravityMovementComponent::GetMaxJumpHeight() const
 {
 	const float GravityMagnitude = GetGravityMagnitude();
 	if (GravityMagnitude > KINDA_SMALL_NUMBER)
@@ -1084,7 +1085,7 @@ float UGravityCharacterMovementComponent::GetMaxJumpHeight() const
 	}
 }
 
-void UGravityCharacterMovementComponent::PhysFlying(float deltaTime, int32 Iterations)
+void UGravityMovementComponent::PhysFlying(float deltaTime, int32 Iterations)
 {
 	if (deltaTime < MIN_TICK_TIME)
 	{
@@ -1152,7 +1153,7 @@ void UGravityCharacterMovementComponent::PhysFlying(float deltaTime, int32 Itera
 	}
 }
 
-void UGravityCharacterMovementComponent::ApplyRootMotionToVelocityOVERRIDEN(float deltaTime)
+void UGravityMovementComponent::ApplyRootMotionToVelocityOVERRIDEN(float deltaTime)
 {
 	SCOPE_CYCLE_COUNTER(STAT_CharacterMovementRootMotionSourceApply);
 
@@ -1210,7 +1211,7 @@ void UGravityCharacterMovementComponent::ApplyRootMotionToVelocityOVERRIDEN(floa
 	}
 }
 
-void UGravityCharacterMovementComponent::PhysSwimming(float deltaTime, int32 Iterations)
+void UGravityMovementComponent::PhysSwimming(float deltaTime, int32 Iterations)
 {
 	if (deltaTime < MIN_TICK_TIME)
 	{
@@ -1342,7 +1343,7 @@ void UGravityCharacterMovementComponent::PhysSwimming(float deltaTime, int32 Ite
 	}
 }
 
-void UGravityCharacterMovementComponent::StartSwimmingOVERRIDEN(FVector OldLocation, FVector OldVelocity, float timeTick, float remainingTime, int32 Iterations)
+void UGravityMovementComponent::StartSwimmingOVERRIDEN(FVector OldLocation, FVector OldVelocity, float timeTick, float remainingTime, int32 Iterations)
 {
 	if (remainingTime < MIN_TICK_TIME || timeTick < MIN_TICK_TIME)
 	{
@@ -1388,12 +1389,12 @@ void UGravityCharacterMovementComponent::StartSwimmingOVERRIDEN(FVector OldLocat
 	}
 }
 
-FVector UGravityCharacterMovementComponent::GetFallingLateralAcceleration(float DeltaTime)
+FVector UGravityMovementComponent::GetFallingLateralAcceleration(float DeltaTime)
 {
 	return GetFallingLateralAccelerationEx(DeltaTime, GetGravityDirection(true));
 }
 
-FVector UGravityCharacterMovementComponent::GetFallingLateralAccelerationEx(float DeltaTime, const FVector& GravDir) const
+FVector UGravityMovementComponent::GetFallingLateralAccelerationEx(float DeltaTime, const FVector& GravDir) const
 {
 	// No vertical acceleration.
 	FVector FallAcceleration = FVector::VectorPlaneProject(Acceleration, GravDir);
@@ -1408,12 +1409,12 @@ FVector UGravityCharacterMovementComponent::GetFallingLateralAccelerationEx(floa
 	return FallAcceleration;
 }
 
-FVector UGravityCharacterMovementComponent::GetAirControl(float DeltaTime, float TickAirControl, const FVector& FallAcceleration)
+FVector UGravityMovementComponent::GetAirControl(float DeltaTime, float TickAirControl, const FVector& FallAcceleration)
 {
 	return GetAirControlEx(DeltaTime, TickAirControl, FallAcceleration, GetGravityDirection(true));
 }
 
-FVector UGravityCharacterMovementComponent::GetAirControlEx(float DeltaTime, float TickAirControl, const FVector& FallAcceleration, const FVector& GravDir) const
+FVector UGravityMovementComponent::GetAirControlEx(float DeltaTime, float TickAirControl, const FVector& FallAcceleration, const FVector& GravDir) const
 {
 	// Boost.
 	if (TickAirControl != 0.0f)
@@ -1424,12 +1425,12 @@ FVector UGravityCharacterMovementComponent::GetAirControlEx(float DeltaTime, flo
 	return TickAirControl * FallAcceleration;
 }
 
-float UGravityCharacterMovementComponent::BoostAirControl(float DeltaTime, float TickAirControl, const FVector& FallAcceleration)
+float UGravityMovementComponent::BoostAirControl(float DeltaTime, float TickAirControl, const FVector& FallAcceleration)
 {
 	return BoostAirControlEx(DeltaTime, TickAirControl, FallAcceleration, GetGravityDirection(true));
 }
 
-float UGravityCharacterMovementComponent::BoostAirControlEx(float DeltaTime, float TickAirControl, const FVector& FallAcceleration, const FVector& GravDir) const
+float UGravityMovementComponent::BoostAirControlEx(float DeltaTime, float TickAirControl, const FVector& FallAcceleration, const FVector& GravDir) const
 {
 	// Allow a burst of initial acceleration.
 	if (AirControlBoostMultiplier > 0.0f && FVector::VectorPlaneProject(Velocity, GravDir).SizeSquared() < FMath::Square(AirControlBoostVelocityThreshold))
@@ -1440,7 +1441,7 @@ float UGravityCharacterMovementComponent::BoostAirControlEx(float DeltaTime, flo
 	return TickAirControl;
 }
 
-void UGravityCharacterMovementComponent::PhysFalling(float deltaTime, int32 Iterations)
+void UGravityMovementComponent::PhysFalling(float deltaTime, int32 Iterations)
 {
 	SCOPE_CYCLE_COUNTER(STAT_CharPhysFalling);
 
@@ -1726,12 +1727,12 @@ void UGravityCharacterMovementComponent::PhysFalling(float deltaTime, int32 Iter
 	}
 }
 
-FVector UGravityCharacterMovementComponent::LimitAirControl(float DeltaTime, const FVector& FallAcceleration, const FHitResult& HitResult, bool bCheckForValidLandingSpot)
+FVector UGravityMovementComponent::LimitAirControl(float DeltaTime, const FVector& FallAcceleration, const FHitResult& HitResult, bool bCheckForValidLandingSpot)
 {
 	return LimitAirControlEx(DeltaTime, FallAcceleration, HitResult, GetGravityDirection(true), bCheckForValidLandingSpot);
 }
 
-FVector UGravityCharacterMovementComponent::LimitAirControlEx(float DeltaTime, const FVector& FallAcceleration, const FHitResult& HitResult, const FVector& GravDir, bool bCheckForValidLandingSpot) const
+FVector UGravityMovementComponent::LimitAirControlEx(float DeltaTime, const FVector& FallAcceleration, const FHitResult& HitResult, const FVector& GravDir, bool bCheckForValidLandingSpot) const
 {
 	FVector Result = FallAcceleration;
 
@@ -1754,7 +1755,7 @@ FVector UGravityCharacterMovementComponent::LimitAirControlEx(float DeltaTime, c
 	return Result;
 }
 
-bool UGravityCharacterMovementComponent::CheckLedgeDirection(const FVector& OldLocation, const FVector& SideStep, const FVector& GravDir) const
+bool UGravityMovementComponent::CheckLedgeDirection(const FVector& OldLocation, const FVector& SideStep, const FVector& GravDir) const
 {
 	const FVector SideDest = OldLocation + SideStep;
 	const FQuat PawnRotation = UpdatedComponent->GetComponentQuat();
@@ -1782,7 +1783,7 @@ bool UGravityCharacterMovementComponent::CheckLedgeDirection(const FVector& OldL
 	return false;
 }
 
-FVector UGravityCharacterMovementComponent::GetLedgeMove(const FVector& OldLocation, const FVector& Delta, const FVector& GravDir) const
+FVector UGravityMovementComponent::GetLedgeMove(const FVector& OldLocation, const FVector& Delta, const FVector& GravDir) const
 {
 	if (!HasValidData() || Delta.IsZero())
 	{
@@ -1808,7 +1809,7 @@ FVector UGravityCharacterMovementComponent::GetLedgeMove(const FVector& OldLocat
 	return FVector::ZeroVector;
 }
 
-void UGravityCharacterMovementComponent::StartFalling(int32 Iterations, float remainingTime, float timeTick, const FVector& Delta, const FVector& subLoc)
+void UGravityMovementComponent::StartFalling(int32 Iterations, float remainingTime, float timeTick, const FVector& Delta, const FVector& subLoc)
 {
 	const float DesiredDist = Delta.Size();
 
@@ -1841,13 +1842,13 @@ void UGravityCharacterMovementComponent::StartFalling(int32 Iterations, float re
 	StartNewPhysics(remainingTime, Iterations);
 }
 
-FVector UGravityCharacterMovementComponent::ComputeGroundMovementDelta(const FVector& Delta, const FHitResult& RampHit, const bool bHitFromLineTrace) const
+FVector UGravityMovementComponent::ComputeGroundMovementDelta(const FVector& Delta, const FHitResult& RampHit, const bool bHitFromLineTrace) const
 {
 	const FVector CapsuleUp = GetComponentAxisZ();
 	return ComputeGroundMovementDeltaEx(FVector::VectorPlaneProject(Delta, CapsuleUp), CapsuleUp, RampHit, bHitFromLineTrace);
 }
 
-FVector UGravityCharacterMovementComponent::ComputeGroundMovementDeltaEx(const FVector& Delta, const FVector& DeltaPlaneNormal, const FHitResult& RampHit, const bool bHitFromLineTrace) const
+FVector UGravityMovementComponent::ComputeGroundMovementDeltaEx(const FVector& Delta, const FVector& DeltaPlaneNormal, const FHitResult& RampHit, const bool bHitFromLineTrace) const
 {
 	const FVector FloorNormal = RampHit.ImpactNormal;
 
@@ -1870,7 +1871,7 @@ FVector UGravityCharacterMovementComponent::ComputeGroundMovementDeltaEx(const F
 	return Delta;
 }
 
-void UGravityCharacterMovementComponent::MoveAlongFloor(const FVector& InVelocity, float DeltaSeconds, FStepDownResult* OutStepDownResult)
+void UGravityMovementComponent::MoveAlongFloor(const FVector& InVelocity, float DeltaSeconds, FStepDownResult* OutStepDownResult)
 {
 	if (!CurrentFloor.IsWalkableFloor())
 	{
@@ -1939,7 +1940,7 @@ void UGravityCharacterMovementComponent::MoveAlongFloor(const FVector& InVelocit
 	}
 }
 
-void UGravityCharacterMovementComponent::MaintainHorizontalGroundVelocity()
+void UGravityMovementComponent::MaintainHorizontalGroundVelocity()
 {
 	if (bMaintainHorizontalGroundVelocity)
 	{
@@ -1953,7 +1954,7 @@ void UGravityCharacterMovementComponent::MaintainHorizontalGroundVelocity()
 	}
 }
 
-void UGravityCharacterMovementComponent::PhysWalking(float deltaTime, int32 Iterations)
+void UGravityMovementComponent::PhysWalking(float deltaTime, int32 Iterations)
 {
 	SCOPE_CYCLE_COUNTER(STAT_CharPhysWalking);
 
@@ -2180,7 +2181,7 @@ void UGravityCharacterMovementComponent::PhysWalking(float deltaTime, int32 Iter
 	}
 }
 
-void UGravityCharacterMovementComponent::AdjustFloorHeight()
+void UGravityMovementComponent::AdjustFloorHeight()
 {
 	SCOPE_CYCLE_COUNTER(STAT_CharAdjustFloorHeight);
 
@@ -2234,7 +2235,7 @@ void UGravityCharacterMovementComponent::AdjustFloorHeight()
 	}
 }
 
-void UGravityCharacterMovementComponent::SetPostLandedPhysics(const FHitResult& Hit)
+void UGravityMovementComponent::SetPostLandedPhysics(const FHitResult& Hit)
 {
 	if (CharacterOwner)
 	{
@@ -2249,7 +2250,7 @@ void UGravityCharacterMovementComponent::SetPostLandedPhysics(const FHitResult& 
 
 			if (DefaultLandMovementMode == MOVE_Walking || DefaultLandMovementMode == MOVE_NavWalking || DefaultLandMovementMode == MOVE_Falling)
 			{
-				//				SetMovementMode(GroundMovementMode);
+//				SetMovementMode(GroundMovementMode);
 				SetMovementMode(GetGroundMovementMode()); //OVERRIDEN
 			}
 			else
@@ -2262,7 +2263,7 @@ void UGravityCharacterMovementComponent::SetPostLandedPhysics(const FHitResult& 
 	}
 }
 
-void UGravityCharacterMovementComponent::OnTeleported()
+void UGravityMovementComponent::OnTeleported()
 {
 	if (!HasValidData())
 	{
@@ -2307,7 +2308,7 @@ void UGravityCharacterMovementComponent::OnTeleported()
 	MaybeSaveBaseLocation();
 }
 
-void UGravityCharacterMovementComponent::PhysicsRotation(float DeltaTime)
+void UGravityMovementComponent::PhysicsRotation(float DeltaTime)
 {
 	if ((!bOrientRotationToMovement && !bUseControllerDesiredRotation) || !HasValidData() || (!CharacterOwner->Controller && !bRunPhysicsWithNoController))
 	{
@@ -2390,7 +2391,7 @@ void UGravityCharacterMovementComponent::PhysicsRotation(float DeltaTime)
 	}
 }
 
-void UGravityCharacterMovementComponent::PhysicsVolumeChanged(class APhysicsVolume* NewVolume)
+void UGravityMovementComponent::PhysicsVolumeChanged(class APhysicsVolume* NewVolume)
 {
 	if (!HasValidData())
 	{
@@ -2430,12 +2431,12 @@ void UGravityCharacterMovementComponent::PhysicsVolumeChanged(class APhysicsVolu
 	}
 }
 
-bool UGravityCharacterMovementComponent::ShouldJumpOutOfWater(FVector& JumpDir)
+bool UGravityMovementComponent::ShouldJumpOutOfWater(FVector& JumpDir)
 {
 	return ShouldJumpOutOfWaterEx(JumpDir, GetGravityDirection(true));
 }
 
-bool UGravityCharacterMovementComponent::ShouldJumpOutOfWaterEx(FVector& JumpDir, const FVector& GravDir)
+bool UGravityMovementComponent::ShouldJumpOutOfWaterEx(FVector& JumpDir, const FVector& GravDir)
 {
 	// If pawn is going up and looking up, then make it jump.
 	AController* OwnerController = CharacterOwner->GetController();
@@ -2452,12 +2453,12 @@ bool UGravityCharacterMovementComponent::ShouldJumpOutOfWaterEx(FVector& JumpDir
 	return false;
 }
 
-bool UGravityCharacterMovementComponent::CheckWaterJump(FVector CheckPoint, FVector& WallNormal)
+bool UGravityMovementComponent::CheckWaterJump(FVector CheckPoint, FVector& WallNormal)
 {
 	return CheckWaterJumpEx(CheckPoint, GetGravityDirection(true), WallNormal);
 }
 
-bool UGravityCharacterMovementComponent::CheckWaterJumpEx(FVector CheckPoint, const FVector& GravDir, FVector& WallNormal)
+bool UGravityMovementComponent::CheckWaterJumpEx(FVector CheckPoint, const FVector& GravDir, FVector& WallNormal)
 {
 	if (!HasValidData())
 	{
@@ -2499,7 +2500,7 @@ bool UGravityCharacterMovementComponent::CheckWaterJumpEx(FVector CheckPoint, co
 	return false;
 }
 
-void UGravityCharacterMovementComponent::MoveSmooth(const FVector& InVelocity, const float DeltaSeconds, FStepDownResult* OutStepDownResult)
+void UGravityMovementComponent::MoveSmooth(const FVector& InVelocity, const float DeltaSeconds, FStepDownResult* OutStepDownResult)
 {
 	if (!HasValidData())
 	{
@@ -2563,7 +2564,7 @@ void UGravityCharacterMovementComponent::MoveSmooth(const FVector& InVelocity, c
 	}
 }
 
-bool UGravityCharacterMovementComponent::IsWalkable(const FHitResult& Hit) const
+bool UGravityMovementComponent::IsWalkable(const FHitResult& Hit) const
 {
 	if (!Hit.IsValidBlockingHit())
 	{
@@ -2590,12 +2591,12 @@ bool UGravityCharacterMovementComponent::IsWalkable(const FHitResult& Hit) const
 	return true;
 }
 
-bool UGravityCharacterMovementComponent::IsWithinEdgeTolerance(const FVector& CapsuleLocation, const FVector& TestImpactPoint, const float CapsuleRadius) const
+bool UGravityMovementComponent::IsWithinEdgeTolerance(const FVector& CapsuleLocation, const FVector& TestImpactPoint, const float CapsuleRadius) const
 {
 	return IsWithinEdgeToleranceEx(CapsuleLocation, GetComponentAxisZ() * -1.0f, CapsuleRadius, TestImpactPoint);
 }
 
-bool UGravityCharacterMovementComponent::IsWithinEdgeToleranceEx(const FVector& CapsuleLocation, const FVector& CapsuleDown, const float CapsuleRadius, const FVector& TestImpactPoint) const
+bool UGravityMovementComponent::IsWithinEdgeToleranceEx(const FVector& CapsuleLocation, const FVector& CapsuleDown, const float CapsuleRadius, const FVector& TestImpactPoint) const
 {
 	const float DistFromCenterSq = (CapsuleLocation + CapsuleDown * ((TestImpactPoint - CapsuleLocation) | CapsuleDown) - TestImpactPoint).SizeSquared();
 	const float ReducedRadiusSq = FMath::Square(FMath::Max(KINDA_SMALL_NUMBER, CapsuleRadius - SWEEP_EDGE_REJECT_DISTANCE));
@@ -2603,7 +2604,7 @@ bool UGravityCharacterMovementComponent::IsWithinEdgeToleranceEx(const FVector& 
 	return DistFromCenterSq < ReducedRadiusSq;
 }
 
-void UGravityCharacterMovementComponent::ComputeFloorDist(const FVector& CapsuleLocation, float LineDistance, float SweepDistance, FFindFloorResult& OutFloorResult, float SweepRadius, const FHitResult* DownwardSweepResult) const
+void UGravityMovementComponent::ComputeFloorDist(const FVector& CapsuleLocation, float LineDistance, float SweepDistance, FFindFloorResult& OutFloorResult, float SweepRadius, const FHitResult* DownwardSweepResult) const
 {
 	OutFloorResult.Clear();
 
@@ -2751,7 +2752,7 @@ void UGravityCharacterMovementComponent::ComputeFloorDist(const FVector& Capsule
 	OutFloorResult.FloorDist = SweepDistance;
 }
 
-bool UGravityCharacterMovementComponent::FloorSweepTest(FHitResult& OutHit, const FVector& Start, const FVector& End, ECollisionChannel TraceChannel,
+bool UGravityMovementComponent::FloorSweepTest(FHitResult& OutHit, const FVector& Start, const FVector& End, ECollisionChannel TraceChannel,
 	const FCollisionShape& CollisionShape, const FCollisionQueryParams& Params, const FCollisionResponseParams& ResponseParam) const
 {
 	bool bBlockingHit = false;
@@ -2785,7 +2786,7 @@ bool UGravityCharacterMovementComponent::FloorSweepTest(FHitResult& OutHit, cons
 	return bBlockingHit;
 }
 
-bool UGravityCharacterMovementComponent::IsValidLandingSpot(const FVector& CapsuleLocation, const FHitResult& Hit) const
+bool UGravityMovementComponent::IsValidLandingSpot(const FVector& CapsuleLocation, const FHitResult& Hit) const
 {
 	if (!Hit.bBlockingHit)
 	{
@@ -2848,7 +2849,7 @@ bool UGravityCharacterMovementComponent::IsValidLandingSpot(const FVector& Capsu
 	return true;
 }
 
-bool UGravityCharacterMovementComponent::ShouldCheckForValidLandingSpot(float DeltaTime, const FVector& Delta, const FHitResult& Hit) const
+bool UGravityMovementComponent::ShouldCheckForValidLandingSpot(float DeltaTime, const FVector& Delta, const FHitResult& Hit) const
 {
 	const FVector CapsuleUp = GetComponentAxisZ();
 
@@ -2863,7 +2864,7 @@ bool UGravityCharacterMovementComponent::ShouldCheckForValidLandingSpot(float De
 	return false;
 }
 
-bool UGravityCharacterMovementComponent::ShouldComputePerchResult(const FHitResult& InHit, bool bCheckRadius) const
+bool UGravityMovementComponent::ShouldComputePerchResult(const FHitResult& InHit, bool bCheckRadius) const
 {
 	if (!InHit.IsValidBlockingHit())
 	{
@@ -2892,7 +2893,7 @@ bool UGravityCharacterMovementComponent::ShouldComputePerchResult(const FHitResu
 	return true;
 }
 
-bool UGravityCharacterMovementComponent::ComputePerchResult(const float TestRadius, const FHitResult& InHit, const float InMaxFloorDist, FFindFloorResult& OutPerchFloorResult) const
+bool UGravityMovementComponent::ComputePerchResult(const float TestRadius, const FHitResult& InHit, const float InMaxFloorDist, FFindFloorResult& OutPerchFloorResult) const
 {
 	if (InMaxFloorDist <= 0.0f)
 	{
@@ -2926,7 +2927,7 @@ bool UGravityCharacterMovementComponent::ComputePerchResult(const float TestRadi
 	return true;
 }
 
-bool UGravityCharacterMovementComponent::StepUp(const FVector& GravDir, const FVector& Delta, const FHitResult& InHit, struct UCharacterMovementComponent::FStepDownResult* OutStepDownResult)
+bool UGravityMovementComponent::StepUp(const FVector& GravDir, const FVector& Delta, const FHitResult& InHit, struct UCharacterMovementComponent::FStepDownResult* OutStepDownResult)
 {
 	SCOPE_CYCLE_COUNTER(STAT_CharStepUp);
 
@@ -3140,7 +3141,7 @@ bool UGravityCharacterMovementComponent::StepUp(const FVector& GravDir, const FV
 	return true;
 }
 
-void UGravityCharacterMovementComponent::HandleImpact(const FHitResult& Impact, float TimeSlice, const FVector& MoveDelta)
+void UGravityMovementComponent::HandleImpact(const FHitResult& Impact, float TimeSlice, const FVector& MoveDelta)
 {
 	if (CharacterOwner)
 	{
@@ -3166,7 +3167,7 @@ void UGravityCharacterMovementComponent::HandleImpact(const FHitResult& Impact, 
 	}
 }
 
-void UGravityCharacterMovementComponent::ApplyImpactPhysicsForces(const FHitResult& Impact, const FVector& ImpactAcceleration, const FVector& ImpactVelocity)
+void UGravityMovementComponent::ApplyImpactPhysicsForces(const FHitResult& Impact, const FVector& ImpactAcceleration, const FVector& ImpactVelocity)
 {
 	if (bEnablePhysicsInteraction && Impact.bBlockingHit)
 	{
@@ -3234,7 +3235,7 @@ void UGravityCharacterMovementComponent::ApplyImpactPhysicsForces(const FHitResu
 	}
 }
 
-void UGravityCharacterMovementComponent::DisplayDebug(UCanvas* Canvas, const FDebugDisplayInfo& DebugDisplay, float& YL, float& YPos)
+void UGravityMovementComponent::DisplayDebug(UCanvas* Canvas, const FDebugDisplayInfo& DebugDisplay, float& YL, float& YPos)
 {
 	if (CharacterOwner == NULL)
 	{
@@ -3268,7 +3269,7 @@ void UGravityCharacterMovementComponent::DisplayDebug(UCanvas* Canvas, const FDe
 	DisplayDebugManager.DrawString(T);
 }
 
-void UGravityCharacterMovementComponent::VisualizeMovement() const
+void UGravityMovementComponent::VisualizeMovement() const
 {
 	if (CharacterOwner == nullptr)
 	{
@@ -3355,7 +3356,7 @@ void UGravityCharacterMovementComponent::VisualizeMovement() const
 #endif // !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
 }
 
-FVector UGravityCharacterMovementComponent::ConstrainInputAcceleration(const FVector& InputAcceleration) const
+FVector UGravityMovementComponent::ConstrainInputAcceleration(const FVector& InputAcceleration) const
 {
 	FVector NewAccel = InputAcceleration;
 
@@ -3368,7 +3369,7 @@ FVector UGravityCharacterMovementComponent::ConstrainInputAcceleration(const FVe
 	return NewAccel;
 }
 
-void UGravityCharacterMovementComponent::ServerMoveHandleClientError(float ClientTimeStamp, float DeltaTime, const FVector& Accel, const FVector& RelativeClientLoc, UPrimitiveComponent* ClientMovementBase, FName ClientBaseBoneName, uint8 ClientMovementMode)
+void UGravityMovementComponent::ServerMoveHandleClientError(float ClientTimeStamp, float DeltaTime, const FVector& Accel, const FVector& RelativeClientLoc, UPrimitiveComponent* ClientMovementBase, FName ClientBaseBoneName, uint8 ClientMovementMode)
 {
 	if (RelativeClientLoc == FVector(1.0f, 2.0f, 3.0f)) // First part of double servermove.
 	{
@@ -3474,7 +3475,7 @@ void UGravityCharacterMovementComponent::ServerMoveHandleClientError(float Clien
 	ServerData->bForceClientUpdate = false;
 }
 
-void UGravityCharacterMovementComponent::ClientAdjustPosition_Implementation(float TimeStamp, FVector NewLocation, FVector NewVelocity, UPrimitiveComponent* NewBase, FName NewBaseBoneName, bool bHasBase, bool bBaseRelativePosition, uint8 ServerMovementMode)
+void UGravityMovementComponent::ClientAdjustPosition_Implementation(float TimeStamp, FVector NewLocation, FVector NewVelocity, UPrimitiveComponent* NewBase, FName NewBaseBoneName, bool bHasBase, bool bBaseRelativePosition, uint8 ServerMovementMode)
 {
 	if (!HasValidData() || !IsComponentTickEnabled())
 	{
@@ -3583,7 +3584,7 @@ void UGravityCharacterMovementComponent::ClientAdjustPosition_Implementation(flo
 	ClientData->bUpdatePosition = true;
 }
 
-void UGravityCharacterMovementComponent::CapsuleTouched(UPrimitiveComponent* OverlappedComp, AActor* Other, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void UGravityMovementComponent::CapsuleTouched(UPrimitiveComponent* OverlappedComp, AActor* Other, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (!bEnablePhysicsInteraction)
 	{
@@ -3623,7 +3624,7 @@ void UGravityCharacterMovementComponent::CapsuleTouched(UPrimitiveComponent* Ove
 	}
 }
 
-void UGravityCharacterMovementComponent::ApplyDownwardForce(float DeltaSeconds)
+void UGravityMovementComponent::ApplyDownwardForce(float DeltaSeconds)
 {
 	if (StandingDownwardForceScale != 0.0f && CurrentFloor.HitResult.IsValidBlockingHit())
 	{
@@ -3637,7 +3638,7 @@ void UGravityCharacterMovementComponent::ApplyDownwardForce(float DeltaSeconds)
 	}
 }
 
-void UGravityCharacterMovementComponent::ApplyRepulsionForce(float DeltaSeconds)
+void UGravityMovementComponent::ApplyRepulsionForce(float DeltaSeconds)
 {
 	if (UpdatedPrimitive && RepulsionForce > 0.0f)
 	{
@@ -3753,7 +3754,7 @@ void UGravityCharacterMovementComponent::ApplyRepulsionForce(float DeltaSeconds)
 	}
 }
 
-void UGravityCharacterMovementComponent::ApplyAccumulatedForces(float DeltaSeconds)
+void UGravityMovementComponent::ApplyAccumulatedForces(float DeltaSeconds)
 {
 	if ((!PendingImpulseToApply.IsZero() || !PendingForceToApply.IsZero()) && IsMovingOnGround())
 	{
@@ -3772,7 +3773,7 @@ void UGravityCharacterMovementComponent::ApplyAccumulatedForces(float DeltaSecon
 	PendingForceToApply = FVector::ZeroVector;
 }
 
-FVector UGravityCharacterMovementComponent::GetGravity() const
+FVector UGravityMovementComponent::GetGravity() const
 {
 	if (!CustomGravityDirection.IsZero())
 	{
@@ -3791,7 +3792,7 @@ FVector UGravityCharacterMovementComponent::GetGravity() const
 	return FVector(0.0f, 0.0f, GetGravityZ());
 }
 
-FVector UGravityCharacterMovementComponent::GetGravityDirection(bool bAvoidZeroGravity) const
+FVector UGravityMovementComponent::GetGravityDirection(bool bAvoidZeroGravity) const
 {
 	// Gravity direction can be influenced by the custom gravity scale value.
 	if (GravityScale != 0.0f)
@@ -3838,48 +3839,48 @@ FVector UGravityCharacterMovementComponent::GetGravityDirection(bool bAvoidZeroG
 	return FVector::ZeroVector;
 }
 
-float UGravityCharacterMovementComponent::GetGravityMagnitude() const
+float UGravityMovementComponent::GetGravityMagnitude() const
 {
 	return FMath::Abs(GetGravityZ());
 }
 
-void UGravityCharacterMovementComponent::SetGravityDirection(const FVector& NewGravityDirection)
+void UGravityMovementComponent::SetGravityDirection(const FVector& NewGravityDirection)
 {
 	SetCustomGravityDirection(NewGravityDirection.GetSafeNormal());
 }
 
-FORCEINLINE void UGravityCharacterMovementComponent::SetCustomGravityDirection(const FVector& NewCustomGravityDirection)
+FORCEINLINE void UGravityMovementComponent::SetCustomGravityDirection(const FVector& NewCustomGravityDirection)
 {
 	bDirtyCustomGravityDirection = CustomGravityDirection != NewCustomGravityDirection;
 	CustomGravityDirection = NewCustomGravityDirection;
 }
 
-void UGravityCharacterMovementComponent::ClientSetCustomGravityDirection_Implementation(const FVector& NewCustomGravityDirection)
+void UGravityMovementComponent::ClientSetCustomGravityDirection_Implementation(const FVector& NewCustomGravityDirection)
 {
 	SetCustomGravityDirection(NewCustomGravityDirection);
 }
 
-void UGravityCharacterMovementComponent::ClientClearCustomGravityDirection_Implementation()
+void UGravityMovementComponent::ClientClearCustomGravityDirection_Implementation()
 {
 	SetCustomGravityDirection(FVector::ZeroVector);
 }
 
-void UGravityCharacterMovementComponent::ClientSetGravityPoint_Implementation(const FVector& NewGravityPoint)
+void UGravityMovementComponent::ClientSetGravityPoint_Implementation(const FVector& NewGravityPoint)
 {
 	GravityPoint = NewGravityPoint;
 }
 
-void UGravityCharacterMovementComponent::ClientClearGravityPoint_Implementation()
+void UGravityMovementComponent::ClientClearGravityPoint_Implementation()
 {
 	GravityPoint = FVector::ZeroVector;
 }
 
-void UGravityCharacterMovementComponent::ClientSetGravityScale_Implementation(float NewGravityScale)
+void UGravityMovementComponent::ClientSetGravityScale_Implementation(float NewGravityScale)
 {
 	GravityScale = NewGravityScale;
 }
 
-void UGravityCharacterMovementComponent::UpdateGravity(float DeltaTime)
+void UGravityMovementComponent::UpdateGravity(float DeltaTime)
 {
 	if (bAlignCustomGravityToFloor && IsMovingOnGround() && !CurrentFloor.HitResult.ImpactNormal.IsZero())
 	{
@@ -3914,13 +3915,13 @@ void UGravityCharacterMovementComponent::UpdateGravity(float DeltaTime)
 	UpdateComponentRotation();
 }
 
-FRotator UGravityCharacterMovementComponent::ConstrainComponentRotation(const FRotator& Rotation) const
+FRotator UGravityMovementComponent::ConstrainComponentRotation(const FRotator& Rotation) const
 {
 	// Keep current Z rotation axis of capsule, try to keep X axis of rotation.
 	return FRotationMatrix::MakeFromZX(GetComponentAxisZ(), Rotation.Vector()).Rotator();
 }
 
-FORCEINLINE FVector UGravityCharacterMovementComponent::GetComponentAxisX() const
+FORCEINLINE FVector UGravityMovementComponent::GetComponentAxisX() const
 {
 	// Fast simplification of FQuat::RotateVector() with FVector(1,0,0).
 	const FQuat ComponentRotation = UpdatedComponent->GetComponentQuat();
@@ -3930,7 +3931,7 @@ FORCEINLINE FVector UGravityCharacterMovementComponent::GetComponentAxisX() cons
 		ComponentRotation.Y * ComponentRotation.W * -2.0f) + QuatVector * (ComponentRotation.X * 2.0f);
 }
 
-FORCEINLINE FVector UGravityCharacterMovementComponent::GetComponentAxisZ() const
+FORCEINLINE FVector UGravityMovementComponent::GetComponentAxisZ() const
 {
 	// Fast simplification of FQuat::RotateVector() with FVector(0,0,1).
 	const FQuat ComponentRotation = UpdatedComponent->GetComponentQuat();
@@ -3940,7 +3941,7 @@ FORCEINLINE FVector UGravityCharacterMovementComponent::GetComponentAxisZ() cons
 		FMath::Square(ComponentRotation.W) - QuatVector.SizeSquared()) + QuatVector * (ComponentRotation.Z * 2.0f);
 }
 
-FVector UGravityCharacterMovementComponent::GetComponentDesiredAxisZ() const
+FVector UGravityMovementComponent::GetComponentDesiredAxisZ() const
 {
 	if (bAlignComponentToFloor && IsMovingOnGround() && !CurrentFloor.HitResult.ImpactNormal.IsZero())
 	{
@@ -3956,7 +3957,7 @@ FVector UGravityCharacterMovementComponent::GetComponentDesiredAxisZ() const
 	return GetComponentAxisZ();
 }
 
-void UGravityCharacterMovementComponent::UpdateComponentRotation()
+void UGravityMovementComponent::UpdateComponentRotation()
 {
 	if (!HasValidData())
 	{
@@ -3977,5 +3978,3 @@ void UGravityCharacterMovementComponent::UpdateComponentRotation()
 	// Intentionally not using MoveUpdatedComponent to bypass constraints.
 	UpdatedComponent->MoveComponent(FVector::ZeroVector, RotationMatrix.Rotator(), true);
 }
-
-
