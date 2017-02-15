@@ -35,42 +35,42 @@ bool ULoader::Load(
 	Begin4D.Add(0);
 	for (NbPlatOut = 0; index < OutStrings.Num(); NbPlatOut++) {
 		Plat_Type.Add(FCString::Atoi(*OutStrings[index]));
-		index++;
+		++index;
 
 		X.Add(FCString::Atof(*OutStrings[index]));
-		index ++;
+		++index;
 		Y.Add(FCString::Atof(*OutStrings[index]));
-		index++;
+		++index;
 		Z.Add(FCString::Atof(*OutStrings[index]));
-		index++;
+		++index;
 
 		rX.Add(FCString::Atof(*OutStrings[index]));
-		index++;
+		++index;
 		rY.Add(FCString::Atof(*OutStrings[index]));
-		index++;
+		++index;
 		rZ.Add(FCString::Atof(*OutStrings[index]));
-		index++;
+		++index;
 
 		sX.Add(FCString::Atof(*OutStrings[index]));
-		index++;
+		++index;
 		sY.Add(FCString::Atof(*OutStrings[index]));
-		index++;
+		++index;
 		sZ.Add(FCString::Atof(*OutStrings[index]));
-		index++;
+		++index;
 
 		int32 Nb4D=FCString::Atoi(*OutStrings[index]);
-		index++;
+		++index;
 
 		int32 index_4D;
 		for (index_4D = 0; index_4D < Nb4D; index_4D++) {
 			Array_4D.Add(FCString::Atof(*OutStrings[index]));
-			index++;
+			++index;
 		}
 
 		Begin4D.Add(Array_4D.Num());
 	}
 
-	NbPlatOut--;
+	--NbPlatOut;
 
 	return success;
 }
