@@ -39,7 +39,7 @@ public:
 	/**
 	 * Redimensionne toute l'instance.
 	 */
-	void rescale(const Vec3<float> c,const Vec3<float>& ds);
+	void rescale(const Vec3<float>& c,const Vec3<float>& ds);
 	
 	/**
 	 * Opérateur d'addition d'instances.
@@ -52,6 +52,8 @@ public:
 	 * Ajoute à l'instance a toutes les plateformes de l'instance b.
 	 */
 	friend Instance& operator+=(Instance& a, const Instance& b);
+	
+	friend std::ostream& operator<<(std::ostream& out, const Instance& i);
 };
 
 #endif /* Instance_hpp */

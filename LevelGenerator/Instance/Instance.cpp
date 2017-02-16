@@ -36,7 +36,7 @@ void Instance::translate(const Vec3<float>& d){
 	}
 }
 
-void Instance::rescale(const Vec3<float> c,const Vec3<float>& ds){
+void Instance::rescale(const Vec3<float>& c,const Vec3<float>& ds){
 	for (auto& p:plateformes){
 		p.rescale(c, ds);
 	}
@@ -58,4 +58,14 @@ Instance& operator+=(Instance& a, const Instance& b){
 		a.addPlatform(p);
 	}
 	return a;
+}
+
+ostream& operator<<(ostream& out, const Instance& i){
+	out << i.plateformes.size() << endl;
+	for (int j=0; j<i.plateformes.size()-1; ++j){
+		out << i.plateformes[j] << endl;
+	}
+	out << i.plateformes.back();
+	
+	return out;
 }

@@ -117,9 +117,11 @@ ostream& operator<< (ostream& out, const PlatInstance& p){
 		out << pos-p.pos.getPos() << endl;
 	}
 	cout << p.pos4D.size() << endl;
-	for(auto& pos:p.pos4D){
-		cout << pos-p.pos << endl;
+	for(int i=0; i<p.pos4D.size()-1; ++i){
+		cout << p.pos4D[i]-p.pos << endl;
 	}
+	
+	cout << p.pos4D.back()-p.pos;
 	
 	return out;
 }
