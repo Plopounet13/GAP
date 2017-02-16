@@ -11,27 +11,53 @@ class Vec3 {
 	
 public:
 	Vec3();
-	Vec3(Vec3<T>& v);
+	Vec3(const Vec3<T>& v);
+	Vec3(T v);
 	Vec3(T mx, T my, T mz);
 	
-	//Vector addition
-	Vec3<T> operator+ (const Vec3<T>& b);
-	Vec3<T> operator+ (const T& b);
-	//Coord to Coord Product
-	Vec3<T> operator* (const Vec3<T>& b);
-	Vec3<T> operator* (const T& b);
+	T getx() const{
+		return x;
+	}
 	
-	Vec3<T> operator/ (const Vec3<T>& b);
-	Vec3<T> operator/ (const T& b);
+	T gety() const{
+		return y;
+	}
+	
+	T getz() const{
+		return z;
+	}
+	
+	T scalar(const Vec3<T>& b) const;
+	//Vectorial product
+	Vec3<T> operator^(const Vec3<T>& b) const;
+	
+	//Vector addition
+	Vec3<T> operator+ (const Vec3<T>& b) const;
+	Vec3<T> operator+ (const T& b) const;
+	
+	Vec3<T> operator- (const Vec3<T>& b) const;
+	Vec3<T> operator- (const T& b) const;
+	Vec3<T> operator- () const;
+	//Coord to Coord Product
+	Vec3<T> operator* (const Vec3<T>& b) const;
+	Vec3<T> operator* (const T& b) const;
+	
+	Vec3<T> operator/ (const Vec3<T>& b) const;
+	Vec3<T> operator/ (const T& b) const;
 	
 	Vec3<T>& operator+= (const Vec3<T>& b);
 	Vec3<T>& operator+= (const T& b);
+	
+	Vec3<T>& operator-= (const Vec3<T>& b);
+	Vec3<T>& operator-= (const T& b);
 	
 	Vec3<T>& operator/= (const Vec3<T>& b);
 	Vec3<T>& operator/= (const T& b);
 	
 	Vec3<T>& operator*= (const Vec3<T>& b);
 	Vec3<T>& operator*= (const T& b);
+	
+	bool operator== (const Vec3<T>& b) const;
 	
 	friend std::ostream& operator<< (std::ostream& out, const Vec3<T>& v){
 		out << v.x << std::endl;
