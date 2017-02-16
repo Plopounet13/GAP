@@ -6,13 +6,52 @@
 #include <cmath>
 #include "Position.hpp"
 #include "PlatInstance.hpp"
+#include "Vec3.hpp"
 
 class Instance{
 private:
-	std::vector<PlatInstance*> plateformes;
+	std::vector<PlatInstance> plateformes;
 	
 public:
 	Instance();
+	
+	/**
+	 * Ajoute une plateforme dans l'instance.
+	 * (Attention une fois ajoutée à l'instance une plateforme ne devient modifiable que par les fonctions de l'instance)
+	 */
+	void addPlatform(const PlatInstance& plat);
+	
+	/**
+	 * Effectue une rotation de centre c et angles dr sur toute l'instance.
+	 */
+	void rotate(const Vec3<float>& c, const Vec3<float>& dr);
+	
+	/**
+	 * Même fonction que la précédente mais ne nécessitant pas le calcul des sinus et cosinus si ils ont déjà été calculés.
+	 */
+	void rotate(const Vec3<float>& c, const Vec3<float>& dr, float cosx, float cosy, float cosz, float sinx, float siny, float sinz);
+	
+	/**
+	 * Effectue une translation de vecteur d de toute l'instance.
+	 */
+	void translate(const Vec3<float>& d);
+	
+	/**
+	 * Redimensionne toute l'instance.
+	 */
+	void rescale(const Vec3<float> c,const Vec3<float>& ds);
+	
+	/**
+	 * Opérateur d'addition d'instances.
+	 * Renvois une instance contenant les plateformes de a et b.
+	 */
+	friend Instance operator+(const Instance& a, const Instance& b);
+	
+	/**
+	 * Opérateur d'addition d'instances.
+	 * Ajoute à l'instance a toutes les plateformes de l'instance b.
+	 */
+	friend Instance& operator+=(Instance& a, const Instance& b);
 };
 
 #endif /* Instance_hpp */
