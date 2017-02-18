@@ -1,0 +1,11 @@
+%Ceci est un commentaire
+ID = 1
+additiveAcceleration = 0 0 0 0
+multiplicativeAcceleration = 1 1 1 1
+nbSortie = 0
+paveSortie = (xmin ymin zmin tmin) (xmax ymax zmax tmax)
+apparitionWeight=5
+scales = (xmin ymin zmin) (xmax ymax zmax)
+rotations = (xmin ymin zmin) (xmax ymax zmax)
+isTransition = true
+4Dmodifiable = true
