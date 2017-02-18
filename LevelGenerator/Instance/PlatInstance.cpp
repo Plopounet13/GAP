@@ -108,7 +108,6 @@ void PlatInstance::rotate(const Vec3<float>& c, const Vec3<float>& dr){
 		p.rotate(c, dr, cosx, cosy, cosz, sinx, siny, sinz);
 }
 
-
 ostream& operator<< (ostream& out, const PlatInstance& p){
 	out << p.ID << endl;
 	out << p.pos << endl;

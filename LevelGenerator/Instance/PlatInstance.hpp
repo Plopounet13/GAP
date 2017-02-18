@@ -7,6 +7,8 @@
 #include "Vec3.hpp"
 #include "Position.hpp"
 
+//TODO: Placer les sorties en 4 dimension au lieu de 3.
+
 class PlatInstance{
 private:
 	int ID;
