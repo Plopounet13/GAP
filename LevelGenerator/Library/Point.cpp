@@ -1,7 +1,7 @@
 #include "Point.h"
 
 
-//// Focntions de la classe
+//// Fonctions de la classe
 
 
 Point::Point() : m_x(0) , m_y(0) , m_z(0) , m_k(0)
