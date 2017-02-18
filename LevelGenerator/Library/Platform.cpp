@@ -1,29 +1,11 @@
 #include <sstream>
 #include <algorithm>
 #include <map>
-#include "Platform.h"
+#include "Platform.hpp"
 
 using namespace std;
 
 Platform::Platform():ID(0){}
-
-Platform::Platform(int ID,
-				   vector<Forme>& formes,
-				   Point& additiveAcceleration,
-				   Point& multiplicativeAcceleration,
-				   std::vector<Point>& distSorties,
-				   std::vector<int>& angleSorties,
-				   bool reshapeAble,
-				   Point& size,
-				   int apparitionWeight):ID(ID),
-									 formes(formes),
-									 distSorties(distSorties),
-									 angleSorties(angleSorties),
-									 reshapeAble(reshapeAble),
-									 additiveAcceleration(additiveAcceleration),
-									 multiplicativeAcceleration(multiplicativeAcceleration),
-									 size(size),
-									 apparitionWeight(apparitionWeight){}
 
 void split(const string s, char delim, vector<string> &elems) {
 	stringstream ss;
@@ -40,16 +22,25 @@ void removeChars(string &str, string charsToRemove ) {
 	}
 }
 
-Platform::Platform(istream& in){
+void Platform::parse(istream& in){
 	string line;
 	map<string, bool> vu;
 	apparitionWeight=DEFAULT_WEIGHT;
+	isTransition=false;
+	modifiable=false;
+	additiveAcceleration = Point(0,0,0,0);
+	multiplicativeAcceleration = Point(1,1,1,1);
+	nbSorties=0;
+
 	while(getline(in, line)){
 		//Uncomment to print parsed input file
 		//cout << line << endl;
 		vector<string> val;
 		split(line, '=', val);
 		removeChars(val[0], " \t");
+		if (val[0][0]=='%'){
+			continue;
+		}
 		if (vu[val[0]]){
 			cerr << "Erreur fichier description plateforme: " << val[0] << " défini plusieurs fois." << endl;
 		}else{
@@ -57,13 +48,24 @@ Platform::Platform(istream& in){
 			if (val[0]=="ID"){
 				ID=atoi(val[1].c_str());
 				
-			}else if (val[0]=="formes"){
+			}else if (val[0]=="nbSortie"){
 				stringstream ss;
 				ss.str(val[1]);
-				int v;
-				while (ss >> v)
-					formes.push_back((Forme)v);
-					
+				ss >> nbSorties;
+				
+			}else if (val[0]=="paveSortie"){
+				stringstream ss;
+				ss.str(val[1]);
+				
+				int x, y, z, q;
+				char t;
+				
+				while (ss >> t >> x >> y >> z >> q >> t){
+					sortieMin.emplace_back(x,y,z,q);
+					ss >> t >> x >> y >> z >> q >> t;
+					sortieMax.emplace_back(x,y,z,q);
+				}
+				
 			}else if (val[0]=="additiveAcceleration"){
 				stringstream ss;
 				ss.str(val[1]);
@@ -78,41 +80,48 @@ Platform::Platform(istream& in){
 				ss >> v1 >> v2 >> v3 >> v4;
 				multiplicativeAcceleration = Point(v1, v2, v3, v4);
 				
-			}else if (val[0]=="distSorties"){
+			}else if (val[0]=="scales"){
 				stringstream ss;
 				ss.str(val[1]);
-				int x, y, z, q;
+				
 				char t;
-				while (ss >> t >> x >> y >> z >> q >> t){
-					distSorties.emplace_back(x, y, z, q);
-				}
 				
-			}else if (val[0]=="angleSorties"){
+				ss >> t >> minScale >> t;
+				ss >> t >> maxScale >> t;
+				
+			}else if (val[0]=="rotations"){
 				stringstream ss;
 				ss.str(val[1]);
-				int a;
-				while (ss >> a){
-					angleSorties.push_back(a);
-				}
 				
-			}else if (val[0]=="reshapeAble"){
+				char t;
+				
+				ss >> t >> minRot >> t;
+				ss >> t >> maxRot >> t;
+				
+			}else if (val[0]=="isTransition"){
 				stringstream ss;
 				ss.str(val[1]);
-				string val;
-				ss >> val;
-				reshapeAble=(val == "true");
 				
-			}else if (val[0]=="size"){
+				string s;
+				
+				ss >> s;
+				isTransition = (s=="true");
+				
+			}else if (val[0]=="4Dmodifiable"){
 				stringstream ss;
 				ss.str(val[1]);
-				int v1, v2, v3;
-				ss >> v1 >> v2 >> v3;
-				size=Point(v1,v2,v3);
+				
+				string s;
+				
+				ss >> s;
+				modifiable = (s=="true");
 				
 			}else if (val[0]=="apparitionWeight"){
 				stringstream ss;
 				ss.str(val[1]);
+				
 				int v;
+				
 				ss >> v;
 				apparitionWeight=v;
 				
@@ -121,19 +130,19 @@ Platform::Platform(istream& in){
 			}
 		}
 	}
-	
+}
+
+Platform::Platform(istream& in){
+	parse(in);
+}
+
+std::istream& operator>> (istream& in, Platform& p){
+	p.parse(in);
+	return in;
 }
 
 int Platform::getID() const {
 	return ID ;
-}
-
-int Platform::getNbFormes() const{
-	return formes.size();
-}
-
-const vector<Forme>& Platform::getFormes() const{
-	return formes;
 }
 
 const Point& Platform::getAddAcceleration() const{
@@ -145,18 +154,27 @@ const Point& Platform::getCoeffAcceleration() const{
 }
 
 int Platform::getNbSorties() const{
-	return distSorties.size();
+	return nbSorties;
 }
 
-const vector<Point>& Platform::getDistSorties() const{
-	return distSorties;
+const vector<Point>& Platform::getSortieMin() const{
+	return sortieMin;
 }
 
-const vector<int>& Platform::getAngleSorties() const{
-	return angleSorties;
+const vector<Point>& Platform::getSortieMax() const{
+	return sortieMax;
 }
-bool Platform::getReshapeAble() const{
-	return reshapeAble;
+
+const Vec3<float>& Platform::getMinScale() const{
+	return minScale;
+}
+
+const Vec3<float>& Platform::getMaxScale() const{
+	return maxScale;
+}
+
+bool Platform::getModifiable() const{
+	return modifiable;
 }
 
 Platform::~Platform() {
