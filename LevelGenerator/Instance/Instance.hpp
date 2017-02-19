@@ -4,13 +4,14 @@
 #include <vector>
 #include <iostream>
 #include <cmath>
+#include <list>
 #include "Position.hpp"
 #include "PlatInstance.hpp"
 #include "Vec3.hpp"
 
 class Instance{
 private:
-	std::vector<PlatInstance> plateformes;
+	std::list<PlatInstance> plateformes;
 	
 public:
 	Instance();
@@ -43,15 +44,11 @@ public:
 	
 	/**
 	 * Opérateur d'addition d'instances.
-	 * Renvois une instance contenant les plateformes de a et b.
-	 */
-	friend Instance operator+(const Instance& a, const Instance& b);
-	
-	/**
-	 * Opérateur d'addition d'instances.
 	 * Ajoute à l'instance a toutes les plateformes de l'instance b.
+	 * Attention b est vidé dans l'opération
+	 * b ne dois pas être la même instance que a
 	 */
-	friend Instance& operator+=(Instance& a, const Instance& b);
+	friend Instance& operator+=(Instance& a, Instance& b);
 	
 	friend std::ostream& operator<<(std::ostream& out, const Instance& i);
 };

@@ -42,30 +42,25 @@ void Instance::rescale(const Vec3<float>& c,const Vec3<float>& ds){
 	}
 }
 
-Instance operator+(const Instance& a, const Instance& b){
-	Instance i;
-	for (auto& p:a.plateformes){
-		i.addPlatform(p);
+//Warning empties Instance b;
+Instance& operator+=(Instance& a, Instance& b){
+	if(&a == &b){
+		cerr << "Error: Instance operator a += b." << endl << "a and b must be different Instances" << endl;
+		return a;
 	}
-	for (auto& p:b.plateformes){
-		i.addPlatform(p);
-	}
-	return i;
-}
-
-Instance& operator+=(Instance& a, const Instance& b){
-	for (auto& p:b.plateformes){
-		a.addPlatform(p);
-	}
+		
+	a.plateformes.splice(a.plateformes.end(), b.plateformes);
 	return a;
 }
 
 ostream& operator<<(ostream& out, const Instance& i){
 	out << i.plateformes.size() << endl;
-	for (int j=0; j<i.plateformes.size()-1; ++j){
-		out << i.plateformes[j] << endl;
+	for (auto j=i.plateformes.begin(); j!=i.plateformes.end(); ++j){
+		out << *j;
+		if (++j!=i.plateformes.end())
+			out << endl;
+		--j;
 	}
-	out << i.plateformes.back();
 	
 	return out;
 }
