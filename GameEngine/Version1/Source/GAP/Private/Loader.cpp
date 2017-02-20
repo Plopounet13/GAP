@@ -84,15 +84,9 @@ void ULoader::interpol(const TArray<float> & Values, const TArray<float> & Index
 		++i;
 	}
 	float p1, p2, v1, v2;
-	if (i == 0) {
+	if (i == 0 || i == Index4D.Num()) {
 		p1 = Index4D.Last() - MAX4D;
 		p2 = Index4D[0];
-		v1 = Values.Last();
-		v2 = Values[0];
-	}
-	else if (i == Index4D.Num()) {
-		p1 = Index4D.Last();
-		p2 = Index4D[0] + MAX4D;
 		v1 = Values.Last();
 		v2 = Values[0];
 	}
