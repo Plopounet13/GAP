@@ -16,6 +16,7 @@ private:
 	Position pos;
 	std::vector<Vec3<float>> posSortie;
 	std::vector<Position> pos4D;
+	int rand;
 	
 public:
 	/**
@@ -26,7 +27,8 @@ public:
 	PlatInstance(int id,
 				 const Position& pos,
 				 std::vector<Vec3<float>>& posSortie,
-				 std::vector<Position>& pos4D);
+				 std::vector<Position>& pos4D,
+				 int rand);
 	
 	/**
 	 * deplace la plateforme d'un vecteur d dans l'espace.

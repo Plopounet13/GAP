@@ -7,11 +7,13 @@ using namespace std;
 PlatInstance::PlatInstance(int id,
 						   const Position& pos,
 						   std::vector<Vec3<float>>& pS,
-						   std::vector<Position>& p4):
+						   std::vector<Position>& p4,
+						   int r):
 pos(pos){
 	posSortie.swap(pS);
 	pos4D.swap(p4);
 	ID=id;
+	rand=r;
 };
 
 void PlatInstance::rotate(const Vec3<float>& dr){
@@ -110,6 +112,7 @@ void PlatInstance::rotate(const Vec3<float>& c, const Vec3<float>& dr){
 
 ostream& operator<< (ostream& out, const PlatInstance& p){
 	out << p.ID << endl;
+	out << p.rand << endl;
 	out << p.pos << endl;
 	out << p.posSortie.size() << endl;
 	for(auto& pos:p.posSortie){
