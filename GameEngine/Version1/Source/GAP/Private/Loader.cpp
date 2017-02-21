@@ -6,68 +6,118 @@
 #define print(text) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::White, text)
 //debug print
 
-bool ULoader::Load(
-	FString InFilename, 
-	int & NbPlatOut, 
-	TArray<float>& X,
-	TArray<float>& Y, 
-	TArray<float>& Z, 
-	TArray<float>& rX, 
-	TArray<float>& rY, 
-	TArray<float>& rZ, 
-	TArray<float>& sX, 
-	TArray<float>& sY, 
-	TArray<float>& sZ, 
-	TArray<int>& Plat_Type,
-	TArray<int>& Begin4D,
-	TArray<float>& Array_4D){
+bool ULoader::Load(FString InFilename,
+				   int & NbPlatOut,
+				   TArray<int>& plat_Type,
+				   TArray<float>& random_number
+				   TArray<FVector>& pos_actor,
+				   TArray<FVector>& rot_actor,
+				   TArray<FVector>& scale_actor,
+				   TArray<int>& nb_sorties,
+				   TArray<int>& begin_sorties,
+				   TArray<FVector>& vect_sorties,
+				   TArray<int>& begin_4D,
+				   TArray<float>& indice_4D,
+				   TArray<FVector>& pos_4D,
+				   TArray<FVector>& rot_4D,
+				   TArray<FVector>& scale_4D,
+				   ){
 
 
-	TArray<FString> OutStrings;
+	TArray<FString> in_strings;
 
 	FString LocalFilePath = (FPaths::GameDir() + InFilename);
 
-	bool success=FFileHelper::LoadANSITextFileToStrings(*LocalFilePath, NULL, OutStrings);
+	bool success=FFileHelper::LoadANSITextFileToStrings(*LocalFilePath, NULL, in_strings);
 	//print(LocalFilePath);
 
-	NbPlatOut = 0;
 	int32 index = 0;
-	Begin4D.Add(0);
-	for (NbPlatOut = 0; index < OutStrings.Num(); NbPlatOut++) {
-		Plat_Type.Add(FCString::Atoi(*OutStrings[index]));
+	begin_sorties.Add(0);
+	begin_4D.Add(0);
+	NbPlatOut = 0;
+	while (index < in_strings.Num()){
+		++NbPlatOut;
+		float x, y, z;
+		
+		plat_type.Add(FCString::Atoi(*in_strings[index]));
 		++index;
+		
+		random_number.Add(FCString::Atoi(*in_strings[index]));
+		++index;
+		
+		x = FCString::Atof(*in_strings[index]);
+		++index;
+		y = FCString::Atof(*in_strings[index]);
+		++index;
+		z = FCString::Atof(*in_strings[index]);
+		++index;
+		pos_actor.Emplace(x, y, z);
+		
+		x = FCString::Atof(*in_strings[index]);
+		++index;
+		y = FCString::Atof(*in_strings[index]);
+		++index;
+		z = FCString::Atof(*in_strings[index]);
+		++index;
+		rot_actor.Emplace(x, y, z);
+		
+		x = FCString::Atof(*in_strings[index]);
+		++index;
+		y = FCString::Atof(*in_strings[index]);
+		++index;
+		z = FCString::Atof(*in_strings[index]);
+		++index;
+		scale_actor.Emplace(x, y, z);
 
-		X.Add(FCString::Atof(*OutStrings[index]));
+		nb_sorties.Add(FCString::Atoi(*in_strings[index]));
 		++index;
-		Y.Add(FCString::Atof(*OutStrings[index]));
-		++index;
-		Z.Add(FCString::Atof(*OutStrings[index]));
-		++index;
-
-		rX.Add(FCString::Atof(*OutStrings[index]));
-		++index;
-		rY.Add(FCString::Atof(*OutStrings[index]));
-		++index;
-		rZ.Add(FCString::Atof(*OutStrings[index]));
-		++index;
-
-		sX.Add(FCString::Atof(*OutStrings[index]));
-		++index;
-		sY.Add(FCString::Atof(*OutStrings[index]));
-		++index;
-		sZ.Add(FCString::Atof(*OutStrings[index]));
-		++index;
-
-		int32 Nb4D=FCString::Atoi(*OutStrings[index]);
+		
+		int32 index_sorties;
+		for (index_sorties=0; index_sorties<nb_sorties.Last(); ++index_sorties){
+			x = FCString::Atof(*in_strings[index]);
+			++index;
+			y = FCString::Atof(*in_strings[index]);
+			++index;
+			z = FCString::Atof(*in_strings[index]);
+			++index;
+			vect_sorties.Emplace(x, y, z);
+		}
+		begin_sorties.Add(vect_sorties.Num());
+		
+		int32 nb_4D=FCString::Atoi(*in_strings[index]);
 		++index;
 
 		int32 index_4D;
-		for (index_4D = 0; index_4D < Nb4D; index_4D++) {
-			Array_4D.Add(FCString::Atof(*OutStrings[index]));
+		for (index_4D = 0; index_4D < nb_4D; index_4D++) {
+			x = FCString::Atof(*in_strings[index]);
 			++index;
+			y = FCString::Atof(*in_strings[index]);
+			++index;
+			z = FCString::Atof(*in_strings[index]);
+			++index;
+			pos_4D.Emplace(x, y, z);
+			
+			indice_4D.Add(FCString::Atof(*in_strings[index]));
+			++index;
+			
+			x = FCString::Atof(*in_strings[index]);
+			++index;
+			y = FCString::Atof(*in_strings[index]);
+			++index;
+			z = FCString::Atof(*in_strings[index]);
+			++index;
+			rot_4D.Emplace(x, y, z);
+			
+			x = FCString::Atof(*in_strings[index]);
+			++index;
+			y = FCString::Atof(*in_strings[index]);
+			++index;
+			z = FCString::Atof(*in_strings[index]);
+			++index;
+			scale_4D.Emplace(x, y, z);
 		}
 
-		Begin4D.Add(Array_4D.Num());
+		begin_4D.Add(indice_4D.Num());
 	}
 
 	--NbPlatOut;
