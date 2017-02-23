@@ -16,13 +16,25 @@ class GAP_API ULoader : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 public:
-		UFUNCTION(BlueprintCallable, Category = "LevelLoader")
-		static bool Load(FString InFilename, int & NbPlatOut, TArray<float> &X, TArray<float> &Y, TArray<float> &Z,
-			TArray<float> &rX, TArray<float> &rY, TArray<float> &rZ,
-			TArray<float> &sX, TArray<float> &sY, TArray<float> &sZ,
-			TArray<int > &Plat_Type, TArray<int> &Begin4D, TArray<float> &Array_4D);
+	UFUNCTION(BlueprintCallable, Category = "LevelLoader")
+	static bool Load(FString InFilename,
+			int & NbPlatOut,
+			TArray<int>& plat_type,
+			TArray<float>& random_number,
+			TArray<FVector>& pos_actor,
+			TArray<FRotator>& rot_actor,
+			TArray<FVector>& scale_actor,
+			TArray<int>& nb_exit,
+			TArray<int>& begin_exit,
+			TArray<FVector>& vect_exit,
+			TArray<int>& begin_4D,
+			TArray<float>& indice_4D,
+			TArray<FVector>& pos_4D,
+			TArray<FRotator>& rot_4D,
+			TArray<FVector>& scale_4D
+			);
 
-		UFUNCTION(BlueprintCallable, Category = "LevelLoader")
-		static void interpol(const TArray<float> & Values, const TArray<float> & Index4D, float Pos_4D, float & Output);
+	UFUNCTION(BlueprintCallable, Category = "LevelLoader")
+	static void interpol(const TArray<float> & Values, const TArray<float> & Index4D, float Pos_4D, float & Output);
 	
 };

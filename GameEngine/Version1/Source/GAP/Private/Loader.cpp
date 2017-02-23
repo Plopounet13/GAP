@@ -8,19 +8,19 @@
 
 bool ULoader::Load(FString InFilename,
 				   int & NbPlatOut,
-				   TArray<int>& plat_Type,
-				   TArray<float>& random_number
+				   TArray<int>& plat_type,
+				   TArray<float>& random_number,
 				   TArray<FVector>& pos_actor,
-				   TArray<FVector>& rot_actor,
+				   TArray<FRotator>& rot_actor,
 				   TArray<FVector>& scale_actor,
-				   TArray<int>& nb_sorties,
-				   TArray<int>& begin_sorties,
-				   TArray<FVector>& vect_sorties,
+				   TArray<int>& nb_exit,
+				   TArray<int>& begin_exit,
+				   TArray<FVector>& vect_exit,
 				   TArray<int>& begin_4D,
 				   TArray<float>& indice_4D,
 				   TArray<FVector>& pos_4D,
-				   TArray<FVector>& rot_4D,
-				   TArray<FVector>& scale_4D,
+				   TArray<FRotator>& rot_4D,
+				   TArray<FVector>& scale_4D
 				   ){
 
 
@@ -32,7 +32,7 @@ bool ULoader::Load(FString InFilename,
 	//print(LocalFilePath);
 
 	int32 index = 0;
-	begin_sorties.Add(0);
+	begin_exit.Add(0);
 	begin_4D.Add(0);
 	NbPlatOut = 0;
 	while (index < in_strings.Num()){
@@ -69,20 +69,20 @@ bool ULoader::Load(FString InFilename,
 		++index;
 		scale_actor.Emplace(x, y, z);
 
-		nb_sorties.Add(FCString::Atoi(*in_strings[index]));
+		nb_exit.Add(FCString::Atoi(*in_strings[index]));
 		++index;
 		
-		int32 index_sorties;
-		for (index_sorties=0; index_sorties<nb_sorties.Last(); ++index_sorties){
+		int32 index_exit;
+		for (index_exit=0; index_exit<nb_exit.Last(); ++index_exit){
 			x = FCString::Atof(*in_strings[index]);
 			++index;
 			y = FCString::Atof(*in_strings[index]);
 			++index;
 			z = FCString::Atof(*in_strings[index]);
 			++index;
-			vect_sorties.Emplace(x, y, z);
+			vect_exit.Emplace(x, y, z);
 		}
-		begin_sorties.Add(vect_sorties.Num());
+		begin_exit.Add(vect_exit.Num());
 		
 		int32 nb_4D=FCString::Atoi(*in_strings[index]);
 		++index;
