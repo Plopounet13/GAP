@@ -35,6 +35,11 @@ public:
 			);
 
 	UFUNCTION(BlueprintCallable, Category = "LevelLoader")
-	static void interpol(const TArray<float> & Values, const TArray<float> & Index4D, float Pos_4D, float & Output);
+	static void interpolate_vector(const TArray<FVector> & Values, const TArray<float> & Index4D, float Pos_4D, FVector & Output);
+
+	UFUNCTION(BlueprintCallable, Category = "LevelLoader")
+	static void interpolate_rotator(const TArray<FRotator> & Values, const TArray<float> & Index4D, float Pos_4D, FRotator & Output);
+
+
 	
 };

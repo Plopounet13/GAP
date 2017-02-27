@@ -36,28 +36,6 @@ namespace CharacterMovementComponentStatics
 	static const FName ImmersionDepthName = FName(TEXT("MovementComp_Character_ImmersionDepth"));
 }
 
-// CVars.
-namespace CharacterMovementCVars
-{
-#if !UE_BUILD_SHIPPING
-	static int32 NetShowCorrections = 0;
-	FAutoConsoleVariableRef CVarNetShowCorrections(
-		TEXT("p.NetShowCorrections"),
-		NetShowCorrections,
-		TEXT("Whether to draw client position corrections (red is incorrect, green is corrected).\n")
-		TEXT("0: Disable, 1: Enable"),
-		ECVF_Cheat);
-
-	static float NetCorrectionLifetime = 4.f;
-	FAutoConsoleVariableRef CVarNetCorrectionLifetime(
-		TEXT("p.NetCorrectionLifetime"),
-		NetCorrectionLifetime,
-		TEXT("How long a visualized network correction persists.\n")
-		TEXT("Time in seconds each visualized network correction persists."),
-		ECVF_Cheat);
-#endif // !UE_BUILD_SHIPPING
-}
-
 
 UGravityMovementComponent::UGravityMovementComponent(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -3418,19 +3396,6 @@ void UGravityMovementComponent::ServerMoveHandleClientError(float ClientTimeStam
 			//ServerData->PendingAdjustment.NewRot = CharacterOwner->GetBasedMovement().Rotation;
 		}
 
-#if !UE_BUILD_SHIPPING
-		if (CharacterMovementCVars::NetShowCorrections != 0)
-		{
-			const FVector LocDiff = UpdatedComponent->GetComponentLocation() - ClientLoc;
-			const FString BaseString = MovementBase ? MovementBase->GetPathName(MovementBase->GetOutermost()) : TEXT("None");
-			UE_LOG(LogNetPlayerMovement, Warning, TEXT("*** Server: Error for %s at Time=%.3f is %3.3f LocDiff(%s) ClientLoc(%s) ServerLoc(%s) Base: %s Bone: %s Accel(%s) Velocity(%s)"),
-				*GetNameSafe(CharacterOwner), ClientTimeStamp, LocDiff.Size(), *LocDiff.ToString(), *ClientLoc.ToString(), *UpdatedComponent->GetComponentLocation().ToString(), *BaseString, *ServerData->PendingAdjustment.NewBaseBoneName.ToString(), *Accel.ToString(), *Velocity.ToString());
-			const float DebugLifetime = CharacterMovementCVars::NetCorrectionLifetime;
-			DrawDebugCapsule(GetWorld(), UpdatedComponent->GetComponentLocation(), CharacterOwner->GetSimpleCollisionHalfHeight(), CharacterOwner->GetSimpleCollisionRadius(), UpdatedComponent->GetComponentQuat(), FColor(100, 255, 100), true, DebugLifetime);
-			DrawDebugCapsule(GetWorld(), ClientLoc, CharacterOwner->GetSimpleCollisionHalfHeight(), CharacterOwner->GetSimpleCollisionRadius(), UpdatedComponent->GetComponentQuat(), FColor(255, 100, 100), true, DebugLifetime);
-		}
-#endif
-
 		ServerData->LastUpdateTime = GetWorld()->TimeSeconds;
 		ServerData->PendingAdjustment.DeltaTime = DeltaTime;
 		ServerData->PendingAdjustment.TimeStamp = ClientTimeStamp;
@@ -3520,19 +3485,6 @@ void UGravityMovementComponent::ClientAdjustPosition_Implementation(float TimeSt
 		MovementBaseUtility::GetMovementBaseTransform(NewBase, NewBaseBoneName, BaseLocation, BaseRotation); // TODO: error handling if returns false.
 		NewLocation += BaseLocation;
 	}
-
-#if !UE_BUILD_SHIPPING
-	if (CharacterMovementCVars::NetShowCorrections != 0)
-	{
-		const FVector LocDiff = UpdatedComponent->GetComponentLocation() - NewLocation;
-		const FString NewBaseString = NewBase ? NewBase->GetPathName(NewBase->GetOutermost()) : TEXT("None");
-		UE_LOG(LogNetPlayerMovement, Warning, TEXT("*** Client: Error for %s at Time=%.3f is %3.3f LocDiff(%s) ClientLoc(%s) ServerLoc(%s) NewBase: %s NewBone: %s ClientVel(%s) ServerVel(%s) SavedMoves %d"),
-			*GetNameSafe(CharacterOwner), TimeStamp, LocDiff.Size(), *LocDiff.ToString(), *UpdatedComponent->GetComponentLocation().ToString(), *NewLocation.ToString(), *NewBaseString, *NewBaseBoneName.ToString(), *Velocity.ToString(), *NewVelocity.ToString(), ClientData->SavedMoves.Num());
-		const float DebugLifetime = CharacterMovementCVars::NetCorrectionLifetime;
-		DrawDebugCapsule(GetWorld(), UpdatedComponent->GetComponentLocation(), CharacterOwner->GetSimpleCollisionHalfHeight(), CharacterOwner->GetSimpleCollisionRadius(), UpdatedComponent->GetComponentQuat(), FColor(255, 100, 100), true, DebugLifetime);
-		DrawDebugCapsule(GetWorld(), NewLocation, CharacterOwner->GetSimpleCollisionHalfHeight(), CharacterOwner->GetSimpleCollisionRadius(), UpdatedComponent->GetComponentQuat(), FColor(100, 255, 100), true, DebugLifetime);
-	}
-#endif //!UE_BUILD_SHIPPING
 
 	// Trust the server's positioning.
 	UpdatedComponent->SetWorldLocation(NewLocation, false);
