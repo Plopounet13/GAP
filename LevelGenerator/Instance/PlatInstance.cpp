@@ -1,16 +1,17 @@
-#include "PlatInstance.hpp"
+#include "PlatInstance.h"
 
 extern double PI_180;
 
 using namespace std;
 
 PlatInstance::PlatInstance(int id,
-						   const Position& pos,
+						   const Position& p,
 						   std::vector<Vec3<float>>& pS,
 						   std::vector<Position>& p4,
-						   int r):
-pos(pos){
+						   int r):pos(p){
+	
 	posSortie.swap(pS);
+	posCentre=(pos.getPos()+posSortie.front())/2;
 	pos4D.swap(p4);
 	ID=id;
 	rand=r;

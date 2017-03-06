@@ -1,4 +1,4 @@
-#include "Position.hpp"
+#include "Position.h"
 
 using namespace std;
 
@@ -30,6 +30,8 @@ Position::Position(const Position& p){
 	rot=p.rot;
 	scale=p.scale;
 }
+
+Position::Position(){}
 
 const Vec3<float>& Position::getPos() const{
 	return pos;

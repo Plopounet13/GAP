@@ -1,4 +1,4 @@
-#include "Instance.hpp"
+#include "Instance.h"
 
 using namespace std;
 

@@ -9,9 +9,9 @@
 #include <time.h>
 #include <algorithm>
 #include <complex>
-#include "Library/Point.hpp"
-#include "Library/Platform.hpp"
-#include "Library/Library.hpp"
+#include "Library/Point.h"
+#include "Library/Platform.h"
+#include "Library/Library.h"
 //#include "PFinstance.h"
 #include "Polynome.h"
 

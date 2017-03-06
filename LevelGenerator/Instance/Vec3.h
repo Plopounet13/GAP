@@ -1,5 +1,5 @@
-#ifndef Vec3_hpp
-#define Vec3_hpp
+#ifndef Vec3_h
+#define Vec3_h
 
 #include <iostream>
 
@@ -165,4 +165,4 @@ public:
 };
 
 
-#endif /* Vec3_hpp */
+#endif /* Vec3_h */

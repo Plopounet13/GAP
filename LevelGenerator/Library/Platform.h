@@ -4,7 +4,7 @@
 #include <vector>
 #include <iostream>
 #include "Point.h"
-#include "../Instance/Vec3.hpp"
+#include "../Instance/Vec3.h"
 
 #define DEFAULT_WEIGHT 10
 

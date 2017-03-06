@@ -1,13 +1,13 @@
-#ifndef Instance_hpp
-#define Instance_hpp
+#ifndef Instance_h
+#define Instance_h
 
 #include <vector>
 #include <iostream>
 #include <cmath>
 #include <list>
-#include "Position.hpp"
-#include "PlatInstance.hpp"
-#include "Vec3.hpp"
+#include "Position.h"
+#include "PlatInstance.h"
+#include "Vec3.h"
 
 class Instance{
 private:
@@ -53,4 +53,4 @@ public:
 	friend std::ostream& operator<<(std::ostream& out, const Instance& i);
 };
 
-#endif /* Instance_hpp */
+#endif /* Instance_h */

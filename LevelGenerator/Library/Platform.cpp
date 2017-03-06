@@ -1,7 +1,7 @@
 #include <sstream>
 #include <algorithm>
 #include <map>
-#include "Platform.hpp"
+#include "Platform.h"
 
 using namespace std;
 

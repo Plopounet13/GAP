@@ -1,10 +1,10 @@
-#ifndef Position_hpp
-#define Position_hpp
+#ifndef Position_h
+#define Position_h
 
 #include <vector>
 #include <iostream>
 #include <cmath>
-#include "Vec3.hpp"
+#include "Vec3.h"
 
 class Position{
 	int k;
@@ -22,6 +22,7 @@ public:
 	Position(const Vec3<float>& loc, const Vec3<float>& rot, const Vec3<float>& scale);
 	Position(float k, const Vec3<float>& loc, const Vec3<float>& rot, const Vec3<float>& scale);
 	Position(const Position& p);
+	Position();
 	
 	/**
 	 * Effectue une rotation d'angles dr centrée en pos.
@@ -65,4 +66,4 @@ public:
 	friend std::ostream& operator<< (std::ostream& out, const Position& p);
 };
 
-#endif /* Instance_hpp */
+#endif /* Instance_h */
