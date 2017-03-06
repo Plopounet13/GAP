@@ -128,7 +128,7 @@ bool ULoader::Load(FString InFilename,
 
 void ULoader::interpolate_vector(const TArray<FVector> & Values, const TArray<float> & Index4D, float Pos_4D, FVector & Output) {
 	int i = 0;
-	if (Pos_4D >= 0 && Pos_4D <= MAX4D)
+	if (Pos_4D < 0 || Pos_4D > MAX4D)
 		print("4D from interpol outside [0,1000]");
 	while (i<Index4D.Num() && Index4D[i]<Pos_4D) {
 		++i;
@@ -140,6 +140,7 @@ void ULoader::interpolate_vector(const TArray<FVector> & Values, const TArray<fl
 		p2 = Index4D[0];
 		v1 = Values.Last();
 		v2 = Values[0];
+		Pos_4D -= MAX4D;
 	}
 	else {
 		p1 = Index4D[i - 1];
@@ -153,7 +154,7 @@ void ULoader::interpolate_vector(const TArray<FVector> & Values, const TArray<fl
 
 void ULoader::interpolate_rotator(const TArray<FRotator> & Values, const TArray<float> & Index4D, float Pos_4D, FRotator & Output) {
 	int i = 0;
-	if (Pos_4D >= 0 && Pos_4D <= MAX4D)
+	if (Pos_4D < 0 || Pos_4D > MAX4D)
 		print("4D from interpol outside [0,1000]");
 	while (i<Index4D.Num() && Index4D[i]<Pos_4D) {
 		++i;
@@ -165,6 +166,7 @@ void ULoader::interpolate_rotator(const TArray<FRotator> & Values, const TArray<
 		p2 = Index4D[0];
 		v1 = Values.Last();
 		v2 = Values[0];
+		Pos_4D -= MAX4D;
 	}
 	else {
 		p1 = Index4D[i - 1];
@@ -175,3 +177,4 @@ void ULoader::interpolate_rotator(const TArray<FRotator> & Values, const TArray<
 
 	Output = ((p2 - Pos_4D)*v1 + (Pos_4D - p1)*v2) * (1/(p2 - p1));
 }
+

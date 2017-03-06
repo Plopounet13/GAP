@@ -10,6 +10,7 @@
 //TODO: Placer les sorties en 4 dimension au lieu de 3.
 //TODO: Ajouter la 4D d'entrée de la plateforme DOINGIT
 //TODO: Discuter comment déterminer la position du centre de la plateforme (Pour l'instant baricentre sortie entrée)
+//TODO: void *****(const vector<vector<int>>& probas, int& x, int& y); 
 
 class PlatInstance{
 private:
