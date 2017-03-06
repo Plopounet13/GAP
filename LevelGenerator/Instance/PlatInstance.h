@@ -7,32 +7,29 @@
 #include "Vec3.h"
 #include "Position.h"
 
-//TODO: Placer les sorties en 4 dimension au lieu de 3.
-//TODO: Ajouter la 4D d'entrée de la plateforme DOINGIT
-//TODO: Discuter comment déterminer la position du centre de la plateforme (Pour l'instant baricentre sortie entrée)
 //TODO: void *****(const vector<vector<int>>& probas, int& x, int& y); 
 
 class PlatInstance{
 private:
 	int ID;
 	
-	Vec3<float> posCentre;
-	
 	Position pos;
 	std::vector<Vec3<float>> posSortie;
+	std::vector<float> sortie4D;
 	std::vector<Position> pos4D;
 	int rand;
 	
 public:
 	/**
 	 *
-	 * Le contenu de posSortie et pos4D est vidé
+	 * Le contenu de posSortie, sortie4D et pos4D est vidé
 	 * Les coordonnées des sorties et des positions 4D sont à donner en absolu même si elle sont affichées en relatif dans le fichier final.
 	 * pos représente le centre de la plateforme
 	*/
 	PlatInstance(int id,
 				 const Position& pos,
 				 std::vector<Vec3<float>>& posSortie,
+				 std::vector<float> sortie4D,
 				 std::vector<Position>& pos4D,
 				 int rand);
 	

@@ -7,14 +7,20 @@ using namespace std;
 PlatInstance::PlatInstance(int id,
 						   const Position& p,
 						   std::vector<Vec3<float>>& pS,
+						   std::vector<float> s4D,
 						   std::vector<Position>& p4,
 						   int r):pos(p){
-	
+	sortie4D.swap(s4D);
 	posSortie.swap(pS);
-	posCentre=(pos.getPos()+posSortie.front())/2;
 	pos4D.swap(p4);
 	ID=id;
 	rand=r;
+	// On considère que la position donnée est la position de l'entrée de la plateforme
+	// On doit donc décaler la position pour qu'elle soit celle du centre.
+	// Le centre est considéré comme le milieu entre l'entrée et la première sortie.
+	if (posSortie.size()){
+		pos.translate((posSortie.front()-pos.getPos())/2);
+	}
 };
 
 void PlatInstance::rotate(const Vec3<float>& dr){
@@ -116,8 +122,9 @@ ostream& operator<< (ostream& out, const PlatInstance& p){
 	out << p.rand << endl;
 	out << p.pos << endl;
 	out << p.posSortie.size() << endl;
-	for(auto& pos:p.posSortie){
-		out << pos-p.pos.getPos() << endl;
+	for(int i=0; i < p.posSortie.size(); ++i){
+		out << p.posSortie[i]-p.pos.getPos() << endl;
+		out << p.sortie4D[i] << endl;
 	}
 	cout << p.pos4D.size() << endl;
 	for(int i=0; i<p.pos4D.size()-1; ++i){
