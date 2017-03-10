@@ -24,5 +24,6 @@ bool f_monte(const Platform& p) ;
 bool f_descend(const Platform& p) ;
 bool f_plat(const Platform& p) ;
 bool f_true(const Platform& p) ;
+bool f_contientPoint(const Platform& p, Point point) ;
 
 #endif /* LIBRARY_H */

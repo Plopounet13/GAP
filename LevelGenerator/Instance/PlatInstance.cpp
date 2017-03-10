@@ -21,7 +21,7 @@ PlatInstance::PlatInstance(int id,
 	if (posSortie.size()){
 		pos.translate((posSortie.front()-pos.getPos())/2);
 	}
-};
+}
 
 void PlatInstance::rotate(const Vec3<float>& dr){
 	rotate(pos.getPos(), dr);
@@ -122,12 +122,12 @@ ostream& operator<< (ostream& out, const PlatInstance& p){
 	out << p.rand << endl;
 	out << p.pos << endl;
 	out << p.posSortie.size() << endl;
-	for(int i=0; i < p.posSortie.size(); ++i){
+	for(int i=0; i < int(p.posSortie.size()); ++i){
 		out << p.posSortie[i]-p.pos.getPos() << endl;
 		out << p.sortie4D[i] << endl;
 	}
 	cout << p.pos4D.size() << endl;
-	for(int i=0; i<p.pos4D.size()-1; ++i){
+	for(int i=0; i<int(p.pos4D.size())-1; ++i){
 		cout << p.pos4D[i]-p.pos << endl;
 	}
 	

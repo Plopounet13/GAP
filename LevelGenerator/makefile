@@ -3,29 +3,47 @@ CXXFLAGS=-g -std=c++11 -Wall -pedantic
 EXEC=patate
 
 all: $(EXEC)
+OBJS = main.o Library/Library.o Library/Platform.o Library/Point.o Polynome.o Instance/Instance.o Instance/PlatInstance.o Instance/Position.o Instance/Vec3.o
 
 
-patate: main.o PFinstance.o Library.o Platform.o Point.o Polynome.o
-	$(CXX) -o patate main.o PFinstance.o Library.o Platform.o Point.o Polynome.o $(CXXFLAGS)
+patate: $(OBJS)
+	$(CXX) -o patate $(OBJS) $(CXXFLAGS)
+
 
 
 Polynome.o: Polynome.cpp Polynome.h
 	$(CXX) -o Polynome.o -c Polynome.cpp $(CXXFLAGS)
-	
-Point.o: Point.cpp Point.h
-	$(CXX) -o Point.o -c Point.cpp $(CXXFLAGS)
 
-Platform.o: Platform.cpp Platform.h Point.h
-	$(CXX) -o Platform.o -c Platform.cpp $(CXXFLAGS)
 
-Library.o: Library.cpp Library.h Platform.h Point.h
-	$(CXX) -o Library.o -c Library.cpp $(CXXFLAGS)
+Library/Point.o: Library/Point.cpp Library/Point.h
+	$(CXX) -o Library/Point.o -c Library/Point.cpp $(CXXFLAGS)
 
-PFinstance.o: PFinstance.cpp PFinstance.h Library.h Platform.h Point.h
-	$(CXX) -o PFinstance.o -c PFinstance.cpp $(CXXFLAGS)
+Library/Platform.o: Library/Platform.cpp Library/Platform.h Library/Point.h
+	$(CXX) -o Library/Platform.o -c Library/Platform.cpp $(CXXFLAGS)
 
-main.o: main.cpp PFinstance.h Library.h Platform.h Point.h Polynome.h
+Library/Library.o: Library/Library.cpp Library/Library.h Library/Platform.h Library/Point.h
+	$(CXX) -o Library/Library.o -c Library/Library.cpp $(CXXFLAGS)
+
+
+Instance/Instance.o: Instance/Instance.cpp Instance/Instance.h Instance/PlatInstance.h Instance/Position.h Instance/Vec3.h
+	$(CXX) -o Instance/Instance.o -c Instance/Instance.cpp $(CXXFLAGS)
+
+Instance/PlatInstance.o: Instance/PlatInstance.cpp Instance/PlatInstance.h Instance/Position.h Instance/Vec3.h
+	$(CXX) -o Instance/PlatInstance.o -c Instance/PlatInstance.cpp $(CXXFLAGS)
+
+Instance/Position.o: Instance/Position.cpp Instance/Position.h Instance/Vec3.h
+	$(CXX) -o Instance/Position.o -c Instance/Position.cpp $(CXXFLAGS)
+
+Instance/Vec3.o: Instance/Vec3.cpp Instance/Vec3.h
+	$(CXX) -o Instance/Vec3.o -c Instance/Vec3.cpp $(CXXFLAGS)
+
+
+main.o: main.cpp Library/Library.h Library/Platform.h Library/Point.h Polynome.h
 	$(CXX) -o main.o -c main.cpp $(CXXFLAGS)
+
+
+
+
 
 
 .PHONY: clean mrproper
@@ -33,6 +51,10 @@ main.o: main.cpp PFinstance.h Library.h Platform.h Point.h Polynome.h
 clean:
 	rm -rf *.o
 	rm -rf *~
+	rm -rf Library/*.o
+	rm -rf Library/*~
+	rm -rf Instance/*.o
+	rm -rf Instance/*~
 
 mrproper: clean
 	rm -rf $(EXEC)

@@ -12,7 +12,10 @@
 #include "Library/Point.h"
 #include "Library/Platform.h"
 #include "Library/Library.h"
-//#include "PFinstance.h"
+#include "Instance/Instance.h"
+#include "Instance/PlatInstance.h"
+#include "Instance/Position.h"
+#include "Instance/Vec3.h"
 #include "Polynome.h"
 
 using namespace std;
@@ -24,15 +27,16 @@ const long double G = 9.81;
 const long double Vk = 100.0;
 const Point Vitmin = Point(24,24,50,2) ;
 const Point Vitmax = Point(36,36,50,8);
-const long double EPSILON = 0.001;
+const long double EPSILON = 0.0001;
 
 
 
 // prototypes
 bool triBezier(const Point& a, const Point& b, Point entree, Point sortie) ;
-vector<Point> generationLocale(Point entree, Point sortie, Point coinRect, int largeur, int profondeur, int hauteur) ;
+vector<Point> generationLocale(Library bibli, Point entree, Point sortie, Point coinRect, int largeur, int profondeur, int hauteur) ;
 Library subLibrary(Library const& bibli, Point entree, Point sortie) ;
-Point bezierT(long double t, long double coeff = 84) ;
+Point bezierT(long double t) ;
+Point royalT(long double t, long double coeff = 84) ;
 bool accessibilite(int IDplatf, Point a, Point b) ;
 Point arrivalJump(Point depart, Point direction, Point vitesse) ;
 Point arrival(Point depart, Point vitesse, long double& t0) ;
@@ -51,7 +55,8 @@ int main(int argc, char** argv)
     
     Point entree = Point(100,100,20,200);
     Point sortie = Point(10000,10000,800,1600);
-    vector<Point> parcours = generationLocale(entree, sortie, Point(0,0,0,0), 11000, 11000, 2000);
+    Library bibli ;
+    vector<Point> parcours = generationLocale(bibli, entree, sortie, Point(0,0,0,0), 11000, 11000, 2000);
     cout<<"2"<<endl;
     cout<<entree.getX()<<endl;
     cout<<entree.getY()<<endl;
@@ -132,7 +137,7 @@ bool triBezier(const Point& a, const Point& b, Point entree, Point sortie)
 
 
 
-vector<Point> generationLocale(Point entree, Point sortie, Point coinRect, int largeur, int profondeur, int hauteur)
+vector<Point> generationLocale(Library bibli, Point entree, Point sortie, Point coinRect, int largeur, int profondeur, int hauteur)
 {
     // hauteur -> z ; largeur -> x ; profondeur -> y
     
@@ -149,7 +154,7 @@ vector<Point> generationLocale(Point entree, Point sortie, Point coinRect, int l
         }
     }
     
-    /*
+    // Pt Bezier temporaires
     Point temp ;
     vector<Point> tempBezier ;
     for(int i=1 ; i<nbPointBezier-1 ; i++) {
@@ -161,23 +166,71 @@ vector<Point> generationLocale(Point entree, Point sortie, Point coinRect, int l
         // 5000 pour que le baryncentre se passe bien pour une dimension torique, on repasse plus tard entre  0 et 1000.
     }
     
+	// tri
     pointBezier[0] = entree ;
     sort(tempBezier.begin(), tempBezier.end(), bind(triBezier,placeholders::_1,placeholders::_2,entree,sortie));
     for(int i=1 ; i<nbPointBezier-1 ; i++) {
         pointBezier[i] = tempBezier[i-1] ;
     }
     pointBezier[nbPointBezier-1] = sortie ;
-    */
     
+	
+	//// Ecartement pour remplir le pave (peut theoriquement fail... mais bon en pratique...)
     
+	// min et max atteints par courbe actuelle
+	
+	long double minX=entree.getX(), maxX=entree.getX(), minY=entree.getY(), maxY=entree.getY(), minZ=entree.getZ(), maxZ=entree.getZ() ;
+	//pas de 0.02 ok (50* ancien BezierT) ? faire avec polynomes (3*durandkerner + recalcul polynomes) ?
+	for (int i = 1 ; i<=50 ; i++) {
+		
+		//ancien BezierT
+		long double x=0,y=0,z=0,k=0 ;
+		long double t = i/50 ;
+		for (int j = 0; j < nbPointBezier ; j++) {
+			long double coef = pasc[nbPointBezier-1][j]*pow(t,j)*pow(1-t,nbPointBezier-j-1) ;
+			x += coef * pointBezier[j].getX() ;
+			y += coef * pointBezier[j].getY() ;
+			z += coef * pointBezier[j].getZ() ;
+			k += coef * pointBezier[j].getK() ;
+		}
+		
+		minX = min(minX,x) ;
+		maxX = max(maxX,x) ;
+		minY = min(minY,y) ;
+		maxY = max(maxY,y) ;
+		minZ = min(minZ,z) ;
+		maxZ = max(maxZ,z) ;
+		
+	}
+	
+	//ratio d'ecartement (laisse 0.05 de marge de chaque cote)
+	
+	long double resizeX = 0.9*largeur/(maxX - minX) ;
+	long double resizeY = 0.9*profondeur/(maxY - minY) ;
+	long double resizeZ = 0.9*hauteur/(maxZ - minZ) ;
+	
+	//ecartement
+	
+	for (int i = 1; i < nbPointBezier-1 ; i++) {
+		Point temp = pointBezier[i] ;
+		int x = temp.getX() , y = temp.getY() , z = temp.getZ() , k = temp.getK() ;
+		pointBezier[i] =   Point((x-minX+0.05*largeur)*resizeX, (y-minY+0.05*profondeur)*resizeY, (z-minZ+0.05*hauteur)*resizeZ, k) ;
+	}
+	
+	
+    /*
+    // utilise comme demo en mi-rendu
     pointBezier[0] = entree ;
     pointBezier[1] = Point(2000,25000,2500,800) ;
     pointBezier[2] = Point(4000,15000,-1100,100) ;
     pointBezier[3] = Point(6000,-15000,2500,800) ;
     pointBezier[4] = Point(8000,25000,-200,-100) ;
     pointBezier[nbPointBezier-1] = sortie ;
+    */
     
-    
+	
+	//// Calcul des polynomes de Bezier
+	
     vector<long double> Vx, Vy, Vz, Vk ;
     Vx.resize(nbPointBezier+1) ;
     Vy.resize(nbPointBezier+1) ;
@@ -215,27 +268,74 @@ vector<Point> generationLocale(Point entree, Point sortie, Point coinRect, int l
     long double t0 = 0.0 ;
     Point position = entree ;
     Point vitesse = Vitmin ;
+    long double probaPonctuelle = 0.6 ;
+    bool ponctuelle ;
     
-    //while(t0<1.0) {
-        //Point arrive = arrival(position, vitesse, t0) ;
-        //choix platforme
-        //...
-    //}
-    
-    while(t0<1024.0){
+    while(t0<1.0){
         Point destfinale = arrival(position, vitesse, t0);
         vitesse = bound(vitesse+Point(2,2,2,2),Vitmin,Vitmax);
         karabonga.push_back(destfinale);
         //cout<<destfinale.getX()<<"  "<<destfinale.getY()<<"  "<<destfinale.getZ()<<"  "<<destfinale.getK()<<"  "<<endl;
         long double t = t0;
-        Point original = bezierT(t);
-        //cout<<original.getX()<<"  "<<original.getY()<<"  "<<original.getZ()<<"  "<<original.getK()<<"  "<<endl;
+        
+        Point original = royalT(t);
+        
         position = destfinale;
+        bool ponctuelle = false ;
+		Platform* PF ;
+        
+        // choix type platforme
+        if (((float)rand()/(float)RAND_MAX)<probaPonctuelle) {
+        	ponctuelle = true ;
+        }
+        
+        else {
+        	
+    		long double hsaut = Vitmin.norm2()*2*Vitmin.getZ()/G ;
+		    Polynome Dx = derive(Bx) , Dy = derive(By) , Dz = derive(Bz) , Dk = derive(Bk) ;
+		    long double dx = Dx.evalreel(t), dy = Dy.evalreel(t), dz = Dz.evalreel(t), dk = Dk.evalreel(t) ;
+		    long double d = sqrt(dx*dx+dy*dy+dz*dz) ;
+		    vector<Platform *> temp ;
+		    for (int i = 0 ; i<5 and temp.size()==0 ; i++) {
+		    	long double h = ((float)rand()/(float)RAND_MAX*4+1)*hsaut ;
+		    	long double x=dx*h/d,y=dy*h/d,z=dz*h/d,k=dk*h/d ;
+		    	Point finPlat1 = Point(int(x+0.5),int(y+0.5),int(z+0.5),int(k+0.5)) + position ;
+		    	long double ttemp = findT(finPlat1) ;
+		    	Point finPlat = royalT(ttemp) ;
+		    	bibli.select(bind(f_contientPoint,placeholders::_1,finPlat-position),temp) ;
+		    }
+		    
+		    if (temp.size()!=0) {
+		    	int poidstotal = 0 ;
+		    	for(unsigned int k=0 ; k<temp.size() ; k++){
+		    		poidstotal += (temp[k])->getApparitionWeight()+1 ;
+		    	}
+		    	int r = rand() % poidstotal ;
+		    	int k = 0 ;
+		    	while (temp[k]->getApparitionWeight() <= r) {
+		    		r=r-temp[k]->getApparitionWeight()-1 ;
+		    		k++ ;
+		    	}
+		    	PF = temp[k] ;
+		    }
+		    else {
+		    	ponctuelle = true ;
+		    }
+        }
+        if (ponctuelle) {
+        	
+        }
+        
+        
+        
+        
+        
+        //cout<<original.getX()<<"  "<<original.getY()<<"  "<<original.getZ()<<"  "<<original.getK()<<"  "<<endl;
         //cout<<t0<<endl;
     }
     
     //posttraitement
-
+	
     return karabonga ;
 
 }
@@ -304,12 +404,17 @@ Library subLibrary(Library const& bibli, Point entree, Point sortie)
 
 
 
-
-
-Point bezierT(long double t,long double coef)
+Point bezierT(long double t)
 {
-    t /= 1024.0 ;
     long double x=Bx.evalreel(t),y=By.evalreel(t),z=Bz.evalreel(t),k=Bk.evalreel(t) ;
+    return Point(int(x+0.5),int(y+0.5),int(z+0.5),int(k+0.5)%1000) ;
+}
+
+
+Point royalT(long double t,long double coef)
+{
+	Point Bez = bezierT(t) ;
+	long double x=Bez.getX(),y=Bez.getY(),z=Bez.getZ(),k=Bez.getK() ;
     x+=coef*sin(t*450);
     y+=coef*sin(t*501);
     z+=coef*sin(t*549);
@@ -427,8 +532,10 @@ Point arrivalJump(Point depart, Point direction, Point vitesse)
 
 Point arrival(Point depart, Point vitesse, long double& t0)
 {
+	// modifie t0
+	
 	Point arrive ;
-    long double t = 1024.0;
+    long double t = 1.0;
     long double pas = t-t0 ;
     Point dirDestination ;
     long double vz = vitesse.getZ() ;
@@ -437,7 +544,7 @@ Point arrival(Point depart, Point vitesse, long double& t0)
     long double zmax = vz*vz/(2*G) ;
     bool cont = false ;
     while (not cont) {
-        dirDestination = bezierT(t)-depart ;
+        dirDestination = royalT(t)-depart ;
         long double z = dirDestination.getZ() ;
         long double h = dirDestination.norm2() ;
         if (z>0.6*zmax or z<-0.9*zmax or h>0.7*hmax or h<-0.7*hmax) {   // distance suffisemment grande
@@ -459,7 +566,7 @@ Point arrival(Point depart, Point vitesse, long double& t0)
             }
         }
         else{   // distance pas assez grande
-            if (t==1024.0) { // fin de toute facon
+            if (t==1.0) { // fin de toute facon
                 cont = true ;
             }
             else {
@@ -486,21 +593,19 @@ long double findT (Point position, long double epsilon)
     Pz = Bz + Polynome(-z) ;
     D = Px*Px + Py*Py + Pz*Pz ;
     
-    vector<long double> extremum = derive(D).durandkerner() ;
-    if (extremum.size()==0)
-        return 1.0 ;
-    else {
-        int minindex = 0 ;
-        long double distance = D.evalreel(extremum[0]) ;
-        for (int i=1 ; i<int(extremum.size()) ; i++) {
-            long double temp = D.evalreel(extremum[i]) ;
-            if (temp<distance) {
-                distance = temp ;
-                minindex = i ;
-            }
+    vector<long double> extremum = derive(D).durandkerner(epsilon) ;
+    extremum.push_back(0) ;
+    extremum.push_back(1) ;
+    int minindex = 0 ;
+    long double distance = D.evalreel(extremum[0]) ;
+    for (int i=1 ; i<int(extremum.size()) ; i++) {
+        long double temp = D.evalreel(extremum[i]) ;
+        if (temp<distance) {
+            distance = temp ;
+            minindex = i ;
         }
-        return 1024.0*extremum[minindex] ;
     }
+    return extremum[minindex] ;
 }
 
 

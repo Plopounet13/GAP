@@ -153,6 +153,10 @@ const Point& Platform::getCoeffAcceleration() const{
 	return multiplicativeAcceleration;
 }
 
+int Platform::getApparitionWeight() const{
+	return apparitionWeight;
+}
+
 int Platform::getNbSorties() const{
 	return nbSorties;
 }
