@@ -13,12 +13,14 @@ class point{
 public:
     point();
     point(double a, double b, double c);
-    const double x();
-    const double y();
-    const double z();
-    const double length();
+    double x() const;
+    double y() const;
+    double z() const;
+    double length() const;
     void set(double a, double b, double c);
     void mult(double lambda);
+    friend point operator*(double lhs, const point& rhs);
+    friend point operator+(point lhs, const point& rhs);
 
 private:
     double m_x, m_y, m_z, m_length;
