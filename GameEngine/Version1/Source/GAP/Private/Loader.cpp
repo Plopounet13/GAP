@@ -140,7 +140,8 @@ void ULoader::interpolate_vector(const TArray<FVector> & Values, const TArray<fl
 		p2 = Index4D[0];
 		v1 = Values.Last();
 		v2 = Values[0];
-		Pos_4D -= MAX4D;
+		if (i == Index4D.Num())
+			Pos_4D -= MAX4D;
 	}
 	else {
 		p1 = Index4D[i - 1];
@@ -166,7 +167,8 @@ void ULoader::interpolate_rotator(const TArray<FRotator> & Values, const TArray<
 		p2 = Index4D[0];
 		v1 = Values.Last();
 		v2 = Values[0];
-		Pos_4D -= MAX4D;
+		if (i == Index4D.Num())
+			Pos_4D -= MAX4D;
 	}
 	else {
 		p1 = Index4D[i - 1];
