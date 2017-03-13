@@ -13,14 +13,15 @@ double c_theta_0 = 90./nb_angles;
 class Cuboid
 {
 public:
-	Cuboid(double l, double h, double th, double ph, double ps, Point i) : length(l), height(h), theta(th), phi(ph), psi(ps), in(i) {
-
+	Cuboid(double l, double h, Point i, Vecteur d) : length(l), height(h), in(i), dir(d) {
+		d.mult(1./d.length());
 	}
 
 //private:
-	point in, out;
-	double theta, phi, psi;
-	double length, height;
+	const Point in;
+	//double theta, phi, psi;
+	const Vecteur dir;
+	const double length, height;
 };
 
 void createWorld();

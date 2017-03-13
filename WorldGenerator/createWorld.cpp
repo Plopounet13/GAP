@@ -14,19 +14,28 @@ void update_world(std::vector<std::vector<std::vector<int> > >& world, const Cub
 
 }
 
-void next_cuboid(std::vector<std::vector<std::vector<int> > >& world, std::vector<Cuboid> &cuboid)
+void next_cuboid(std::vector<std::vector<std::vector<int> > >& world, std::vector<Cuboid> &cuboids)
 {
 	std::map<std::pair<int, int>, double> probas;
 
-	double theta = c_theta_0, phi = c_theta_0;
-	for(size_t i = -nb_angles; i < nb_angles; ++i) { // i = theta
-		for(size_t j = -nb_angles; j < nb_angles; ++j) { // j = phi
-			vecteur e_x, e_y, e_z;
-			size_t length;
-			for(length = 0; length < c_length_max; ++length) {
+	const Cuboid &last_cuboid  = cuboids.back();
+	Vecteur v = last_cuboid.dir;
+	Point out = last_cuboid.in + last_cuboid.dir*last_cuboid.length;
+
+	Vecteur e_x, e_y, e_z;
+	base(v, e_z, e_x, e_y);
+	for(int i = -nb_angles; i < nb_angles; ++i) { 
+		for(int j = -nb_angles; j < nb_angles ++j) {
+			Vecteur currVect =   i*e_x + j*e_y + nb_angles/2*e_x;
+			Vecteur f_x, f_y, f_z;
+			base(currVect, f_z, f_x,, f_y); 
+
+			Vecteur shift = cuboids.back().dir*c_height;
+
+			for(size_t length = 0; length < c_length_max; ++length) {
 				for(size_t k = -c_height; k < c_height; ++k) {
 					for(size_t l = -c_height; l < c_height; ++l) {
-						vecteur currPos = length*e_z + k * e_y + l * e_x;
+						Vecteur currPos = out + shift + k * e_y + l * e_x +  length*e_z ;
 						if(world[currPos.x()][currPos.y()][currPos.z()]  != 0) {
 							goto end_browse;
 						}
@@ -39,7 +48,9 @@ void next_cuboid(std::vector<std::vector<std::vector<int> > >& world, std::vecto
 		}
 	}
 
-	cuboid = choose(probas);
+	//cuboid = choose(probas);
+	pair = std::make_pair(1,1);
+
 }
 
 void createWorld() {
@@ -47,7 +58,7 @@ void createWorld() {
 	std::vector<Cuboid> cuboids;
 
 	/// Create first cuboid
-	cuboids.push_back(Cuboid(c_length_max, c_height, 0, 0, 0, Point(0,0,0)));
+	cuboids.push_back(Cuboid(c_length_max, c_height, Point(0,0,0), Vecteur(1, 0, 0)));
 
 	size_t n = 10;
 	for(size_t i = 0; i < n; ++i) {
