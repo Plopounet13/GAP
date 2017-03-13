@@ -7,6 +7,6 @@
 #include <cmath>
 #include "geometrie.h"
 
-bool base(vecteur x, vecteur& xout, vecteur& yout, vecteur& zout);
+bool make_base(Vecteur x, Vecteur& xout, Vecteur& yout, Vecteur& zout);
 
 #endif // FUNCTIONS_H_INCLUDED

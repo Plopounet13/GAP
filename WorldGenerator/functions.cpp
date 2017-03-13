@@ -1,7 +1,7 @@
 #include "functions.h"
 
 /// returns false if something went wrong, true otherwise
-bool base(vecteur input, vecteur& xout, vecteur& yout, vecteur& zout){
+bool make_base(Vecteur input, Vecteur& xout, Vecteur& yout, Vecteur& zout){
     if(input.x() == 0 and input.y() == 0 and input.z() == 0)
         return false;
     if(input.x() != 0 and input.y() != 0 and input.z() != 0){

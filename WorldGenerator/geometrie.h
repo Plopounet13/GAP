@@ -5,23 +5,23 @@
 #include <algorithm>
 #include <set>
 #include <cmath>
-#define vecteur point
+#define Vecteur Point
 
-class point{
+class Point{
 /// Cette classe définit les points (et les vecteurs) dans l'espace à 3 dimensions
 
 public:
-    point();
-    point(double a, double b, double c);
+    Point();
+    Point(double a, double b, double c);
     double x() const;
     double y() const;
     double z() const;
     double length() const;
     void set(double a, double b, double c);
     void mult(double lambda);
-    friend point operator*(double lhs, const point& rhs);
-    friend point operator*(const point& rhs, double lhs);
-    friend point operator+(point lhs, const point& rhs);
+    friend Point operator*(double lhs, const Point& rhs);
+    friend Point operator*(const Point& rhs, double lhs);
+    friend Point operator+(Point lhs, const Point& rhs);
 
 private:
     double m_x, m_y, m_z, m_length;
