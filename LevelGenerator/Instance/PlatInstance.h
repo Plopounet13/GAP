@@ -7,8 +7,6 @@
 #include "Vec3.h"
 #include "Position.h"
 
-//TODO: void *****(const vector<vector<int>>& probas, int& x, int& y); 
-
 class PlatInstance{
 private:
 	int ID;
