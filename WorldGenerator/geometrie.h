@@ -20,6 +20,7 @@ public:
     void set(double a, double b, double c);
     void mult(double lambda);
     friend point operator*(double lhs, const point& rhs);
+    friend point operator*(const point& rhs, double lhs);
     friend point operator+(point lhs, const point& rhs);
 
 private:

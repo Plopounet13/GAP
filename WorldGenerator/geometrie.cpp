@@ -41,6 +41,11 @@ point operator*(double lhs, point rhs){
     return rhs;
 }
 
+point operator*(point rhs, double lhs){
+    rhs.set(lhs*rhs.x(), lhs*rhs.y(), lhs*rhs.z());
+    return rhs;
+}
+
 point operator+(point lhs, const point& rhs){
     lhs.set(lhs.x()+rhs.x(), lhs.y()+rhs.y(), lhs.z()+rhs.z());
     return lhs;
