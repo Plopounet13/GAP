@@ -40,6 +40,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "LevelLoader")
 	static void interpolate_rotator(const TArray<FRotator> & Values, const TArray<float> & Index4D, float Pos_4D, FRotator & Output);
 
-
+	UFUNCTION(BlueprintCallable, Category = "LevelLoader")
+	static bool Scan(TArray<FString> &LevelList);
 	
 };

@@ -26,7 +26,7 @@ bool ULoader::Load(FString InFilename,
 
 	TArray<FString> in_strings;
 
-	FString LocalFilePath = (FPaths::GameDir() + InFilename);
+	FString LocalFilePath = (FPaths::GameDir() + "/levels/" + InFilename);
 
 	bool success=FFileHelper::LoadANSITextFileToStrings(*LocalFilePath, NULL, in_strings);
 	//print(LocalFilePath);
@@ -178,5 +178,32 @@ void ULoader::interpolate_rotator(const TArray<FRotator> & Values, const TArray<
 	}
 
 	Output = ((p2 - Pos_4D)*v1 + (Pos_4D - p1)*v2) * (1/(p2 - p1));
+}
+
+bool ULoader::Scan(TArray<FString> &LevelList) {
+
+	FString path = FPaths::GameDir();
+
+	if (path.Len() < 1) return false;
+
+	FPaths::NormalizeDirectoryName(path);
+
+	IFileManager& FileManager = IFileManager::Get();
+	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
+
+	path = path + "/levels/";
+	if (!PlatformFile.DirectoryExists(*path))
+	{
+		PlatformFile.CreateDirectory(*path);
+
+		if (!PlatformFile.DirectoryExists(*path))
+		{
+			return false;
+		}
+	}
+
+	FString FinalPath = path + "*.dat";
+	FileManager.FindFiles(LevelList, *FinalPath, true, false);
+	return true;
 }
 
