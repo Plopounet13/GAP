@@ -1,6 +1,6 @@
 #include "createWorld.h"
 
-int compute_proba(size_t length) {
+int compute_proba(uint32_t length) {
 	if(length < c_length_min) return 0;
 	else return length-c_length_min;
 }
@@ -11,7 +11,14 @@ int reverse_proba() {
 
 void update_world(std::vector<std::vector<std::vector<int> > >& world, const Cuboid &cuboid)
 {
-
+	Vecteur e_x, e_y, e_z;
+	base(cuboid.dir, e_z, e_x, e_y);
+	for(uint32_t k = -c_height; k < c_height; ++k) {
+		for(uint32_t l = -c_height; l < c_height; ++l) {
+			Point currPos =   cuboid.in + k*e_x + l*e_y + nb_angles/2*e_x;
+			world[currPos.x()][currPos.y()][currPos.z()]  = 1;
+		}
+	}
 }
 
 void next_cuboid(std::vector<std::vector<std::vector<int> > >& world, std::vector<Cuboid> &cuboids)
@@ -20,21 +27,23 @@ void next_cuboid(std::vector<std::vector<std::vector<int> > >& world, std::vecto
 
 	const Cuboid &last_cuboid  = cuboids.back();
 	Vecteur v = last_cuboid.dir;
-	Point out = last_cuboid.in + last_cuboid.dir*last_cuboid.length;
+	Point out = last_cuboid.in + last_cuboid.length*last_cuboid.dir;
+
+	Vecteur shift = c_height*last_cuboid.dir;
+	uint32_t length;
 
 	Vecteur e_x, e_y, e_z;
 	base(v, e_z, e_x, e_y);
 	for(int i = -nb_angles; i < nb_angles; ++i) { 
-		for(int j = -nb_angles; j < nb_angles ++j) {
+		for(int j = -nb_angles; j < nb_angles; ++j) {
 			Vecteur currVect =   i*e_x + j*e_y + nb_angles/2*e_x;
 			Vecteur f_x, f_y, f_z;
-			base(currVect, f_z, f_x,, f_y); 
+			base(currVect, f_z, f_x, f_y); 
 
-			Vecteur shift = cuboids.back().dir*c_height;
-
-			for(size_t length = 0; length < c_length_max; ++length) {
-				for(size_t k = -c_height; k < c_height; ++k) {
-					for(size_t l = -c_height; l < c_height; ++l) {
+			
+			for(length = 0; length < c_length_max; ++length) {
+				for(uint32_t k = -c_height; k < c_height; ++k) {
+					for(uint32_t l = -c_height; l < c_height; ++l) {
 						Vecteur currPos = out + shift + k * e_y + l * e_x +  length*e_z ;
 						if(world[currPos.x()][currPos.y()][currPos.z()]  != 0) {
 							goto end_browse;
@@ -49,8 +58,9 @@ void next_cuboid(std::vector<std::vector<std::vector<int> > >& world, std::vecto
 	}
 
 	//cuboid = choose(probas);
-	pair = std::make_pair(1,1);
-
+	auto pair = std::make_pair(1,1);
+	auto new_cuboid = Cuboid(out + shift, pair.first * e_y + pair.second * e_x +  length*e_z, length);
+	cuboids.push_back(new_cuboid);
 }
 
 void createWorld() {
@@ -58,10 +68,10 @@ void createWorld() {
 	std::vector<Cuboid> cuboids;
 
 	/// Create first cuboid
-	cuboids.push_back(Cuboid(c_length_max, c_height, Point(0,0,0), Vecteur(1, 0, 0)));
+	cuboids.push_back(Cuboid(Point(0,0,0), Vecteur(1, 0, 0), c_length_max));
 
-	size_t n = 10;
-	for(size_t i = 0; i < n; ++i) {
+	uint32_t n = 10;
+	for(uint32_t i = 0; i < n; ++i) {
 		next_cuboid(world, cuboids);
 	}
 }
