@@ -26,7 +26,7 @@ bool ULoader::Load(FString InFilename,
 
 	TArray<FString> in_strings;
 
-	FString LocalFilePath = (FPaths::GameDir() + "/levels/" + InFilename);
+	FString LocalFilePath = (FPaths::GameDir() + "/Levels/" + InFilename);
 
 	bool success=FFileHelper::LoadANSITextFileToStrings(*LocalFilePath, NULL, in_strings);
 	//print(LocalFilePath);
@@ -191,7 +191,7 @@ bool ULoader::Scan(TArray<FString> &LevelList) {
 	IFileManager& FileManager = IFileManager::Get();
 	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
 
-	path = path + "/levels/";
+	path = path + "/Levels/";
 	if (!PlatformFile.DirectoryExists(*path))
 	{
 		PlatformFile.CreateDirectory(*path);
@@ -204,6 +204,12 @@ bool ULoader::Scan(TArray<FString> &LevelList) {
 
 	FString FinalPath = path + "*.dat";
 	FileManager.FindFiles(LevelList, *FinalPath, true, false);
+
+	int i;
+	for (i = 0; i < LevelList.Num(); i++) {
+		LevelList[i].RemoveFromEnd(".dat", ESearchCase::IgnoreCase);
+	}
+
 	return true;
 }
 
