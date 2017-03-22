@@ -1,0 +1,26 @@
+plat_type
+random_number
+x
+y
+z
+rx
+ry
+rz
+sx
+sy
+sz
+nb_exit
+[x
+y
+z] * nb_exit
+nb_4d
+[x
+y
+z
+indice_4d
+rx
+ry
+rz
+sx
+sy
+sz] *nb_4d
