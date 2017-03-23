@@ -22,6 +22,7 @@ public:
 			TArray<int>& plat_type,
 			TArray<float>& random_number,
 			TArray<FVector>& pos_actor,
+			TArray<float>& pos_4D_start,
 			TArray<FRotator>& rot_actor,
 			TArray<FVector>& scale_actor,
 			TArray<int>& nb_exit,
