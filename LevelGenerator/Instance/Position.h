@@ -23,6 +23,8 @@ public:
 	Position(const Position& p);
 	Position();
 	
+	bool kset();
+	
 	/**
 	 * Effectue une rotation d'angles dr centrée en pos.
 	 */

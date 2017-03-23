@@ -11,6 +11,7 @@ bool ULoader::Load(FString InFilename,
 				   TArray<int>& plat_type,
 				   TArray<float>& random_number,
 				   TArray<FVector>& pos_actor,
+				   TArray<float>& pos_4D_start,
 				   TArray<FRotator>& rot_actor,
 				   TArray<FVector>& scale_actor,
 				   TArray<int>& nb_exit,
@@ -52,6 +53,10 @@ bool ULoader::Load(FString InFilename,
 		z = FCString::Atof(*in_strings[index]);
 		++index;
 		pos_actor.Emplace(x, y, z);
+		
+		x = FCString::Atof(*in_strings[index]);
+		++index;
+		pos_4D_start.Emplace(k);
 		
 		x = FCString::Atof(*in_strings[index]);
 		++index;

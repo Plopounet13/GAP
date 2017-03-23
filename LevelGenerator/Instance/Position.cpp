@@ -33,6 +33,10 @@ Position::Position(const Position& p){
 
 Position::Position(){}
 
+bool Position::kset(){
+		return k!=-1;
+}
+
 const Vec3<float>& Position::getPos() const{
 	return pos;
 }

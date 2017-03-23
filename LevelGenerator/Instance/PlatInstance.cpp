@@ -10,6 +10,8 @@ PlatInstance::PlatInstance(int id,
 						   std::vector<float> s4D,
 						   std::vector<Position>& p4,
 						   int r):pos(p){
+	if (!pos.kset())
+		cerr << "Erreur: la plateforme n'a pas de position 4D d'entrée" << endl;
 	sortie4D.swap(s4D);
 	posSortie.swap(pS);
 	pos4D.swap(p4);
