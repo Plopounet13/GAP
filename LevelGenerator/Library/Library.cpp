@@ -2,6 +2,8 @@
 
 using namespace std;
 
+#define PI 3.14159265
+
 Library::Library(){}
 
 void Library::push(Platform* p){
@@ -60,18 +62,55 @@ bool f_true(const Platform& p)
     return true;
 }
 
-bool f_contientPoint(const Platform& p, Point point)
+bool f_ponctuelle(const Platform& p)
 {
-	// retourne true si une sortie permet d'atteindre le point 
+    return (p.getNbSorties()==0) ;
+}
+
+bool f_atteintPointRotation(const Platform& p, Point point, int rotation)
+{
+	// retourne true si, avec rotation donnee (en degree), une sortie permet d'atteindre le point 
 	vector<Point> sortieMin = p.getSortieMin() ;
 	vector<Point> sortieMax = p.getSortieMin() ;
 	int n = sortieMin.size() ;
+        long double x = point.getX() ;
+        long double y = point.getY() ;
+        long double r = sqrt(x*x+y*y) ;
+        long double theta = atan2(y,x)*180/PI ;
+        long double theta2 = theta - rotation*1.0 ;
+        long double x2 = r*cos(theta2*PI/180);
+        long double y2 = r*sin(theta2*PI/180);
 	for (int i = 0 ; i<n ; i++) {
 		Point pmin = sortieMin[i] ;
 		Point pmax = sortieMax[i] ;
-		if (pmin.getX() <= point.getX() and point.getX() <= pmax.getX() and pmin.getY() <= point.getY() and point.getY() <= pmax.getY() and pmin.getZ() <= point.getZ() and point.getZ() <= pmax.getZ() and pmin.getK() <= point.getK() and point.getK() <= pmax.getK()) {
-			return true ;
+		if (pmin.getX() <= x2 and x2 <= pmax.getX() and pmin.getY() <= y2 and y2 <= pmax.getY() and pmin.getZ() <= point.getZ() and point.getZ() <= pmax.getZ() and pmin.getK() <= point.getK() and point.getK() <= pmax.getK()) {
+                	return true ;
 		}
 	}
+	return false;
+}
+
+bool f_atteintPoint(const Platform& p, Point point)
+{
+	// retourne true si, avec rotation d'axe Z, une sortie permet d'atteindre le point 
+	vector<Point> sortieMin = p.getSortieMin() ;
+	vector<Point> sortieMax = p.getSortieMin() ;
+	int n = sortieMin.size() ;
+        long double x = point.getX() ;
+        long double y = point.getY() ;
+        long double r = sqrt(x*x+y*y) ;
+        long double theta = atan2(y,x)*180/PI ;
+        for (int i = 0 ; i<n ; i++) {
+            Point pmin = sortieMin[i] ;
+            Point pmax = sortieMax[i] ;
+            for (int rot = 0 ; rot < 35 ; rot++) {
+                long double theta2 = theta - rot*10.0 ;
+                long double x2 = r*cos(theta2*PI/180);
+                long double y2 = r*sin(theta2*PI/180);
+                if (pmin.getX() <= x2 and x2 <= pmax.getX() and pmin.getY() <= y2 and y2 <= pmax.getY() and pmin.getZ() <= point.getZ() and point.getZ() <= pmax.getZ() and pmin.getK() <= point.getK() and point.getK() <= pmax.getK()) {
+                        return true ;
+                }
+            }
+        }
 	return false;
 }
