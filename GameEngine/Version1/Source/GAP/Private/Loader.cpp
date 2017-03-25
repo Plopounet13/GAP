@@ -33,114 +33,108 @@ bool ULoader::Load(FString InFilename,
 	bool success;
 
 
-	try
-	{
-		success= FFileHelper::LoadANSITextFileToStrings(*LocalFilePath, NULL, in_strings);
 
-		int32 index = - 1;
-		begin_exit.Add(0);
-		begin_4D.Add(0);
-		NbPlatOut = 0;
-		int32 num = in_strings.Num() - 1;
-		while (index < num){
-			++NbPlatOut;
-			float x, y, z;
-			safe_pp(index, num);
-			plat_type.Add(FCString::Atoi(*in_strings[index]));
+	success= FFileHelper::LoadANSITextFileToStrings(*LocalFilePath, NULL, in_strings);
 
-			safe_pp(index,num);
-			random_number.Add(FCString::Atoi(*in_strings[index]));
+	int32 index = - 1;
+	begin_exit.Add(0);
+	begin_4D.Add(0);
+	NbPlatOut = 0;
+	int32 num = in_strings.Num() - 1;
+	while (index < num){
+		++NbPlatOut;
+		float x, y, z;
+		safe_pp(index, num);
+		plat_type.Add(FCString::Atoi(*in_strings[index]));
+
+		safe_pp(index,num);
+		random_number.Add(FCString::Atoi(*in_strings[index]));
 			
-			safe_pp(index,num);
-			x = FCString::Atof(*in_strings[index]);
-			safe_pp(index,num);
-			y = FCString::Atof(*in_strings[index]);
-			safe_pp(index,num);
-			z = FCString::Atof(*in_strings[index]);
-			pos_actor.Emplace(x, y, z);
-			
-
-			safe_pp(index, num);
-			x = FCString::Atof(*in_strings[index]);
-			pos_4D_start.Emplace(x);
+		safe_pp(index,num);
+		x = FCString::Atof(*in_strings[index]);
+		safe_pp(index,num);
+		y = FCString::Atof(*in_strings[index]);
+		safe_pp(index,num);
+		z = FCString::Atof(*in_strings[index]);
+		pos_actor.Emplace(x, y, z);
 			
 
-			safe_pp(index, num);
-			x = FCString::Atof(*in_strings[index]);
-			safe_pp(index,num);
-			y = FCString::Atof(*in_strings[index]);
-			safe_pp(index,num);
-			z = FCString::Atof(*in_strings[index]);
-			rot_actor.Emplace(x, y, z);
+		safe_pp(index, num);
+		x = FCString::Atof(*in_strings[index]);
+		pos_4D_start.Emplace(x);
 			
 
-			safe_pp(index, num);
-			x = FCString::Atof(*in_strings[index]);
-			safe_pp(index,num);
-			y = FCString::Atof(*in_strings[index]);
-			safe_pp(index,num);
-			z = FCString::Atof(*in_strings[index]);
-			scale_actor.Emplace(x, y, z);
+		safe_pp(index, num);
+		x = FCString::Atof(*in_strings[index]);
+		safe_pp(index,num);
+		y = FCString::Atof(*in_strings[index]);
+		safe_pp(index,num);
+		z = FCString::Atof(*in_strings[index]);
+		rot_actor.Emplace(x, y, z);
+			
 
-			safe_pp(index, num);
-			nb_exit.Add(FCString::Atoi(*in_strings[index]));
+		safe_pp(index, num);
+		x = FCString::Atof(*in_strings[index]);
+		safe_pp(index,num);
+		y = FCString::Atof(*in_strings[index]);
+		safe_pp(index,num);
+		z = FCString::Atof(*in_strings[index]);
+		scale_actor.Emplace(x, y, z);
+
+		safe_pp(index, num);
+		nb_exit.Add(FCString::Atoi(*in_strings[index]));
 			
 		
-			int32 index_exit;
-			for (index_exit=0; index_exit<nb_exit.Last(); ++index_exit){
-				safe_pp(index, num);
-				x = FCString::Atof(*in_strings[index]);
-				safe_pp(index,num);
-				y = FCString::Atof(*in_strings[index]);
-				safe_pp(index,num);
-				z = FCString::Atof(*in_strings[index]);
-				vect_exit.Emplace(x, y, z);
-			}
-			begin_exit.Add(vect_exit.Num());
+		int32 index_exit;
+		for (index_exit=0; index_exit<nb_exit.Last(); ++index_exit){
+			safe_pp(index, num);
+			x = FCString::Atof(*in_strings[index]);
+			safe_pp(index,num);
+			y = FCString::Atof(*in_strings[index]);
+			safe_pp(index,num);
+			z = FCString::Atof(*in_strings[index]);
+			vect_exit.Emplace(x, y, z);
+		}
+		begin_exit.Add(vect_exit.Num());
+
+		safe_pp(index, num);
+		int32 nb_4D=FCString::Atoi(*in_strings[index]);
+
+		int32 index_4D;
+		for (index_4D = 0; index_4D < nb_4D; index_4D++) {
+			safe_pp(index, num);
+			x = FCString::Atof(*in_strings[index]);
+			safe_pp(index,num);
+			y = FCString::Atof(*in_strings[index]);
+			safe_pp(index,num);
+			z = FCString::Atof(*in_strings[index]);
+			pos_4D.Emplace(x, y, z);
+				
 
 			safe_pp(index, num);
-			int32 nb_4D=FCString::Atoi(*in_strings[index]);
-
-			int32 index_4D;
-			for (index_4D = 0; index_4D < nb_4D; index_4D++) {
-				safe_pp(index, num);
-				x = FCString::Atof(*in_strings[index]);
-				safe_pp(index,num);
-				y = FCString::Atof(*in_strings[index]);
-				safe_pp(index,num);
-				z = FCString::Atof(*in_strings[index]);
-				pos_4D.Emplace(x, y, z);
+			indice_4D.Add(FCString::Atof(*in_strings[index]));
 				
-
-				safe_pp(index, num);
-				indice_4D.Add(FCString::Atof(*in_strings[index]));
+			safe_pp(index,num);
+			x = FCString::Atof(*in_strings[index]);
+			safe_pp(index,num);
+			y = FCString::Atof(*in_strings[index]);
+			safe_pp(index,num);
+			z = FCString::Atof(*in_strings[index]);
+			rot_4D.Emplace(x, y, z);
 				
-				safe_pp(index,num);
-				x = FCString::Atof(*in_strings[index]);
-				safe_pp(index,num);
-				y = FCString::Atof(*in_strings[index]);
-				safe_pp(index,num);
-				z = FCString::Atof(*in_strings[index]);
-				rot_4D.Emplace(x, y, z);
-				
-				safe_pp(index, num);
-				x = FCString::Atof(*in_strings[index]);
-				safe_pp(index,num);
-				y = FCString::Atof(*in_strings[index]);
-				safe_pp(index,num);
-				z = FCString::Atof(*in_strings[index]);
+			safe_pp(index, num);
+			x = FCString::Atof(*in_strings[index]);
+			safe_pp(index,num);
+			y = FCString::Atof(*in_strings[index]);
+			safe_pp(index,num);
+			z = FCString::Atof(*in_strings[index]);
 
-				scale_4D.Emplace(x, y, z);
-			}
-			begin_4D.Add(indice_4D.Num());
+			scale_4D.Emplace(x, y, z);
 		}
+		begin_4D.Add(indice_4D.Num());
+	}
 
-		--NbPlatOut;
-	}
-	catch (...)
-	{
-		return false;
-	}
+	--NbPlatOut;
 
 	return success;
 }
