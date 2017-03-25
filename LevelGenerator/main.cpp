@@ -34,8 +34,8 @@ const long double probaPonctuelle = 0.6 ;
 
 // prototypes
 bool triBezier(const Point& a, const Point& b, Point entree, Point sortie) ;
-Instance generationLocale(Library bibli, Point entree, Point sortie, int largeur, int profondeur, int hauteur) ;
-bool choixPlatforme(Library bibli, Point position, long double t, int& id, int& rotation, long double& t_fin, Point& finPlat) ;
+void generationLocale(const Library& bibli, Point entree, Point sortie, int largeur, int profondeur, int hauteur, Instance& karabonga) ;
+bool choixPlatforme(const Library& bibli, Point position, long double t, int& id, int& rotation, long double& t_fin, Point& finPlat) ;
 Library subLibrary(Library const& bibli, Point entree, Point sortie) ;
 Point bezierT(long double t) ;
 Point royalT(long double t, long double coeff = 84) ;
@@ -76,7 +76,8 @@ int main(int argc, char** argv)
     
     Point entree = Point(100,100,20,200);
     Point sortie = Point(10000,10000,800,1600);
-    Instance parcours = generationLocale(bibli, entree, sortie, 11000, 11000, 2000);
+	Instance parcours;
+    generationLocale(bibli, entree, sortie, 11000, 11000, 2000, parcours);
     cout<<"2"<<endl;
     cout<<entree.getX()<<endl;
     cout<<entree.getY()<<endl;
@@ -161,7 +162,7 @@ bool triBezier(const Point& a, const Point& b, Point entree, Point sortie)
 
 
 
-Instance generationLocale(Library bibli, Point entree, Point sortie, int largeur, int profondeur, int hauteur)
+void generationLocale(const Library& bibli, Point entree, Point sortie, int largeur, int profondeur, int hauteur, Instance& karabonga)
 {
         // input : liste de platformes, un rectangle avec entree et sortie
         // output : une liste d'instance de platformes (sauf entree et sortie)
@@ -295,7 +296,7 @@ Instance generationLocale(Library bibli, Point entree, Point sortie, int largeur
     //Library lib = subLibrary(bibli, entree, sortie) ;
 
 
-    Instance karabonga ; // contiendra la liste des instance de platformes
+    //Instance karabonga ; // contiendra la liste des instance de platformes
     long double t = 0.0 ; // parametre actuel (suppose)
     Point position = entree ; // position actuelle
     Point vitesse = Vitmin ; // vitesse actuelle
@@ -353,11 +354,11 @@ Instance generationLocale(Library bibli, Point entree, Point sortie, int largeur
     //posttraitement
     
     
-    return karabonga ;
+    //return karabonga ;
     
 }
 
-bool choixPlatforme(Library bibli, Point position, long double t, int& id, int& rotation, long double& t_fin, Point& finPlat)
+bool choixPlatforme(const Library& bibli, Point position, long double t, int& id, int& rotation, long double& t_fin, Point& finPlat)
 {
     // choisi la prochaine platforme a utiliser
     // warning : id, rotation, t_fin, finPlat sont modifiés
