@@ -43,6 +43,11 @@ public:
 	void rescale(const Vec3<float>& c,const Vec3<float>& ds);
 	
 	/**
+	 * Effectue un rotation et une translation du niveau pour aligner l'axe x du niveau sur newX et positionner le coin du niveau
+	 */
+	void move(const Vec3<float>& newX, const Vec3<float>& d);
+	
+	/**
 	 * Opérateur d'addition d'instances.
 	 * Ajoute à l'instance a toutes les plateformes de l'instance b.
 	 * Attention b est vidé dans l'opération

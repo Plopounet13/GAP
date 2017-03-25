@@ -42,6 +42,21 @@ void Instance::rescale(const Vec3<float>& c,const Vec3<float>& ds){
 	}
 }
 
+void Instance::move(const Vec3<float>& newX, const Vec3<float>& d){
+	float norm = newX.scalar(newX);
+	float cosx = 1;
+	float sinx = 0;
+	float cosz = newX.getx()/norm;
+	float sinz = newX.gety()/norm;
+	float cosy = newX.getz()/norm;
+	float siny = newX.getx()/norm;
+	
+	Vec3<float> dr(0, ((siny>0)?acos(cosy) : -acos(cosy)), ((sinz>0)?acos(cosz) : -acos(cosz))), c(0,0,0);
+
+	rotate(c, dr, cosx, sinx, cosy, siny, cosz, sinz);
+	translate(d);
+}
+
 //Warning empties Instance b;
 Instance& operator+=(Instance& a, Instance& b){
 	if(&a == &b){
