@@ -18,6 +18,7 @@ bool ULoader::Load(FString InFilename,
 				   TArray<int>& nb_exit,
 				   TArray<int>& begin_exit,
 				   TArray<FVector>& vect_exit,
+				   TArray<float>& vect_exit_4D,
 				   TArray<int>& begin_4D,
 				   TArray<float>& indice_4D,
 				   TArray<FVector>& pos_4D,
@@ -94,6 +95,10 @@ bool ULoader::Load(FString InFilename,
 			safe_pp(index,num);
 			z = FCString::Atof(*in_strings[index]);
 			vect_exit.Emplace(x, y, z);
+
+			safe_pp(index, num);
+			x = FCString::Atof(*in_strings[index]);
+			vect_exit_4D.Add(x);
 		}
 		begin_exit.Add(vect_exit.Num());
 
