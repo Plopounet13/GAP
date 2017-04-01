@@ -5,14 +5,15 @@ int compute_proba(uint32_t length) {
 	else return length-c_length_min;
 }
 
+//TODO
 int reverse_proba() {
-
+	return 0;
 }
 
 void update_world(std::vector<std::vector<std::vector<int> > >& world, const Cuboid &cuboid)
 {
 	Vecteur e_x, e_y, e_z;
-	base(cuboid.dir, e_z, e_x, e_y);
+	make_base(cuboid.dir, e_z, e_x, e_y);
 	for(uint32_t k = -c_height; k < c_height; ++k) {
 		for(uint32_t l = -c_height; l < c_height; ++l) {
 			Point currPos =   cuboid.in + k*e_x + l*e_y + nb_angles/2*e_x;
@@ -33,12 +34,12 @@ void next_cuboid(std::vector<std::vector<std::vector<int> > >& world, std::vecto
 	uint32_t length;
 
 	Vecteur e_x, e_y, e_z;
-	base(v, e_z, e_x, e_y);
+	make_base(v, e_z, e_x, e_y);
 	for(int i = -nb_angles; i < nb_angles; ++i) { 
 		for(int j = -nb_angles; j < nb_angles; ++j) {
 			Vecteur currVect =   i*e_x + j*e_y + nb_angles/2*e_x;
 			Vecteur f_x, f_y, f_z;
-			base(currVect, f_z, f_x, f_y); 
+			make_base(currVect, f_z, f_x, f_y);
 
 			
 			for(length = 0; length < c_length_max; ++length) {
