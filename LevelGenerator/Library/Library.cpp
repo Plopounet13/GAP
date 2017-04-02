@@ -67,11 +67,11 @@ bool f_ponctuelle(const Platform& p)
     return (p.getNbSorties()==0) ;
 }
 
-bool f_atteintPointRotation(const Platform& p, Point point, int rotation)
+bool f_atteintPointRotation(const Platform& p, Point4 point, int rotation)
 {
 	// retourne true si, avec rotation donnee (en degree), une sortie permet d'atteindre le point 
-	vector<Point> sortieMin = p.getSortieMin() ;
-	vector<Point> sortieMax = p.getSortieMax() ;
+	vector<Point4> sortieMin = p.getSortieMin() ;
+	vector<Point4> sortieMax = p.getSortieMax() ;
 	int n = sortieMin.size() ;
 	long double x = point.getX() ;
 	long double y = point.getY() ;
@@ -81,8 +81,8 @@ bool f_atteintPointRotation(const Platform& p, Point point, int rotation)
 	long double x2 = r*cos(theta2*PI/180);
 	long double y2 = r*sin(theta2*PI/180);
 	for (int i = 0 ; i<n ; i++) {
-		Point pmin = sortieMin[i] ;
-		Point pmax = sortieMax[i] ;
+		Point4 pmin = sortieMin[i] ;
+		Point4 pmax = sortieMax[i] ;
 		if (pmin.getX() <= x2&&x2 <= pmax.getX()&&pmin.getY() <= y2&&y2 <= pmax.getY()&&pmin.getZ() <= point.getZ()&&point.getZ() <= pmax.getZ()&&pmin.getK() <= point.getK()&&point.getK() <= pmax.getK()) {
                 	return true ;
 		}
@@ -92,19 +92,19 @@ bool f_atteintPointRotation(const Platform& p, Point point, int rotation)
 
 
 //TODO: On fait une belle fonction pour ça. (cercle intersecte carré ?)
-bool f_atteintPoint(const Platform& p, Point point)
+bool f_atteintPoint(const Platform& p, Point4 point)
 {
 	// retourne true si, avec rotation d'axe Z, une sortie permet d'atteindre le point 
-	vector<Point> sortieMin = p.getSortieMin() ;
-	vector<Point> sortieMax = p.getSortieMax() ;
+	vector<Point4> sortieMin = p.getSortieMin() ;
+	vector<Point4> sortieMax = p.getSortieMax() ;
 	int n = sortieMin.size() ;
 	long double x = point.getX() ;
 	long double y = point.getY() ;
 	long double r = sqrt(x*x+y*y) ;
 	long double theta = atan2(y,x)*180/PI ;
 	for (int i = 0 ; i<n ; i++) {
-		Point pmin = sortieMin[i] ;
-		Point pmax = sortieMax[i] ;
+		Point4 pmin = sortieMin[i] ;
+		Point4 pmax = sortieMax[i] ;
 		if (pmin.getZ() <= point.getZ()&&point.getZ() <= pmax.getZ()&&pmin.getK() <= point.getK()&&point.getK() <= pmax.getK()){
             for (int rot = 0 ; rot < 35 ; rot++) {
                 long double theta2 = theta - rot*10.0 ;

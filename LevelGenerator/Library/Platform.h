@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <iostream>
-#include "Point.h"
+#include "Point4.h"
 #include "../Instance/Vec3.h"
 
 #define DEFAULT_WEIGHT 10
@@ -13,9 +13,9 @@ private:
 	//Attributs
 	int ID; //Identifiant de la plateforme
 	
-	Point additiveAcceleration; //Modification d'accélération additive
+	Point4 additiveAcceleration; //Modification d'accélération additive
 	
-	Point multiplicativeAcceleration; //Modification d'accelération multiplicative
+	Point4 multiplicativeAcceleration; //Modification d'accelération multiplicative
 	
 	int apparitionWeight; //Poids d'apparition de la platforme (par défaut 10)
 	
@@ -28,9 +28,9 @@ private:
 	int nbSorties; //Nombre de sorties plaçable pour la plateforme
 	
 	//La sortie doit se trouver dans l'hyper pavé défini par sortieMin et sortieMax
-	std::vector<Point> sortieMin; //Position minimale d'une sortie
+	std::vector<Point4> sortieMin; //Position minimale d'une sortie
 	
-	std::vector<Point> sortieMax; // Position maximale d'une sortie
+	std::vector<Point4> sortieMax; // Position maximale d'une sortie
 	
 	bool isTransition; // Est une plateforme inter sous-niveau
 	
@@ -46,12 +46,12 @@ public:
 	
 	//Getters
 	int getID() const;
-	const Point& getAddAcceleration() const;
-	const Point& getCoeffAcceleration() const;
+	const Point4& getAddAcceleration() const;
+	const Point4& getCoeffAcceleration() const;
 	int getApparitionWeight() const;
 	int getNbSorties() const;
-	const std::vector<Point>& getSortieMin() const;
-	const std::vector<Point>& getSortieMax() const;
+	const std::vector<Point4>& getSortieMin() const;
+	const std::vector<Point4>& getSortieMax() const;
 	const Vec3<float>& getMinScale() const;
 	const Vec3<float>& getMaxScale() const;
 	bool getModifiable() const;

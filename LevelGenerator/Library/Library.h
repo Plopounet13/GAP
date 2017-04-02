@@ -6,7 +6,7 @@
 #include <cmath>
 #include <functional>
 #include "Platform.h"
-#include "Point.h"
+#include "Point4.h"
 
 class Library{
 private:
@@ -26,7 +26,7 @@ bool f_descend(const Platform& p) ;
 bool f_plat(const Platform& p) ;
 bool f_true(const Platform& p) ;
 bool f_ponctuelle(const Platform& p) ;
-bool f_atteintPointRotation(const Platform& p, Point point, int rotation) ;
-bool f_atteintPoint(const Platform& p, Point point) ;
+bool f_atteintPointRotation(const Platform& p, Point4 point, int rotation) ;
+bool f_atteintPoint(const Platform& p, Point4 point) ;
 
 #endif /* LIBRARY_H */

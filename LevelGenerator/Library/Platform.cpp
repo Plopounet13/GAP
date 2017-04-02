@@ -28,8 +28,8 @@ void Platform::parse(istream& in){
 	apparitionWeight=DEFAULT_WEIGHT;
 	isTransition=false;
 	modifiable=false;
-	additiveAcceleration = Point(0,0,0,0);
-	multiplicativeAcceleration = Point(1,1,1,1);
+	additiveAcceleration = Point4(0,0,0,0);
+	multiplicativeAcceleration = Point4(1,1,1,1);
 	nbSorties=0;
 
 	while(getline(in, line)){
@@ -71,14 +71,14 @@ void Platform::parse(istream& in){
 				ss.str(val[1]);
 				int v1, v2, v3, v4;
 				ss >> v1 >> v2 >> v3 >> v4;
-				additiveAcceleration = Point(v1, v2, v3, v4);
+				additiveAcceleration = Point4(v1, v2, v3, v4);
 				
 			}else if (val[0]=="multiplicativeAcceleration"){
 				stringstream ss;
 				ss.str(val[1]);
 				int v1, v2, v3, v4;
 				ss >> v1 >> v2 >> v3 >> v4;
-				multiplicativeAcceleration = Point(v1, v2, v3, v4);
+				multiplicativeAcceleration = Point4(v1, v2, v3, v4);
 				
 			}else if (val[0]=="scales"){
 				stringstream ss;
@@ -145,11 +145,11 @@ int Platform::getID() const {
 	return ID ;
 }
 
-const Point& Platform::getAddAcceleration() const{
+const Point4& Platform::getAddAcceleration() const{
 	return additiveAcceleration;
 }
 
-const Point& Platform::getCoeffAcceleration() const{
+const Point4& Platform::getCoeffAcceleration() const{
 	return multiplicativeAcceleration;
 }
 
@@ -161,11 +161,11 @@ int Platform::getNbSorties() const{
 	return nbSorties;
 }
 
-const vector<Point>& Platform::getSortieMin() const{
+const vector<Point4>& Platform::getSortieMin() const{
 	return sortieMin;
 }
 
-const vector<Point>& Platform::getSortieMax() const{
+const vector<Point4>& Platform::getSortieMax() const{
 	return sortieMax;
 }
 

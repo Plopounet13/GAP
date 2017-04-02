@@ -1,6 +1,5 @@
 #include <map>
 #include <vector>
-#include
 #include "functions.h"
 
 const uint32_t c_world_size = 400;
