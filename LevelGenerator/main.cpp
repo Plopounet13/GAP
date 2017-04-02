@@ -290,7 +290,8 @@ void generationLocale(const Library& bibli, Point entree, Point sortie, int larg
             sortie4D.push_back((float)finPlat.getK()) ;
         }
 
-        vector<Position> pos4D ; // vide pour l'instant... posttraitement ?
+        vector<Position> pos4D ;
+        pos4D.push_back(pos) ;
 
         PlatInstance pi = PlatInstance(id,pos,posSortie,sortie4D,pos4D,rand()) ;
         acceleration = Point (int(acceleration.getX()*diminution), int(acceleration.getY()*diminution), int(acceleration.getZ()*diminution), int(acceleration.getK()*diminution));
