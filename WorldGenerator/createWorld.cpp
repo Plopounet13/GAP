@@ -1,6 +1,34 @@
 #include "createWorld.h"
+#include <random>
+
 
 using namespace std;
+
+int seed=42;
+default_random_engine gen(seed);
+// Renvoie X et Y tirés aléatoirements tels que la proba de la paire X,Y soit donnée par probas[X][Y]
+void choose(const vector<vector<int>>& probas, int& x, int& y){
+	int total = 0;
+	vector<int> totaux(probas.size());
+	for (int i = 0; i < probas.size(); ++i){
+		for (int v : probas[i]){
+			total += v;
+		}
+		totaux[i] = total;
+	}
+	uniform_int_distribution<int> rd(0, total-1);
+	int r =rd(gen);
+	for (x = 0; x < totaux.size()-1 && r >= totaux[x]; ++x);
+	
+	r -= (x ? totaux[x-1] : 0);
+	
+	for (y = 0; y < probas[x].size() && r >= 0; ++y){
+		r -= probas[x][y];
+	}
+	--y;
+}
+
+
 
 void init_library()
 {
@@ -76,7 +104,9 @@ void next_cuboid(std::vector<std::vector<std::vector<int> > >& world_bin, std::v
 		}
 	}
 
-	//cuboid = choose(probas);
+	int theta_1_choose, theta_2_choose;
+	choose(probas, theta_1_choose, theta_2_choose);
+	length = reverse_proba(probas[theta_1_choose][theta_2_choose]));
 
 	
 	auto pair = std::make_pair(1,1);
