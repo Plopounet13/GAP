@@ -2,8 +2,6 @@
 #include <vector>
 #include
 #include "functions.h"
-#define Point point
-#define Vecteur vecteur
 
 const uint32_t c_world_size = 400;
 

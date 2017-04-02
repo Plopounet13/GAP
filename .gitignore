@@ -11,3 +11,5 @@ Saved
 *.xcodeproj
 *.xcworkspace
 *.o
+*.obj
+*.exe

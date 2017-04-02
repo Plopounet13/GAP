@@ -2,7 +2,9 @@
 
 using namespace std;
 
-double PI_180 = M_PI/180;
+
+#define PI 3.14159265
+double PI_180 = PI/180;
 
 Position::Position(const Vec3<float>& loc, const Vec3<float>& r, const Vec3<float>& s){
 	k=-1;
@@ -42,7 +44,7 @@ const Vec3<float>& Position::getPos() const{
 }
 
 Position operator- (const Position& a, const Position& b){
-	Position p(a.pos-b.pos, a.rot-b.rot, (b.scale==Vec3<float>(0))?Vec3<float>(1):a.scale/b.scale);
+	Position p(a.k, a.pos-b.pos, a.rot-b.rot, (b.scale==Vec3<float>(0))?Vec3<float>(1):a.scale/b.scale);
 	return p;
 }
 

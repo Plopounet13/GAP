@@ -121,7 +121,7 @@ void PlatInstance::rotate(const Vec3<float>& c, const Vec3<float>& dr){
 
 ostream& operator<< (ostream& out, const PlatInstance& p){
 	out << p.ID << endl;
-	out << p.rand << endl;
+	out << ((float)p.rand/INT_MAX) << endl;
 	out << p.pos << endl;
 	out << p.posSortie.size() << endl;
 	for(int i=0; i < int(p.posSortie.size()); ++i){

@@ -33,12 +33,12 @@ void next_cuboid(std::vector<std::vector<std::vector<int> > >& world_bin, std::v
 	uint32_t length;
 
 	Vecteur e_x, e_y, e_z;
-	base(v, e_z, e_x, e_y);
+	make_base(v, e_z, e_x, e_y);
 	for(int i = -nb_angles; i < nb_angles; ++i) { 
 		for(int j = -nb_angles; j < nb_angles; ++j) {
 			Vecteur currVect =   i*e_x + j*e_y + nb_angles/2*e_x;
 			Vecteur f_x, f_y, f_z;
-			base(currVect, f_z, f_x, f_y); 
+			make_base(currVect, f_z, f_x, f_y);
 
 			
 			for(length = 0; length < c_length_max; ++length) {

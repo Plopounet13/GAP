@@ -1,5 +1,6 @@
 
 #include "Polynome.h"
+#define max(a,b) (a>b?a:b)
 
 using namespace std;
 
@@ -71,7 +72,7 @@ long double Polynome::evalreel(long double a) const
 int Polynome::degre() const
 {
 	int d = coefs.size()-1 ;
-	while (d>=1 and coefs[d]==0)
+	while (d>=1 && coefs[d]==0)
 		d-- ;
 	return d ;
 }
@@ -88,7 +89,7 @@ vector<long double> Polynome::durandkerner(long double epsilon) const
 	}
 	
 	bool termine = false ;
-	while (not termine) {
+	while (! termine) {
 		for (int i = 0 ; i<d ; i++) {
 			complex<long double> r = rac[i] ;
 			complex<long double> temp = 1 ;
@@ -100,7 +101,7 @@ vector<long double> Polynome::durandkerner(long double epsilon) const
 			racbis[i] = r - this->eval(r)/temp ;
 		}
 		termine = true ;
-		for (int i = 0 ; i<d and termine; i++) {
+		for (int i = 0 ; i<d && termine; i++) {
 			if (abs(rac[i]-racbis[i]) >= epsilon)
 				termine = false ;
 		}
@@ -112,7 +113,7 @@ vector<long double> Polynome::durandkerner(long double epsilon) const
 	vector<long double> v ;
 	for (int i=0 ; i<d ; i++) {
 		long double r = real(rac[i]) ;
-		if (abs(imag(rac[i]))<10*epsilon and r>=0 and r<=1)
+		if (abs(imag(rac[i]))<10*epsilon && r>=0 && r<=1)
 			v.push_back(r) ;
 	}
 	return v ;

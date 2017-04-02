@@ -28,6 +28,7 @@ public:
 			TArray<int>& nb_exit,
 			TArray<int>& begin_exit,
 			TArray<FVector>& vect_exit,
+			TArray<float>& vect_exit_4D,
 			TArray<int>& begin_4D,
 			TArray<float>& indice_4D,
 			TArray<FVector>& pos_4D,
@@ -43,5 +44,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "LevelLoader")
 	static bool Scan(TArray<FString> &LevelList);
-	
+
+	UFUNCTION(BlueprintCallable, Category = "LevelLoader")
+	static bool LaunchGenerator();
 };

@@ -13,7 +13,8 @@ sz
 nb_exit
 [x
 y
-z] * nb_exit
+z
+k] * nb_exit
 nb_4d
 [x
 y
@@ -25,3 +26,21 @@ rz
 sx
 sy
 sz] *nb_4d
+1
+0
+0
+10000
+0
+0
+0
+0
+0
+1
+1
+1
+1
+0
+0
+100
+100
+0

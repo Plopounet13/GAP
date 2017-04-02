@@ -63,7 +63,7 @@ bool f_true(const Platform& p)
 }
 
 bool f_ponctuelle(const Platform& p)
-{
+{	
     return (p.getNbSorties()==0) ;
 }
 
@@ -83,7 +83,7 @@ bool f_atteintPointRotation(const Platform& p, Point point, int rotation)
 	for (int i = 0 ; i<n ; i++) {
 		Point pmin = sortieMin[i] ;
 		Point pmax = sortieMax[i] ;
-		if (pmin.getX() <= x2 and x2 <= pmax.getX() and pmin.getY() <= y2 and y2 <= pmax.getY() and pmin.getZ() <= point.getZ() and point.getZ() <= pmax.getZ() and pmin.getK() <= point.getK() and point.getK() <= pmax.getK()) {
+		if (pmin.getX() <= x2&&x2 <= pmax.getX()&&pmin.getY() <= y2&&y2 <= pmax.getY()&&pmin.getZ() <= point.getZ()&&point.getZ() <= pmax.getZ()&&pmin.getK() <= point.getK()&&point.getK() <= pmax.getK()) {
                 	return true ;
 		}
 	}
@@ -107,7 +107,7 @@ bool f_atteintPoint(const Platform& p, Point point)
                 long double theta2 = theta - rot*10.0 ;
                 long double x2 = r*cos(theta2*PI/180);
                 long double y2 = r*sin(theta2*PI/180);
-                if (pmin.getX() <= x2 and x2 <= pmax.getX() and pmin.getY() <= y2 and y2 <= pmax.getY() and pmin.getZ() <= point.getZ() and point.getZ() <= pmax.getZ() and pmin.getK() <= point.getK() and point.getK() <= pmax.getK()) {
+                if (pmin.getX() <= x2&&x2 <= pmax.getX()&&pmin.getY() <= y2&&y2 <= pmax.getY()&&pmin.getZ() <= point.getZ()&&point.getZ() <= pmax.getZ()&&pmin.getK() <= point.getK()&&point.getK() <= pmax.getK()) {
                         return true ;
                 }
             }
