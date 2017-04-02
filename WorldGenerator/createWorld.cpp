@@ -1,5 +1,24 @@
 #include "createWorld.h"
 
+using namespace std;
+
+void init_library()
+{
+filebuf fb;
+    if (fb.open ("patate.txt",ios::in))
+    {
+        istream is(&fb);
+        
+        Platform p = Platform(is) ;
+        bibli.push(&p) ;
+        
+        fb.close();
+    }
+    else {
+        cout << "mouais..." << endl ;
+    }
+}
+
 uint32_t  compute_proba(uint32_t length) {
 	if(length < c_length_min) return 0;
 	else return length-c_length_min;
