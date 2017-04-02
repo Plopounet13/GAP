@@ -1,6 +1,6 @@
 %Accelerate
 ID = 6
-additiveAcceleration = 500 0 0 0
+additiveAcceleration = 20 0 0 0
 multiplicativeAcceleration = 1 1 1 1
 nbSortie = 0
 apparitionWeight = 10

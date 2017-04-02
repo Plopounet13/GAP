@@ -1,4 +1,4 @@
-﻿cl -o Polynome.obj -c Polynome.cpp /EHsc 
+cl -o Polynome.obj -c Polynome.cpp /EHsc 
 
 cl -o Library/Point.obj -c Library/Point.cpp  /EHsc 
 
