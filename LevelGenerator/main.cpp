@@ -441,7 +441,7 @@ bool choixPlatforme(const Library& bibli, Point position, long double t, int& id
             }
             int r = rand() % poidstotal ;
             int k = 0 ;
-            while (temp[k]->getApparitionWeight() <= r) {
+            while (temp[k]->getApparitionWeight()+1 <= r) {
                     r=r-temp[k]->getApparitionWeight()-1 ;
                     k++ ;
             }
@@ -476,7 +476,7 @@ bool choixPlatforme(const Library& bibli, Point position, long double t, int& id
         }
         int r = rand() % poidstotal ;
         int k = 0 ;
-        while (temp[k]->getApparitionWeight() <= r) {
+        while (temp[k]->getApparitionWeight()+1 <= r) {
                 r=r-temp[k]->getApparitionWeight()-1 ;
                 k++ ;
         }
