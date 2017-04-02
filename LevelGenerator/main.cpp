@@ -29,13 +29,14 @@ const Point Vitmin = Point(24,24,50,2) ;
 const Point Vitmax = Point(36,36,50,8);
 const long double EPSILON = 0.0001;
 const long double probaPonctuelle = 0.6 ;
+const long double LAST_T = 0.992;
 
 
 
 // prototypes
 bool triBezier(const Point& a, const Point& b, Point entree, Point sortie) ;
 void generationLocale(const Library& bibli, Point entree, Point sortie, int largeur, int profondeur, int hauteur, Instance& karabonga) ;
-bool choixPlatforme(const Library& bibli, Point position, long double t, int& id, int& rotation, long double& t_fin, Point& finPlat) ;
+bool choixPlatforme(const Library& bibli, Point position, long double t, int& id, int& rotation, long double& t_fin, Point& finPlat, Point& acc) ;
 Library subLibrary(Library const& bibli, Point entree, Point sortie) ;
 Point bezierT(long double t) ;
 Point royalT(long double t, long double coeff = 84) ;
@@ -44,6 +45,7 @@ Point arrivalJump(Point depart, Point direction, Point vitesse) ;
 Point arrival(Point depart, Point vitesse, long double& t0) ;
 long double findT (Point position, long double epsilon = EPSILON) ;
 void ConstructionHeaviside(int largeur, int profondeur, int hauteur) ;
+Point HeavT(long double t) ;
 
 
 // global
@@ -58,26 +60,26 @@ vector<Point> decHeav;
 
 int main(int argc, char** argv)
 {
-    
+
     Library bibli ;
 
-    
+
     filebuf fb;
     if (fb.open ("patate.txt",ios::in))
     {
         istream is(&fb);
-        
+
         Platform p = Platform(is) ;
         bibli.push(&p) ;
-        
+
         fb.close();
     }
     else {
         cout << "mouais..." << endl ;
     }
-    
-    
-    
+
+
+
     Point entree = Point(100,100,20,200);
     Point sortie = Point(10000,10000,800,1600);
     Instance parcours;
@@ -306,19 +308,23 @@ void generationLocale(const Library& bibli, Point entree, Point sortie, int larg
     Point position = entree ; // position actuelle
     Point vitesse = Vitmin ; // vitesse actuelle
 
+    Point acceleration;
+    long double diminution = 0.4;
+
     while(t<1.0){
-        
-        Point debutplat = arrival(position, vitesse, t) ; // debut platforme suivante (modifie t)
+
+        Point debutplat = arrival(position, vitesse+acceleration, t) ; // debut platforme suivante (modifie t)
         vitesse = bound(vitesse+Point(2,2,2,2),Vitmin,Vitmax) ; // vitesse pour la platforme suivante (pifometre ?)
-        
+
         position = debutplat ;
-        
+
         int id ;
         int rotation ;
         long double t_fin ;
         Point finPlat ;
-        bool ponctuelle = choixPlatforme(bibli, position, t, id, rotation, t_fin, finPlat) ;
-        
+        Point acc;
+        bool ponctuelle = choixPlatforme(bibli, position, t, id, rotation, t_fin, finPlat, acc) ;
+
         if (ponctuelle) {
             rotation=0 ;
             finPlat = position ;
@@ -326,16 +332,16 @@ void generationLocale(const Library& bibli, Point entree, Point sortie, int larg
         else {
             t = t_fin ;
         }
-        
+
         int x = position.getX() , y = position.getY(), z = position.getZ() , k = position.getK() ;
         Position pos = Position(k, // entree 4D
                 Vec3<float>(0.0,0.0,rotation), // rotation
                 Vec3<float>(1.0,1.0,1.0), // scale
                 Vec3<float>(x,y,z)) ; // position d'entree
-        
+
         vector<Vec3<float>> posSortie ; // position de la sortie (on en met qu'une ?)
         vector<float> sortie4D ;
-        
+
         if (not ponctuelle) {
             // donne relatif a la platforme, donc doit inverser la rotation
             int xtemp = finPlat.getX() , ytemp = finPlat.getY() ;
@@ -344,23 +350,25 @@ void generationLocale(const Library& bibli, Point entree, Point sortie, int larg
             long double theta2 = theta - rotation*1.0 ;
             long double x2 = r*cos(theta2*PI/180) ;
             long double y2 = r*sin(theta2*PI/180) ;
-            posSortie.push_back(Vec3<float>(x2,y2,(float)finPlat.getZ())) ; 
+            posSortie.push_back(Vec3<float>(x2,y2,(float)finPlat.getZ())) ;
             sortie4D.push_back((float)finPlat.getK()) ;
         }
-        
+
         vector<Position> pos4D ; // vide pour l'instant... posttraitement ?
-        
+
         PlatInstance pi = PlatInstance(id,pos,posSortie,sortie4D,pos4D,rand()) ;
+        acceleration = Point (int(acceleration.getX()*diminution), int(acceleration.getY()*diminution), int(acceleration.getZ()*diminution), int(acceleration.getK()*diminution));
+        acceleration = acceleration+acc;
         karabonga.addPlatform(pi) ;
         cout << "+1" << endl ;
         position = finPlat ;
     }
-    
+
     //posttraitement
-    
-    
+
+
     //return karabonga ;
-    
+
 }
 
 void ConstructionHeaviside(int largeur, int profondeur, int hauteur){
@@ -458,19 +466,19 @@ Point HeavT(long double t){
     return Heav;
 }
 
-bool choixPlatforme(const Library& bibli, Point position, long double t, int& id, int& rotation, long double& t_fin, Point& finPlat)
+bool choixPlatforme(const Library& bibli, Point position, long double t, int& id, int& rotation, long double& t_fin, Point& finPlat, Point& acc)
 {
     // choisi la prochaine platforme a utiliser
-    // warning : id, rotation, t_fin, finPlat sont modifiés
+    // warning : id, rotation, t_fin, finPlat, acc sont modifiés
     // input : bibli, position de debut de platforme, avec parametre estime t, + parametres modifiables
     // output : booleen true si platforme ponctuelle, les autres informations seront dans les parametres modifiés
-    
+
     bool ponctuelle ;
-    
-    if (((float)rand()/(float)RAND_MAX)<probaPonctuelle) { // proba de base
+
+    if ((((float)rand()/(float)RAND_MAX)<probaPonctuelle) or t > LAST_T) { // proba de base
         ponctuelle = true ;
     }
-    
+
     else {
         // calculs de derivees, donnant la direction locale
         long double hsaut = Vitmin.norm2()*2*Vitmin.getZ()/G ;
@@ -483,6 +491,8 @@ bool choixPlatforme(const Library& bibli, Point position, long double t, int& id
             long double x=dx*h/d,y=dy*h/d,z=dz*h/d,k=dk*h/d ;
             Point finPlat1 = Point(int(x+0.5),int(y+0.5),int(z+0.5),int(k+0.5)) + position ; // on part un peu loin en direction de la derivee
             t_fin = findT(finPlat1) ; // on revient sur la courbe
+            if (t_fin > LAST_T)
+                t_fin = LAST_T;
             finPlat = royalT(t_fin) ; // Point de fin de platforme souhaite
             bibli.select(bind(f_atteintPoint,placeholders::_1,finPlat-position),temp) ; // platformes pouvant atteindre le point souhaite
         }
@@ -499,9 +509,10 @@ bool choixPlatforme(const Library& bibli, Point position, long double t, int& id
                     r=r-temp[k]->getApparitionWeight()-1 ;
                     k++ ;
             }
-            
+
             Platform* PF = temp[k] ;
             id = PF->getID() ; // recupere ID
+            acc = PF->getAddAcceleration();
             rotation = 0 ;
             // on calcul la rotation necessaire
             while(not f_atteintPointRotation(*PF, finPlat-position, rotation)) {
@@ -510,13 +521,13 @@ bool choixPlatforme(const Library& bibli, Point position, long double t, int& id
                 if (rotation==360)
                     exit(12) ;
             }
-            
+
         }
         else { // si on n'arrive pas a mettre en place une platforme longue
             ponctuelle = true ;
         }
     }
-    
+
     if (ponctuelle) {
         // on recupere une platforme ponctuelle aleatoirement
         vector<Platform *> temp ;
@@ -534,8 +545,9 @@ bool choixPlatforme(const Library& bibli, Point position, long double t, int& id
                 k++ ;
         }
         id = temp[k]->getID() ; // recupere ID
+        acc = temp[k]->getAddAcceleration();
     }
-    
+
     return ponctuelle ;
 }
 
