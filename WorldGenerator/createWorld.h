@@ -10,30 +10,31 @@
 #include "../LevelGenerator/Polynome.h"
 #include "functions.h"
 
-const uint32_t c_world_size = 400;
+//TODO: NOOOOOON !!!! pas de variable globale dans un .h
+extern const uint32_t c_world_size;
 
-const uint32_t c_height = 10, c_length_min = 40, c_length_max = 80, c_phi_max = 90, c_theta_max = 90;
-const uint32_t nb_angles = 20;
-double c_theta_0 = 90./nb_angles;
+extern const uint32_t c_height, c_length_min, c_length_max, c_phi_max, c_theta_max;
+extern const uint32_t nb_angles;
+extern double c_theta_0;
 
-Library bibli;
-Instance world;
+extern Library bibli;
+extern Instance world;
 
-void init_library();
+void init_library(const std::string& listFileName, Library& lib);
 
 class Cuboid
 {
 public:
 	Cuboid(Point i, Vecteur d, double l, double h = c_height) : length(l), height(h), in(i), dir(d) {
 		d.mult(1./d.length());
-                        out = in + dir*l;
+		out = in + dir*l;
 	}
 
 //private:
-            const Point in, out;
+	Point in, out;
 	//double theta, phi, psi;
-	const Vecteur dir;
-	const double length, height;
+	Vecteur dir;
+	double length, height;
 };
 
 void createWorld();

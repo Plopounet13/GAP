@@ -1,8 +1,20 @@
+#include <fstream>
+#include "../LevelGenerator/levelGenerator.h"
 #include "createWorld.h"
 #include <random>
 
 
+const uint32_t c_world_size = 400;
+
+const uint32_t c_height = 10, c_length_min = 40, c_length_max = 80, c_phi_max = 90, c_theta_max = 90;
+const uint32_t nb_angles = 20;
+double c_theta_0 = 90./nb_angles;
+
+Library bibli;
+Instance world;
+
 using namespace std;
+
 
 int seed=42;
 default_random_engine gen(seed);
@@ -30,21 +42,26 @@ void choose(const vector<vector<int>>& probas, int& x, int& y){
 
 
 
-void init_library()
-{
-filebuf fb;
-    if (fb.open ("patate.txt",ios::in))
-    {
-        istream is(&fb);
-        
-        Platform p = Platform(is) ;
-        bibli.push(&p) ;
-        
-        fb.close();
-    }
-    else {
-        cout << "mouais..." << endl ;
-    }
+void init_library(const string& listFileName, Library& lib){
+	ifstream fileList(listFileName);
+	if (fileList.fail()){
+		cerr << "Impossible d'ouvrir la liste de fichiers de plateforme " + listFileName << endl;
+		exit(144*12);
+	}
+	string fileName;
+	while (getline(fileList, fileName)){
+		
+		ifstream platFile(fileName);
+		
+		if (platFile.fail()){
+			cerr << "Impossible d'ouvrir le fichier de plateforme " + fileName << endl;
+			exit(144*12);
+		}
+		
+		Platform *p = new Platform(platFile);
+		lib.push(p);
+		
+	}
 }
 
 uint32_t  compute_proba(uint32_t length) {
@@ -59,7 +76,7 @@ uint32_t  reverse_proba(uint32_t proba) {
 void update_world(std::vector<std::vector<std::vector<int> > >& world_bin, const Cuboid &cuboid)
 {
  	Vecteur e_x, e_y, e_z;
-	base(cuboid.dir, e_z, e_x, e_y);
+	make_base(cuboid.dir, e_z, e_x, e_y);
 	for(uint32_t k = -c_height; k < c_height; ++k) {
 		for(uint32_t l = -c_height; l < c_height; ++l) {
 			Point currPos =   cuboid.in + k*e_x + l*e_y + nb_angles/2*e_x;
@@ -77,7 +94,7 @@ void next_cuboid(std::vector<std::vector<std::vector<int> > >& world_bin, std::v
 	Point out = last_cuboid.in + last_cuboid.length*last_cuboid.dir;
 
 	Vecteur shift = c_height*last_cuboid.dir;
-	uint32_t length;
+	uint32_t length=0;
 
 	Vecteur e_x, e_y, e_z;
 	make_base(v, e_z, e_x, e_y);
@@ -104,24 +121,27 @@ void next_cuboid(std::vector<std::vector<std::vector<int> > >& world_bin, std::v
 		}
 	}
 
+	//TODO: Va falloir discuter de vos typage les gars...
 	int theta_1_choose, theta_2_choose;
-	choose(probas, theta_1_choose, theta_2_choose);
-	length = reverse_proba(probas[theta_1_choose][theta_2_choose]));
+	//choose(probas, theta_1_choose, theta_2_choose);
+	//length = reverse_proba(probas[theta_1_choose][theta_2_choose]));
 
 	
 	auto pair = std::make_pair(1,1);
 	auto new_cuboid = Cuboid(out + shift, pair.first * e_y + pair.second * e_x +  length*e_z, length);
 
+	//TODO: Parler avec Thomas de cette partie
 	Instance new_instance;
 	generationLocale(bibli, new_cuboid.in, new_cuboid.out, new_cuboid.length, new_cuboid.height, new_cuboid.height, new_instance);
-	new_instance.move(in, dir); 
+	//Si in = new_cuboid.in plein de problemes (move need coin inf et generation locale need être placé à 0/0/0 pas directement là où tu en as besoin
+	//new_instance.move(in, dir);
 	world += new_instance;
 
 	cuboids.push_back(new_cuboid);
 }
 
 void createWorld() {
-	init_library();
+	init_library("../platform_file_list.txt", bibli);
 
 	std::vector<std::vector<std::vector<int>>> world_bin(c_world_size, std::vector<std::vector<int> > (c_world_size, std::vector<int> (c_world_size, 0)));
 	std::vector<Cuboid> cuboids;
@@ -135,6 +155,6 @@ void createWorld() {
 	}
 
 	ofstream out("map.dat");
-	out << instance <<  endl;
+	out << world;
 	out.close();
 }
