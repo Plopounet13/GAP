@@ -1,27 +1,27 @@
 #include "createWorld.h"
 
-int compute_proba(uint32_t length) {
+uint32_t  compute_proba(uint32_t length) {
 	if(length < c_length_min) return 0;
 	else return length-c_length_min;
 }
 
-int reverse_proba() {
-
+uint32_t  reverse_proba(uint32_t proba) {
+	return proba+c_length_min;
 }
 
-void update_world(std::vector<std::vector<std::vector<int> > >& world, const Cuboid &cuboid)
+void update_world(std::vector<std::vector<std::vector<int> > >& world_bin, const Cuboid &cuboid)
 {
-	Vecteur e_x, e_y, e_z;
+ 	Vecteur e_x, e_y, e_z;
 	base(cuboid.dir, e_z, e_x, e_y);
 	for(uint32_t k = -c_height; k < c_height; ++k) {
 		for(uint32_t l = -c_height; l < c_height; ++l) {
 			Point currPos =   cuboid.in + k*e_x + l*e_y + nb_angles/2*e_x;
-			world[currPos.x()][currPos.y()][currPos.z()]  = 1;
+			world_bin[currPos.x()][currPos.y()][currPos.z()]  = 1;
 		}
 	}
 }
 
-void next_cuboid(std::vector<std::vector<std::vector<int> > >& world, std::vector<Cuboid> &cuboids)
+void next_cuboid(std::vector<std::vector<std::vector<int> > >& world_bin, std::vector<Cuboid> &cuboids)
 {
 	std::map<std::pair<int, int>, double> probas;
 
@@ -45,7 +45,7 @@ void next_cuboid(std::vector<std::vector<std::vector<int> > >& world, std::vecto
 				for(uint32_t k = -c_height; k < c_height; ++k) {
 					for(uint32_t l = -c_height; l < c_height; ++l) {
 						Vecteur currPos = out + shift + k * e_y + l * e_x +  length*e_z ;
-						if(world[currPos.x()][currPos.y()][currPos.z()]  != 0) {
+						if(world_bin[currPos.x()][currPos.y()][currPos.z()]  != 0) {
 							goto end_browse;
 						}
 					}
@@ -58,13 +58,23 @@ void next_cuboid(std::vector<std::vector<std::vector<int> > >& world, std::vecto
 	}
 
 	//cuboid = choose(probas);
+
+	
 	auto pair = std::make_pair(1,1);
 	auto new_cuboid = Cuboid(out + shift, pair.first * e_y + pair.second * e_x +  length*e_z, length);
+
+	Instance new_instance;
+	generationLocale(bibli, new_cuboid.in, new_cuboid.out, new_cuboid.length, new_cuboid.height, new_cuboid.height, new_instance);
+	new_instance.move(in, dir); 
+	world += new_instance;
+
 	cuboids.push_back(new_cuboid);
 }
 
 void createWorld() {
-	std::vector<std::vector<std::vector<int> > > world(c_world_size, std::vector<std::vector<int> > (c_world_size, std::vector<int> (c_world_size, 0)));
+	init_library();
+
+	std::vector<std::vector<std::vector<int>>> world_bin(c_world_size, std::vector<std::vector<int> > (c_world_size, std::vector<int> (c_world_size, 0)));
 	std::vector<Cuboid> cuboids;
 
 	/// Create first cuboid
@@ -72,6 +82,10 @@ void createWorld() {
 
 	uint32_t n = 10;
 	for(uint32_t i = 0; i < n; ++i) {
-		next_cuboid(world, cuboids);
+		next_cuboid(world_bin, cuboids);
 	}
+
+	ofstream out("map.dat");
+	out << instance <<  endl;
+	out.close();
 }
