@@ -1,6 +1,13 @@
 #include <map>
 #include <vector>
-#include
+//#include "../LevelGenerator/Library/Point.h"
+#include "../LevelGenerator/Library/Platform.h"
+#include "../LevelGenerator/Library/Library.h"
+#include "../LevelGenerator/Instance/Instance.h"
+#include "../LevelGenerator/Instance/PlatInstance.h"
+#include "../LevelGenerator/Instance/Position.h"
+#include "../LevelGenerator/Instance/Vec3.h"
+#include "../LevelGenerator/Polynome.h"
 #include "functions.h"
 
 const uint32_t c_world_size = 400;
@@ -12,22 +19,7 @@ double c_theta_0 = 90./nb_angles;
 Library bibli;
 Instance world;
 
-void init_library()
-{
-filebuf fb;
-    if (fb.open ("patate.txt",ios::in))
-    {
-        istream is(&fb);
-        
-        Platform p = Platform(is) ;
-        bibli.push(&p) ;
-        
-        fb.close();
-    }
-    else {
-        cout << "mouais..." << endl ;
-    }
-}
+void init_library();
 
 class Cuboid
 {
