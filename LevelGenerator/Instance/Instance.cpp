@@ -69,12 +69,14 @@ Instance& operator+=(Instance& a, Instance& b){
 }
 
 ostream& operator<<(ostream& out, const Instance& i){
-	out << i.plateformes.size() << endl;
+	
+	auto avantDernier = i.plateformes.end();
+	--avantDernier;
+	
 	for (auto j=i.plateformes.begin(); j!=i.plateformes.end(); ++j){
 		out << *j;
-		if (++j!=i.plateformes.end())
+		if (j!=avantDernier)
 			out << endl;
-		--j;
 	}
 	
 	return out;

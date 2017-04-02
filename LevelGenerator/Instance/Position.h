@@ -8,9 +8,9 @@
 
 class Position{
 	int k;
+	Vec3<float> pos;
 	Vec3<float> rot;
 	Vec3<float> scale;
-	Vec3<float> pos;
 	
 public:
 	/**
