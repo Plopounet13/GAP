@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <iostream>
+#include "../../WorldGenerator/geometrie.h"
 
 class Point4 {
 /// Cette classe défini les Points
@@ -11,7 +12,8 @@ class Point4 {
 public:
     Point4();
     Point4(int x, int y=0, int z=0, int k=0);
-    Point4(Point4 const& orig);
+	Point4(Point4 const& orig);
+	Point4(Point const& orig);
     int getX() const;
     int getY() const;
     int getZ() const;
@@ -40,7 +42,7 @@ friend long double dist4(Point4 const& a, Point4 const& b) ;
 friend long double scal2(Point4 const& a, Point4 const& b) ;
 friend long double scal3(Point4 const& a, Point4 const& b) ;
 friend long double scal4(Point4 const& a, Point4 const& b) ;
-
+	friend void fromPoint(const Point& p, Point4& out);
 };
 
 #endif /* POINT4_H */

@@ -19,6 +19,17 @@ Point4::Point4(Point4 const& orig) {
     m_k = orig.m_k ;
 }
 
+void fromPoint(const Point& p, Point4& out){
+	out.m_k = 0;
+	out.m_x = p.m_x;
+	out.m_y = p.m_y;
+	out.m_z = p.m_z;
+}
+
+Point4::Point4(Point const& orig){
+	fromPoint(orig, *this);
+}
+
 int Point4::getX() const {
     return m_x ;
 }
