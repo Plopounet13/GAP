@@ -2,7 +2,9 @@
 
 using namespace std;
 
-double PI_180 = M_PI/180;
+
+#define PI 3.14159265
+double PI_180 = PI/180;
 
 Position::Position(const Vec3<float>& loc, const Vec3<float>& r, const Vec3<float>& s){
 	k=-1;

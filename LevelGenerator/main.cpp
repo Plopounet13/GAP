@@ -43,12 +43,16 @@ Point royalT(long double t, long double coeff = 84) ;
 Point arrivalJump(Point depart, Point direction, Point vitesse) ;
 Point arrival(Point depart, Point vitesse, long double& t0) ;
 long double findT (Point position, long double epsilon = EPSILON) ;
+void ConstructionHeaviside(int largeur, int profondeur, int hauteur) ;
 
 
 // global
 Point pointBezier[nbPointBezier] ;
 Polynome Bx, By, Bz, Bk ;
 
+// On crée une discontinuité
+vector<int> posHeav;
+vector<Point> decHeav;
 
 //srand (time(NULL)); à mettre quelquepart, ou autre seed
 
@@ -76,7 +80,7 @@ int main(int argc, char** argv)
     
     Point entree = Point(100,100,20,200);
     Point sortie = Point(10000,10000,800,1600);
-	Instance parcours;
+    Instance parcours;
     generationLocale(bibli, entree, sortie, 11000, 11000, 2000, parcours);
     cout<<"2"<<endl;
     cout<<entree.getX()<<endl;
@@ -291,6 +295,7 @@ void generationLocale(const Library& bibli, Point entree, Point sortie, int larg
         free(pasc[i]) ;
     free(pasc) ;
 
+    ConstructionHeaviside(largeur, profondeur, hauteur);
 
     // reduire la librairie ?
     //Library lib = subLibrary(bibli, entree, sortie) ;
@@ -334,8 +339,8 @@ void generationLocale(const Library& bibli, Point entree, Point sortie, int larg
         if (not ponctuelle) {
             // donne relatif a la platforme, donc doit inverser la rotation
             int xtemp = finPlat.getX() , ytemp = finPlat.getY() ;
-            long double r = sqrt(x*x+y*y) ;
-            long double theta = atan2(y,x)*180/PI ;
+            long double r = sqrt(xtemp*xtemp+ytemp*ytemp) ;
+            long double theta = atan2(ytemp,xtemp) *180/PI ;
             long double theta2 = theta - rotation*1.0 ;
             long double x2 = r*cos(theta2*PI/180) ;
             long double y2 = r*sin(theta2*PI/180) ;
@@ -356,6 +361,101 @@ void generationLocale(const Library& bibli, Point entree, Point sortie, int larg
     
     //return karabonga ;
     
+}
+
+void ConstructionHeaviside(int largeur, int profondeur, int hauteur){
+    //Pour effectuer les décalages sur x et y ont doit supposer que cela n'interfere pas ave les plateformes existantes
+    // Pour cela on essaye de dévier à la perpendiculaire (à peu près...)
+    for (int i = 0 ; i<4 ; i++){
+        long double t1 = (float)rand()/(float)RAND_MAX;
+        long double t2 = (float)rand()/(float)RAND_MAX;
+        if (t1>t2){
+            long double t3 = t1;
+            t1 = t2;
+            t2 = t3;
+        }
+        int espace = largeur;
+        if (profondeur < espace)
+            espace = profondeur;
+        if (hauteur < espace)
+            espace = hauteur;
+        Point Postemp;
+        for (long double t3 = t1; t3<t2;t3+=0.001){
+            Postemp = royalT(t3);
+            if (Postemp.getX()<espace)
+                espace = Postemp.getX();
+            if (largeur - Postemp.getX()<espace)
+                espace = largeur - Postemp.getX();
+            if (Postemp.getY()<espace)
+                espace = Postemp.getY();
+            if (profondeur - Postemp.getY()<espace)
+                espace = profondeur - Postemp.getY();
+            if (Postemp.getZ()<espace)
+                espace = Postemp.getZ();
+            if (hauteur - Postemp.getZ()<espace)
+                espace = hauteur - Postemp.getZ();
+        }
+        if (espace > 0){
+            long double decalh = rand()%4;
+            long double decalz = rand()%10;
+            long double Normalisation = decalh + decalz;
+            long double borne1 = ((((float)rand()/(float)RAND_MAX)/3)+0.5)*espace;
+            long double borne2 = (Vitmin.getZ()*Vitmin.getZ()/G*2)*(((float)rand()/(float)RAND_MAX)*4+2.5);
+            if (borne2<borne1)
+                borne1 = borne2;
+            Polynome Dx = derive(Bx) , Dy = derive(By);
+            long double dx = Dx.evalreel(t1), dy = Dy.evalreel(t1);
+            long double dirx,diry; // On cherche à prendre un vecteur othogonal
+            if (dy < 0.1 and dy > -0.1){
+                dirx = 1;
+                diry = - (dx/dy);
+            }
+            else{
+                dirx = 0;
+                diry = 1;
+            }
+            dirx = dirx/(dirx+diry);
+            diry = diry/(dirx+diry);
+            dx = Dx.evalreel(t2);
+            dy = Dy.evalreel(t2);
+            long double prodscal = dirx*dx+diry*dy;
+            if (prodscal<0.3 and prodscal>-0.3){
+                dirx+= (((float)rand()/(float)RAND_MAX)/3)-0.15;
+                diry+= (((float)rand()/(float)RAND_MAX)/3)-0.15;
+                dirx = dirx/(dirx+diry);
+                diry = diry/(dirx+diry);
+                int signh = 1, signz = 1;
+                if (((float)rand()/(float)RAND_MAX)<0.5)
+                    signh = -1;
+                if (((float)rand()/(float)RAND_MAX)<0.5)
+                    signz = -1;
+                decHeav.push_back(Point(signh*int(Normalisation*dirx*borne1*decalh+0.5),signh*int(Normalisation*diry*borne1*decalh+0.5),signz*int(Normalisation*borne1*decalz+0.5),0));
+                posHeav.push_back(t1);
+                posHeav.push_back(t2);
+            }
+            else{
+                if(((float)rand()/(float)RAND_MAX)<0.7){
+                    i--;
+                }
+            }
+        }
+        else{
+            if(((float)rand()/(float)RAND_MAX)<0.7){
+                i--;
+            }
+        }
+    }
+
+}
+
+Point HeavT(long double t){
+    Point Heav = Point(0,0,0,0);
+    for (unsigned int i = 0; i< decHeav.size();i++){
+        if (posHeav[2*i]<t and t<posHeav[2*i+1]){
+            Heav = Heav + decHeav[i];
+        }
+    }
+    return Heav;
 }
 
 bool choixPlatforme(const Library& bibli, Point position, long double t, int& id, int& rotation, long double& t_fin, Point& finPlat)
@@ -521,7 +621,7 @@ Point royalT(long double t,long double coef)
     x+=coef*sin(t*450);
     y+=coef*sin(t*501);
     z+=coef*sin(t*549);
-    return Point(int(x+0.5),int(y+0.5),int(z+0.5),int(k+0.5)%1000) ;
+    return Point(int(x+0.5),int(y+0.5),int(z+0.5),int(k+0.5)%1000)+HeavT(t) ;
 }
 
 /*
@@ -651,7 +751,7 @@ Point arrival(Point depart, Point vitesse, long double& t0)
     long double hmax = vitesse.norm2()*2*vz/G ;
     long double zmax = vz*vz/(2*G) ;
     bool cont = false ;
-    while (not cont) {
+    while (not cont and pas > 0.001) {
         dirDestination = royalT(t)-depart ;
         long double z = dirDestination.getZ() ;
         long double h = dirDestination.norm2() ;
@@ -681,6 +781,15 @@ Point arrival(Point depart, Point vitesse, long double& t0)
                 pas = pas/2 ;
                 t = t + pas ;
             }
+        }
+    }
+    if (not cont){
+        dirDestination = royalT(t)-depart ;
+        long double z = dirDestination.getZ() ;
+        long double h = dirDestination.norm2() ;
+        if (not (z>0.6*zmax or z<-0.9*zmax or h>0.7*hmax or h<-0.7*hmax)){
+            t+=2*pas;
+            dirDestination = royalT(t)-depart ;
         }
     }
     t0 = t ;
