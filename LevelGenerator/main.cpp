@@ -86,7 +86,7 @@ int main(int argc, char** argv)
     Point sortie = Point(10000,10000,800,1600);
     Instance parcours;
     generationLocale(bibli, entree, sortie, 11000, 11000, 2000, parcours);
-	cout << parcours << endl;
+	cout << parcours;
 
 }
 
