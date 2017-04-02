@@ -72,7 +72,7 @@ bool f_atteintPointRotation(const Platform& p, Point4 point, int rotation)
 	// retourne true si, avec rotation donnee (en degree), une sortie permet d'atteindre le point 
 	vector<Point4> sortieMin = p.getSortieMin() ;
 	vector<Point4> sortieMax = p.getSortieMax() ;
-	int n = sortieMin.size() ;
+	int n = (int)sortieMin.size() ;
 	long double x = point.getX() ;
 	long double y = point.getY() ;
 	long double r = sqrt(x*x+y*y) ;
@@ -97,7 +97,7 @@ bool f_atteintPoint(const Platform& p, Point4 point)
 	// retourne true si, avec rotation d'axe Z, une sortie permet d'atteindre le point 
 	vector<Point4> sortieMin = p.getSortieMin() ;
 	vector<Point4> sortieMax = p.getSortieMax() ;
-	int n = sortieMin.size() ;
+	int n = (int)sortieMin.size() ;
 	long double x = point.getX() ;
 	long double y = point.getY() ;
 	long double r = sqrt(x*x+y*y) ;

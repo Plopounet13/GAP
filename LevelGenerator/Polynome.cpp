@@ -30,7 +30,7 @@ Polynome::Polynome(long double coefficient)
 
 Polynome::Polynome(vector<long double> coefficients)
 {
-	int s = coefficients.size() ;
+	int s = (int)coefficients.size() ;
 	coefs.resize(s) ;
 	for (int i=0 ; i<s ; i++) {
 		coefs[i] = coefficients[i] ;
@@ -40,7 +40,7 @@ Polynome::Polynome(vector<long double> coefficients)
 complex<long double> Polynome::eval(complex<long double> a) const
 {
 	complex<long double> z ;
-	int s = coefs.size() ;
+	int s = (int)coefs.size() ;
 	if (s==0) {
 		z = 0 ;
 		return z ;
@@ -56,7 +56,7 @@ complex<long double> Polynome::eval(complex<long double> a) const
 long double Polynome::evalreel(long double a) const
 {
 	long double z ;
-	int s = coefs.size() ;
+	int s = (int)coefs.size() ;
 	if (s==0) {
 		z = 0 ;
 		return z ;
@@ -71,7 +71,7 @@ long double Polynome::evalreel(long double a) const
 
 int Polynome::degre() const
 {
-	int d = coefs.size()-1 ;
+	int d = (int)coefs.size()-1 ;
 	while (d>=1 && coefs[d]==0)
 		d-- ;
 	return d ;
