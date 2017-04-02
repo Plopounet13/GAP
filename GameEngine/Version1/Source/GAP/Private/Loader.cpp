@@ -232,3 +232,8 @@ bool ULoader::Scan(TArray<FString> &LevelList) {
 	return true;
 }
 
+bool ULoader::LaunchGenerator() {
+	FPlatformProcess::CreateProc(TEXT("C:\\Windows\\notepad.exe"), nullptr, true, false, false, nullptr, 0, nullptr, nullptr);
+	print("plop");
+	return true;
+}
