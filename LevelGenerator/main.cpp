@@ -70,14 +70,13 @@ int main(int argc, char** argv)
         if (fb.open ("Library/p"+to_string(i)+".txt",ios::in))
         {
             istream is(&fb);
-
-            Platform p = Platform(is) ;
-            bibli.push(&p) ;
+            Platform *p = new Platform(is) ;
+            bibli.push(p) ;
 
             fb.close();
         }
         else {
-            cout << "raté" << endl ;
+            cout << "Failed" << endl ;
         }
     }
 
@@ -87,73 +86,7 @@ int main(int argc, char** argv)
     Point sortie = Point(10000,10000,800,1600);
     Instance parcours;
     generationLocale(bibli, entree, sortie, 11000, 11000, 2000, parcours);
-    cout<<"2"<<endl;
-    cout<<entree.getX()<<endl;
-    cout<<entree.getY()<<endl;
-    cout<<entree.getZ()<<endl;
-    cout<<0<<endl;
-    cout<<0<<endl;
-    cout<<0<<endl;
-    cout<<1<<endl;
-    cout<<1<<endl;
-    cout<<1<<endl;
-    cout<<4<<endl;
-    int a = rand()%40;
-    int b = rand()%20;
-    b+=10;
-    int c = rand()%20;
-    c+=10;
-    int d = rand()%40;
-    cout<<0<<endl;
-    cout<<1<<endl;
-    cout<<750<<endl;
-    cout<<800<<endl;
-    /*
-    for (int i = 0; i<int(parcours.size())-1; i++){
-        cout<<"0"<<endl;
-        cout<<parcours[i].getX()<<endl;
-        cout<<parcours[i].getY()<<endl;
-        cout<<parcours[i].getZ()<<endl;
-        cout<<0<<endl;
-        cout<<0<<endl;
-        cout<<0<<endl;
-        cout<<1<<endl;
-        cout<<1<<endl;
-        cout<<1<<endl;
-                cout<<4<<endl;
-        a = rand()%40;
-        b = rand()%200;
-        b+=100;
-        c = rand()%200;
-        c+=100;
-        d = rand()%400;
-        cout<<0<<endl;
-        cout<<(parcours[i].getK()-b+1000)%1000<<endl;
-        cout<<(parcours[i].getK()+c+1000)%1000<<endl;
-        cout<<950<<endl;
-    }
-    */
-    cout<<"1"<<endl;
-    cout<<sortie.getX()<<endl;
-    cout<<sortie.getY()<<endl;
-    cout<<sortie.getZ()<<endl;
-    cout<<0<<endl;
-    cout<<0<<endl;
-    cout<<0<<endl;
-    cout<<1<<endl;
-    cout<<1<<endl;
-    cout<<1<<endl;
-    cout<<4<<endl;
-    a = rand()%40;
-    b = rand()%200;
-    b+=100;
-    c = rand()%200;
-    c+=10;
-    d = rand()%400;
-    cout<<0<<endl;
-    cout<<1<<endl;
-    cout<<750<<endl;
-    cout<<800<<endl;
+	cout << parcours << endl;
 
 }
 
@@ -198,7 +131,7 @@ void generationLocale(const Library& bibli, Point entree, Point sortie, int larg
     vector<Point> tempBezier ;
     for(int i=1 ; i<nbPointBezier-1 ; i++) {
         temp = Point(rand() % largeur,rand() % profondeur,rand() % hauteur, rand() % 5000) ;
-        if (scal2(temp-entree, sortie-entree)<0 or scal2(temp-entree, sortie-entree)>pow(dist2(entree,sortie),2))
+        if (scal2(temp-entree, sortie-entree)<0||scal2(temp-entree, sortie-entree)>pow(dist2(entree,sortie),2))
             i--;
         else
             tempBezier.push_back(temp) ;
@@ -345,7 +278,7 @@ void generationLocale(const Library& bibli, Point entree, Point sortie, int larg
         vector<Vec3<float>> posSortie ; // position de la sortie (on en met qu'une ?)
         vector<float> sortie4D ;
 
-        if (not ponctuelle) {
+        if (! ponctuelle) {
             // donne relatif a la platforme, donc doit inverser la rotation
             int xtemp = finPlat.getX() , ytemp = finPlat.getY() ;
             long double r = sqrt(xtemp*xtemp+ytemp*ytemp) ;
@@ -363,7 +296,7 @@ void generationLocale(const Library& bibli, Point entree, Point sortie, int larg
         acceleration = Point (int(acceleration.getX()*diminution), int(acceleration.getY()*diminution), int(acceleration.getZ()*diminution), int(acceleration.getK()*diminution));
         acceleration = acceleration+acc;
         karabonga.addPlatform(pi) ;
-        cout << "+1" << endl ;
+        //cout << "+1" << endl ;
         position = finPlat ;
     }
 
@@ -417,7 +350,7 @@ void ConstructionHeaviside(int largeur, int profondeur, int hauteur){
             Polynome Dx = derive(Bx) , Dy = derive(By);
             long double dx = Dx.evalreel(t1), dy = Dy.evalreel(t1);
             long double dirx,diry; // On cherche à prendre un vecteur othogonal
-            if (dy < 0.1 and dy > -0.1){
+            if (dy < 0.1 && dy > -0.1){
                 dirx = 1;
                 diry = - (dx/dy);
             }
@@ -430,7 +363,7 @@ void ConstructionHeaviside(int largeur, int profondeur, int hauteur){
             dx = Dx.evalreel(t2);
             dy = Dy.evalreel(t2);
             long double prodscal = dirx*dx+diry*dy;
-            if (prodscal<0.3 and prodscal>-0.3){
+            if (prodscal<0.3 && prodscal>-0.3){
                 dirx+= (((float)rand()/(float)RAND_MAX)/3)-0.15;
                 diry+= (((float)rand()/(float)RAND_MAX)/3)-0.15;
                 dirx = dirx/(dirx+diry);
@@ -462,7 +395,7 @@ void ConstructionHeaviside(int largeur, int profondeur, int hauteur){
 Point HeavT(long double t){
     Point Heav = Point(0,0,0,0);
     for (unsigned int i = 0; i< decHeav.size();i++){
-        if (posHeav[2*i]<t and t<posHeav[2*i+1]){
+        if (posHeav[2*i]<t && t<posHeav[2*i+1]){
             Heav = Heav + decHeav[i];
         }
     }
@@ -478,7 +411,7 @@ bool choixPlatforme(const Library& bibli, Point position, long double t, int& id
 
     bool ponctuelle ;
 
-    if ((((float)rand()/(float)RAND_MAX)<probaPonctuelle) or t > LAST_T) { // proba de base
+    if ((((float)rand()/(float)RAND_MAX)<probaPonctuelle)||t > LAST_T) { // proba de base
         ponctuelle = true ;
     }
 
@@ -489,7 +422,7 @@ bool choixPlatforme(const Library& bibli, Point position, long double t, int& id
         long double dx = Dx.evalreel(t), dy = Dy.evalreel(t), dz = Dz.evalreel(t), dk = Dk.evalreel(t) ;
         long double d = sqrt(dx*dx+dy*dy+dz*dz) ;
         vector<Platform *> temp ;
-        for (int i = 0 ; i<5 and temp.size()==0 ; i++) {
+        for (int i = 0 ; i<5 && temp.size()==0 ; i++) {
             long double h = ((float)rand()/(float)RAND_MAX*5+3)*hsaut ;
             long double x=dx*h/d,y=dy*h/d,z=dz*h/d,k=dk*h/d ;
             Point finPlat1 = Point(int(x+0.5),int(y+0.5),int(z+0.5),int(k+0.5)) + position ; // on part un peu loin en direction de la derivee
@@ -518,7 +451,7 @@ bool choixPlatforme(const Library& bibli, Point position, long double t, int& id
             acc = PF->getAddAcceleration();
             rotation = 0 ;
             // on calcul la rotation necessaire
-            while(not f_atteintPointRotation(*PF, finPlat-position, rotation)) {
+            while(! f_atteintPointRotation(*PF, finPlat-position, rotation)) {
                 rotation += 10 ;
                 // au pire rotation==350, sinon bug
                 if (rotation==360)
@@ -766,12 +699,12 @@ Point arrival(Point depart, Point vitesse, long double& t0)
     long double hmax = vitesse.norm2()*2*vz/G ;
     long double zmax = vz*vz/(2*G) ;
     bool cont = false ;
-    while (not cont and pas > 0.001) {
+    while (! cont && pas > 0.001) {
         dirDestination = royalT(t)-depart ;
         long double z = dirDestination.getZ() ;
         long double h = dirDestination.norm2() ;
-        if (z>0.6*zmax or z<-0.9*zmax or h>0.7*hmax or h<-0.7*hmax) {   // distance suffisemment grande
-            if (z>0.8*zmax or z<-2.0*zmax or h>0.95*hmax or h<-0.95*hmax) {   // distance trop grande
+        if (z>0.6*zmax||z<-0.9*zmax||h>0.7*hmax||h<-0.7*hmax) {   // distance suffisemment grande
+            if (z>0.8*zmax||z<-2.0*zmax||h>0.95*hmax||h<-0.95*hmax) {   // distance trop grande
                 pas = pas/2 ;
                 t = t - pas ;
                 //cout<<"z  "<<z<<"   "<<zmax<<endl;
@@ -781,7 +714,7 @@ Point arrival(Point depart, Point vitesse, long double& t0)
                 arrive = arrivalJump(depart,dirDestination+depart, vitesse) ;
                 //cout<<"?"<<endl;
                 cont = (dist3(arrive, depart)<=1500) ;
-                if (not cont){
+                if (! cont){
                         pas = pas/2 ;
                     t = t - pas ;
                 }
@@ -798,11 +731,11 @@ Point arrival(Point depart, Point vitesse, long double& t0)
             }
         }
     }
-    if (not cont){
+    if (! cont){
         dirDestination = royalT(t)-depart ;
         long double z = dirDestination.getZ() ;
         long double h = dirDestination.norm2() ;
-        if (not (z>0.6*zmax or z<-0.9*zmax or h>0.7*hmax or h<-0.7*hmax)){
+        if (! (z>0.6*zmax||z<-0.9*zmax||h>0.7*hmax||h<-0.7*hmax)){
             t+=2*pas;
             dirDestination = royalT(t)-depart ;
         }
