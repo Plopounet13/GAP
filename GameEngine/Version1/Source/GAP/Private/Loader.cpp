@@ -41,7 +41,7 @@ bool ULoader::Load(FString InFilename,
 	begin_exit.Add(0);
 	begin_4D.Add(0);
 	NbPlatOut = 0;
-	int32 num = in_strings.Num() - 1;
+	int32 num = in_strings.Num()-1;
 	while (index < num){
 		++NbPlatOut;
 		float x, y, z;
@@ -106,7 +106,7 @@ bool ULoader::Load(FString InFilename,
 		int32 nb_4D=FCString::Atoi(*in_strings[index]);
 
 		int32 index_4D;
-		for (index_4D = 0; index_4D < nb_4D; index_4D++) {
+		for (index_4D = 0; index_4D < nb_4D; ++index_4D) {
 			safe_pp(index, num, FString::FromInt(__LINE__));
 			x = FCString::Atof(*in_strings[index]);
 			safe_pp(index,num, FString::FromInt(__LINE__));
@@ -136,6 +136,7 @@ bool ULoader::Load(FString InFilename,
 
 			scale_4D.Emplace(x, y, z);
 		}
+
 		begin_4D.Add(indice_4D.Num());
 	}
 
