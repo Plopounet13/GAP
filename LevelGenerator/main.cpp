@@ -269,11 +269,11 @@ void generationLocale(const Library& bibli, Point entree, Point sortie, int larg
             t = t_fin ;
         }
 
-        int x = position.getX() , y = position.getY(), z = position.getZ() , k = position.getK() ;
-        Position pos = Position(k, // entree 4D
-                Vec3<float>(0.0,0.0,rotation), // rotation
-                Vec3<float>(1.0,1.0,1.0), // scale
-                Vec3<float>(x,y,z)) ; // position d'entree
+		int x = position.getX() , y = position.getY(), z = position.getZ() , k = position.getK() ;
+		Position pos = Position(k, // entree 4D
+								Vec3<float>(x,y,z),// position d'entree
+								Vec3<float>(0.0,0.0,rotation), // rotation
+								Vec3<float>(1.0,1.0,1.0)) ;  // scale
 
         vector<Vec3<float>> posSortie ; // position de la sortie (on en met qu'une ?)
         vector<float> sortie4D ;
