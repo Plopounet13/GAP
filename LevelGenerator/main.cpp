@@ -21,6 +21,7 @@ using namespace std;
 
 #define PI 3.14159265
 
+
 // constantes globales
 const int nbPointBezier = 6 ;
 const long double G = 9.81;
@@ -30,7 +31,6 @@ const Point Vitmax = Point(36,36,50,8);
 const long double EPSILON = 0.0001;
 const long double probaPonctuelle = 0.6 ;
 const long double LAST_T = 0.992;
-
 
 
 // prototypes
@@ -52,9 +52,11 @@ Point HeavT(long double t) ;
 Point pointBezier[nbPointBezier] ;
 Polynome Bx, By, Bz, Bk ;
 
+
 // On crée une discontinuité
 vector<int> posHeav;
 vector<Point> decHeav;
+
 
 //srand (time(NULL)); à mettre quelquepart, ou autre seed
 
@@ -72,11 +74,11 @@ int main(int argc, char** argv)
             istream is(&fb);
             Platform *p = new Platform(is) ;
             bibli.push(p) ;
-
+			
             fb.close();
         }
         else {
-            cout << "Failed" << endl ;
+            cerr << "Failed" << endl ;
         }
     }
 
