@@ -44,7 +44,7 @@ const Vec3<float>& Position::getPos() const{
 }
 
 Position operator- (const Position& a, const Position& b){
-	Position p(a.pos-b.pos, a.rot-b.rot, (b.scale==Vec3<float>(0))?Vec3<float>(1):a.scale/b.scale);
+	Position p(a.k, a.pos-b.pos, a.rot-b.rot, (b.scale==Vec3<float>(0))?Vec3<float>(1):a.scale/b.scale);
 	return p;
 }
 
