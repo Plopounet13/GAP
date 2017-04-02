@@ -65,17 +65,20 @@ int main(int argc, char** argv)
 
 
     filebuf fb;
-    if (fb.open ("patate.txt",ios::in))
-    {
-        istream is(&fb);
+    
+    for(int i=0 ; i < 10 ; i++) {
+        if (fb.open ("Library/p"+to_string(i)+".txt",ios::in))
+        {
+            istream is(&fb);
 
-        Platform p = Platform(is) ;
-        bibli.push(&p) ;
+            Platform p = Platform(is) ;
+            bibli.push(&p) ;
 
-        fb.close();
-    }
-    else {
-        cout << "mouais..." << endl ;
+            fb.close();
+        }
+        else {
+            cout << "raté" << endl ;
+        }
     }
 
 

@@ -1,0 +1,11 @@
+%Accelerate
+ID = 6
+additiveAcceleration = 500 0 0 0
+multiplicativeAcceleration = 1 1 1 1
+nbSortie = 0
+paveSortie =
+apparitionWeight = 10
+scales = (1 1 1) (1.5 1.5 1.5)
+rotations = (0 0 0) (360 360 360)
+isTransition = false
+4Dmodifiable = true
