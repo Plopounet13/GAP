@@ -1,0 +1,72 @@
+%Basic plat
+ID = 0
+additiveAcceleration = 0 0 0 0
+multiplicativeAcceleration = 1 1 1 1
+nbSortie = 0
+paveSortie =
+apparitionWeight = 10
+scales = (1 1 1) (1.5 1.5 1.5)
+rotations = (0 0 0) (360 360 360)
+isTransition = false
+4Dmodifiable = true
+
+%Checkpoint
+ID = 3
+additiveAcceleration = 0 0 0 0
+multiplicativeAcceleration = 1 1 1 1
+nbSortie = 0
+paveSortie =
+apparitionWeight = 1
+scales = (1 1 1) (1.5 1.5 1.5)
+rotations = (0 0 0) (360 360 360)
+isTransition = false
+4Dmodifiable = true
+
+
+%Bridge
+ID = 4
+additiveAcceleration = 0 0 0 0
+multiplicativeAcceleration = 1 1 1 1
+nbSortie = 1
+paveSortie = (500 0 500 100) (10000 0 10000 600)
+apparitionWeight = 5
+scales = (1 1 1) (1 1 1)
+rotations = (0 0 0) (360 360 360)
+isTransition = false
+4Dmodifiable = false
+
+%Ascensor
+ID = 5
+additiveAcceleration = 0 0 0 0
+multiplicativeAcceleration = 1 1 1 1
+nbSortie = 1
+paveSortie = (0 0 100 50) (0 0 5000 500)
+apparitionWeight=5
+scales = (1 1 1 1) (1 1 1)
+rotations = (0 0 0) (360 360 360)
+isTransition = false
+4Dmodifiable = false
+
+%Accelerate
+ID = 6
+additiveAcceleration = 500 0 0 0
+multiplicativeAcceleration = 1 1 1 1
+nbSortie = 0
+paveSortie =
+apparitionWeight = 10
+scales = (1 1 1) (1.5 1.5 1.5)
+rotations = (0 0 0) (360 360 360)
+isTransition = false
+4Dmodifiable = true
+
+%Pikes
+ID = 7
+additiveAcceleration = 0 0 0 0
+multiplicativeAcceleration = 1 1 1 1
+nbSortie = 0
+paveSortie =
+apparitionWeight = 10
+scales = (1 1 1) (1.5 1.5 1.5)
+rotations = (0 0 0) (360 360 360)
+isTransition = false
+4Dmodifiable = true
