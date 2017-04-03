@@ -37,11 +37,10 @@ const long double LAST_T = 0.992;
 // prototypes
 bool triBezier(const Point4& a, const Point4& b, Point4 entree, Point4 sortie) ;
 void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int largeur, int profondeur, int hauteur, Instance& karabonga) ;
-bool choixPlatforme(const Library& bibli, Point4 position, long double t, int& id, int& rotation, long double& t_fin, Point4& finPlat, Point4& acc) ;
+bool choixPlatforme(const Library& bibli, Point4 position, long double t, int& id, float& rotation, long double& t_fin, Point4& finPlat, Point4& acc) ;
 Library subLibrary(Library const& bibli, Point4 entree, Point4 sortie) ;
 Point4 bezierT(long double t) ;
 Point4 royalT(long double t, long double coeff = 84) ;
-//bool accessibilite(int IDplatf, Point4 a, Point4 b) ;
 Point4 arrivalJump(Point4 depart, Point4 direction, Point4 vitesse) ;
 Point4 arrival(Point4 depart, Point4 vitesse, long double& t0) ;
 long double findT (Point4 position, long double epsilon = EPSILON) ;
@@ -227,7 +226,7 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
 		position = debutplat ;
 		
 		int id ;
-		int rotation ;
+		float rotation ;
 		long double t_fin ;
 		Point4 finPlat ;
 		Point4 acc;
@@ -375,7 +374,7 @@ Point4 HeavT(long double t){
 	return Heav;
 }
 
-bool choixPlatforme(const Library& bibli, Point4 position, long double t, int& id, int& rotation, long double& t_fin, Point4& finPlat, Point4& acc)
+bool choixPlatforme(const Library& bibli, Point4 position, long double t, int& id, float& rotation, long double& t_fin, Point4& finPlat, Point4& acc)
 {
 	// choisi la prochaine platforme a utiliser
 	// warning : id, rotation, t_fin, finPlat, acc sont modifiés
@@ -422,15 +421,66 @@ bool choixPlatforme(const Library& bibli, Point4 position, long double t, int& i
 			Platform* PF = temp[k] ;
 			id = PF->getID() ; // recupere ID
 			acc = PF->getAddAcceleration();
-			rotation = 0 ;
+			rotation = 0.0 ;
 			// on calcul la rotation necessaire
-			while(! f_atteintPointRotation(*PF, finPlat-position, rotation)) {
-				rotation += 10 ;
-				// au pire rotation==350, sinon bug
-				if (rotation==360)
-					exit(12) ;
-			}
-			
+                        Point4 dir = finPlat-position ;
+                        int i = 0 ;
+                        while (!f_atteintPointViaI(*PF, dir, i))
+                            ++i ;
+                        long double x = dir.getX() ;
+                        long double y = dir.getY() ;
+                        double rad = sqrt(x*x+y*y) ;
+                        long double theta = atan2(y,x)*180/PI ;
+                        Point4 pmin = PF->getSortieMin()[i] ;
+                        Point4 pmax = PF->getSortieMax()[i] ;
+                        int xmin=pmin.getX(), ymin=pmin.getY(), xmax=pmax.getX(), ymax=pmax.getY() ;
+                        if (ymin <= 0 && 0 <= ymax && xmin <= rad && rad <= xmax) { // cas ou la plateforme est, de base, dirigee vers x croissant
+                            rotation = theta ;
+                        }
+                        else { // calculs compliques probablement jamais utilises
+                            // arccos dans [0;PI], arcsin dans [-PI/2;PI/2]
+                            long double rotx_min = 180/PI*acos(min(1.0,xmax/rad)) ;
+                            long double rotx_max = 180/PI*acos(max(-1.0,xmin/rad)) ;
+                            long double roty_min = 180/PI*asin(max(-1.0,ymin/rad)) ;
+                            long double roty_max = 180/PI*asin(min(1.0,ymax/rad)) ;
+                            if (rotx_min <= roty_max && roty_min <= rotx_max) { // 1er quart
+                                long double rot_min = max(rotx_min, roty_min) ;
+                                long double rot_max = min(rotx_max, roty_max) ;
+                                long double rot_platforme = rot_min+rot_max/2 ;
+                                rotation = theta - rot_platforme ;
+                            }
+                            else if (rotx_min <= 180-roty_min && 180-roty_max <= rotx_max) { // 2eme quart
+                                long double rot_min = max(rotx_min, 180-roty_max) ;
+                                long double rot_max = min(rotx_max, 180-roty_min) ;
+                                long double rot_platforme = rot_min+rot_max/2 ;
+                                rotation = theta - rot_platforme ;
+                            }
+                            else if (360-rotx_max <= 180-roty_min && 180-roty_max <= 360-rotx_min) { // 3eme quart
+                                long double rot_min = max(360-rotx_max, 180-roty_max) ;
+                                long double rot_max = min(360-rotx_min, 180-roty_min) ;
+                                long double rot_platforme = rot_min+rot_max/2 ;
+                                rotation = theta - rot_platforme ;
+                            }
+                            else if (360-rotx_max <= 360+roty_max && 360+roty_min <= 360-rotx_min) { // 4eme quart
+                                long double rot_min = max(360-rotx_max, 360+roty_min) ;
+                                long double rot_max = min(360-rotx_min, 360+roty_max) ;
+                                long double rot_platforme = rot_min+rot_max/2 ;
+                                rotation = theta - rot_platforme ;
+                            }
+                            else { // pas de rotation qui marche... watt ?
+                                exit(333) ;
+                            }
+                        }
+                        /*
+                        long double x = point.getX() ;
+                        long double y = point.getY() ;
+                        long double r = sqrt(x*x+y*y) ;
+                        long double theta = atan2(y,x)*180/PI ;
+                        long double theta2 = theta - rotation*1.0 ;
+                        long double x2 = r*cos(theta2*PI/180);
+                        long double y2 = r*sin(theta2*PI/180);
+                        */
+                        
 		}
 		else { // si on n'arrive pas a mettre en place une platforme longue
 			ponctuelle = true ;
@@ -526,7 +576,6 @@ Library subLibrary(Library const& bibli, Point4 entree, Point4 sortie)
 }
 
 
-
 Point4 bezierT(long double t)
 {
 	// renvoie le point de la courbe de Bezier de parametre t
@@ -545,21 +594,6 @@ Point4 royalT(long double t,long double coef)
 	return Point4(int(x+0.5),int(y+0.5),int(z+0.5),int(k+0.5)%1000)+HeavT(t) ;
 }
 
-/*
- bool accessibilite(int IDplatf, Point4 a, Point4 b)
- {
- // True si on peut sauter du point a de la platforme d'ID donnee au point b
- 
- //1. aller cherche Platform d'id donnee, puis acceleration et coeffAcceleration
- 
- //2. calculer vitesse max
- 
- //3. courbe de mouvement
- 
- //4. point dedans ?
- return true ;
- }
- */
 
 Point4 arrivalJump(Point4 depart, Point4 direction, Point4 vitesse)
 {
