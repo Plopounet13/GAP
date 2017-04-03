@@ -58,9 +58,6 @@ vector<int> posHeav;
 vector<Point4> decHeav;
 
 
-//srand (time(NULL)); à mettre quelquepart, ou autre seed
-
-
 
 bool triBezier(const Point4& a, const Point4& b, Point4 entree, Point4 sortie)
 {
@@ -227,15 +224,15 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
 		vitesse = bound(vitesse+Point4(2,2,2,2),Vitmin,Vitmax) ; // vitesse pour la platforme suivante (pifometre ?)
 		
                 if (!firstplat && ponctuelle) {
-                    int x1=position.getX(), y1=position.getY() ; // position plateforme ponctuelle
-                    int x2=debutplat.getX(), y2=debutplat.getY() ; // debut plat suivante
-                    int dx = x2-x1, dy = y2-y1 ;
-                    float rot = atan2(dy,dx)*180/PI ;
-                    pi->rotate(Vec3<float>(0,0,rot)) ;
-                    karabonga.addPlatform(*pi) ;
+                        int x1=position.getX(), y1=position.getY() ; // position plateforme ponctuelle
+                        int x2=debutplat.getX(), y2=debutplat.getY() ; // debut plat suivante
+                        int dx = x2-x1, dy = y2-y1 ;
+                        float rot = atan2(dy,dx)*180/PI ;
+                        pi->rotate(Vec3<float>(0,0,rot)) ;
+                        karabonga.addPlatform(*pi) ;
                 }
                 else
-                    firstplat = false ;
+                        firstplat = false ;
                 
 		position = debutplat ;
 		
@@ -262,9 +259,10 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
 		
 		vector<Vec3<float>> posSortie ; // position de la sortie (on en met qu'une ?)
 		vector<float> sortie4D ;
+		vector<Position> pos4D ;
 		
 		if (! ponctuelle) {
-			// donne relatif a la platforme, donc doit inverser la rotation
+			// sortie donne relatif a la platforme, donc doit inverser la rotation
 			int xtemp = finPlat.getX() , ytemp = finPlat.getY() ;
 			long double r = sqrt(xtemp*xtemp+ytemp*ytemp) ;
 			long double theta = atan2(ytemp,xtemp) *180/PI ;
@@ -273,15 +271,39 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
 			long double y2 = r*sin(theta2*PI/180) ;
 			posSortie.push_back(Vec3<float>(x2,y2,(float)finPlat.getZ())) ;
 			sortie4D.push_back((float)finPlat.getK()) ;
+                        // pos4D parce que voila...
+                        pos4D.push_back(pos) ;
 		}
-		
-		vector<Position> pos4D ;
-		pos4D.push_back(pos) ;
+		else {
+                        // pos4D pour faire apparaitre et disparaitre dans la 4D
+                        Position pos1 = Position((k-75+1000)%1000, // debut apparition
+								Vec3<float>(x,y,z),
+								Vec3<float>(0.0,0.0,0.0),
+								Vec3<float>(0.0,0.0,0.0)) ;
+                        Position pos2 = Position((k-25+1000)%1000, // fin appartition, debut plein
+								Vec3<float>(x,y,z),
+								Vec3<float>(0.0,0.0,0.0),
+								Vec3<float>(1.0,1.0,1.0)) ;
+                        Position pos3 = Position((k+25+1000)%1000, // fin plein, debut disparition
+								Vec3<float>(x,y,z),
+								Vec3<float>(0.0,0.0,0.0),
+								Vec3<float>(1.0,1.0,1.0)) ;
+                        Position pos4 = Position((k+75+1000)%1000, // disparu
+								Vec3<float>(x,y,z),
+								Vec3<float>(0.0,0.0,0.0),
+								Vec3<float>(0.0,0.0,0.0)) ;
+                        pos4D.push_back(pos1) ;
+                        pos4D.push_back(pos2) ;
+                        pos4D.push_back(pos3) ;
+                        pos4D.push_back(pos4) ;
+                }
 		
 		pi = new PlatInstance(id,pos,posSortie,sortie4D,pos4D,rand()) ;
+                if (! ponctuelle) {
+                        karabonga.addPlatform(*pi) ;
+                }
 		acceleration = Point4 (int(acceleration.getX()*diminution), int(acceleration.getY()*diminution), int(acceleration.getZ()*diminution), int(acceleration.getK()*diminution));
 		acceleration = acceleration+acc;
-		//cout << "+1" << endl ;
 		position = finPlat ;
 	}
         
