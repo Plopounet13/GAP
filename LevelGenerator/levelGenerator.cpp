@@ -217,12 +217,26 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
 	
 	Point4 acceleration;
 	long double diminution = 0.4;
-	
+        PlatInstance* pi ;
+        bool ponctuelle ;
+	bool firstplat = true ;
+        
 	while(t<1.0){
 		
 		Point4 debutplat = arrival(position, vitesse+acceleration, t) ; // debut platforme suivante (modifie t)
 		vitesse = bound(vitesse+Point4(2,2,2,2),Vitmin,Vitmax) ; // vitesse pour la platforme suivante (pifometre ?)
 		
+                if (!firstplat && ponctuelle) {
+                    int x1=position.getX(), y1=position.getY() ; // position plateforme ponctuelle
+                    int x2=debutplat.getX(), y2=debutplat.getY() ; // debut plat suivante
+                    int dx = x2-x1, dy = y2-y1 ;
+                    float rot = atan2(dy,dx)*180/PI ;
+                    pi->rotate(Vec3<float>(0,0,rot)) ;
+                    karabonga.addPlatform(*pi) ;
+                }
+                else
+                    firstplat = false ;
+                
 		position = debutplat ;
 		
 		int id ;
@@ -230,7 +244,7 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
 		long double t_fin ;
 		Point4 finPlat ;
 		Point4 acc;
-		bool ponctuelle = choixPlatforme(bibli, position, t, id, rotation, t_fin, finPlat, acc) ;
+		ponctuelle = choixPlatforme(bibli, position, t, id, rotation, t_fin, finPlat, acc) ;
 		
 		if (ponctuelle) {
 			rotation=0 ;
@@ -264,13 +278,21 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
 		vector<Position> pos4D ;
 		pos4D.push_back(pos) ;
 		
-		PlatInstance pi = PlatInstance(id,pos,posSortie,sortie4D,pos4D,rand()) ;
+		pi = new PlatInstance(id,pos,posSortie,sortie4D,pos4D,rand()) ;
 		acceleration = Point4 (int(acceleration.getX()*diminution), int(acceleration.getY()*diminution), int(acceleration.getZ()*diminution), int(acceleration.getK()*diminution));
 		acceleration = acceleration+acc;
-		karabonga.addPlatform(pi) ;
 		//cout << "+1" << endl ;
 		position = finPlat ;
 	}
+        
+        if (ponctuelle) {
+                int x1=position.getX(), y1=position.getY() ; // position derniere plateforme
+                int x2=sortie.getX(), y2=sortie.getY() ; // position de fin
+                int dx = x2-x1, dy = y2-y1 ;
+                float rot = atan2(dy,dx)*180/PI ;
+                pi->rotate(Vec3<float>(0,0,rot)) ;
+                karabonga.addPlatform(*pi) ;
+        }
 	
 	//posttraitement
 	
@@ -471,16 +493,6 @@ bool choixPlatforme(const Library& bibli, Point4 position, long double t, int& i
                                 exit(333) ;
                             }
                         }
-                        /*
-                        long double x = point.getX() ;
-                        long double y = point.getY() ;
-                        long double r = sqrt(x*x+y*y) ;
-                        long double theta = atan2(y,x)*180/PI ;
-                        long double theta2 = theta - rotation*1.0 ;
-                        long double x2 = r*cos(theta2*PI/180);
-                        long double y2 = r*sin(theta2*PI/180);
-                        */
-                        
 		}
 		else { // si on n'arrive pas a mettre en place une platforme longue
 			ponctuelle = true ;
