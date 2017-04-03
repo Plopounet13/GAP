@@ -37,7 +37,7 @@ void Platform::parse(istream& in){
 		//cout << line << endl;
 		vector<string> val;
 		split(line, '=', val);
-		removeChars(val[0], " \t");
+		removeChars(val[0], " \t\r");
 		if (val[0][0]=='%'){
 			continue;
 		}

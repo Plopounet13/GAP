@@ -125,8 +125,9 @@ void next_cuboid(std::vector<std::vector<std::vector<int> > >& world_bin, std::v
 	int theta_1_choose, theta_2_choose;
 	//choose(probas, theta_1_choose, theta_2_choose);
 	//length = reverse_proba(probas[theta_1_choose][theta_2_choose]));
+	length = 80;
 
-	
+	//TODO: La taille du sous niveau ne va pas le faire
 	auto pair = std::make_pair(1,1);
 	auto new_cuboid = Cuboid(out + shift, pair.first * e_y + pair.second * e_x +  length*e_z, length);
 
@@ -136,12 +137,14 @@ void next_cuboid(std::vector<std::vector<std::vector<int> > >& world_bin, std::v
 	//Si in = new_cuboid.in plein de problemes (move need coin inf et generation locale need être placé à 0/0/0 pas directement là où tu en as besoin
 	//new_instance.move(in, dir);
 	world += new_instance;
+	
+	//TODO: où sont les plateformes de transition ?
 
 	cuboids.push_back(new_cuboid);
 }
 
 void createWorld() {
-	init_library("../platform_file_list.txt", bibli);
+	init_library("/Users/lois/Documents/M1ENS/GAPLocalProject/GAPLocalProject/GAP/platform_file_list.txt", bibli);
 
 	std::vector<std::vector<std::vector<int>>> world_bin(c_world_size, std::vector<std::vector<int> > (c_world_size, std::vector<int> (c_world_size, 0)));
 	std::vector<Cuboid> cuboids;

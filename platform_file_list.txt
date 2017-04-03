@@ -1,6 +1,6 @@
-../LevelGenerator/Library/p0.txt
-../LevelGenerator/Library/p3.txt
-../LevelGenerator/Library/p4.txt
-../LevelGenerator/Library/p5.txt
-../LevelGenerator/Library/p6.txt
-../LevelGenerator/Library/p7.txt
+/Users/lois/Documents/M1ENS/GAPLocalProject/GAPLocalProject/GAP/LevelGenerator/Library/p0.txt
+/Users/lois/Documents/M1ENS/GAPLocalProject/GAPLocalProject/GAP/LevelGenerator/Library/p3.txt
+/Users/lois/Documents/M1ENS/GAPLocalProject/GAPLocalProject/GAP/LevelGenerator/Library/p4.txt
+/Users/lois/Documents/M1ENS/GAPLocalProject/GAPLocalProject/GAP/LevelGenerator/Library/p5.txt
+/Users/lois/Documents/M1ENS/GAPLocalProject/GAPLocalProject/GAP/LevelGenerator/Library/p6.txt
+/Users/lois/Documents/M1ENS/GAPLocalProject/GAPLocalProject/GAP/LevelGenerator/Library/p7.txt
