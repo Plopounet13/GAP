@@ -26,7 +26,8 @@ class Cuboid
 {
 public:
 	Cuboid(Point i, Vecteur d, double l, double h = c_height) : length(l), height(h), in(i), dir(d) {
-		d.mult(1./d.length());
+		//TODO: voir avec Thomas
+		dir.mult(1./dir.length());
 		out = in + dir*l;
 	}
 

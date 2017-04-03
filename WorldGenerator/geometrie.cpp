@@ -55,5 +55,5 @@ Point operator*(const Point& rhs, double lhs){
 
 Point operator+(const Point& lhs, const Point& rhs){
     Point res(lhs.x()+rhs.x(), lhs.y()+rhs.y(), lhs.z()+rhs.z());
-    return lhs;
+    return res;
 }
