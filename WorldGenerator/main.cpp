@@ -1,10 +1,11 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <math.h> 
+#include <cstring>
+#include <math.h>
 #include "createWorld.h"
 
-#define XCODE_DEBUG 1
+#define XCODE_DEBUG 0
 
 using namespace std;
 
@@ -16,37 +17,39 @@ void usage(){
 int main(int argc, const char* argv[]) {
 	ofstream out;
 	int seed;
-	
+	string listFileName = "platform_file_list.txt";
+
 #if XCODE_DEBUG != 0
 	out.open("level.dat");
 	seed = 42;
 	goto skipInit;
+	listFileName = "/Users/lois/Documents/M1ENS/GAPLocalProject/GAPLocalProject/GAP/platform_file_list.txt";
 #endif
-	
+
 	if (argc != 3){
 		cerr << "Error: Wrong number of parameters" << endl << endl;
 		usage();
 		exit (1);
 	}
-	
-	out.open(argv[1]);
+
+	out.open("GameEngine/Version1/Levels/"+(string)argv[1]+".user.dat");
 	if (out.fail()){
 		cerr << "Error: Impossible to create output file" << endl << endl;
 		usage();
 		exit(2);
 	}
-	
+
 	seed = atoi(argv[2]);
-	
+
 skipInit:
-	
-	
+
+
 	//TODO: Generate pseudo random serie to have install independent random
 	srand(seed);
 	gen.seed(seed);
-	
-	init_library("/Users/lois/Documents/M1ENS/GAPLocalProject/GAPLocalProject/GAP/platform_file_list.txt", bibli);
-	
+
+	init_library(listFileName, bibli);
+
 	createWorld(out);
 }
 
@@ -180,10 +183,10 @@ bool generateSubLevel(const Point &p)
 		}
 	}
 
-	if(sumCoefs == 0) 
+	if(sumCoefs == 0)
 		return false;
 
-	int 
+	int
 
 	return true;
 }

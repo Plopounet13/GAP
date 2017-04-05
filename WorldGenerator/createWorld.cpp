@@ -50,8 +50,7 @@ void init_library(const string& listFileName, Library& lib){
 		exit(144*12);
 	}
 	string fileName;
-	while (getline(fileList, fileName)){
-
+	while (fileList >> fileName){//getline(fileList, fileName)){
 		ifstream platFile(fileName);
 
 		if (platFile.fail()){
