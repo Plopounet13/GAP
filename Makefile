@@ -1,7 +1,7 @@
 PROG = WorldGenerator/main
 PRODNAME = generate_level
 # Variables pour la compilation des fichiers
-CC        =  clang++
+CC        =  g++
 CFLAGS    =  -Wall -O3
 STD = -std=c++11
 LIBRARY = Library Platform Point4
