@@ -215,7 +215,7 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
 	Point4 acceleration;
 	long double diminution = 0.4;
         PlatInstance* pi ;
-        bool ponctuelle ;
+        bool ponctuelle = false;
 	bool firstplat = true ;
         
 	while(t<1.0){

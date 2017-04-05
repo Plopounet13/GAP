@@ -1,13 +1,52 @@
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <math.h> 
 #include "createWorld.h"
 
+#define XCODE_DEBUG 0
 
 using namespace std;
 
-int main() {
-	createWorld();
+void usage(){
+	cerr << "usage:" << endl;
+	cerr << "\t./generate_level outputFile seed" << endl;
+}
+
+int main(int argc, const char* argv[]) {
+	ofstream out;
+	int seed;
+	
+#if XCODE_DEBUG != 0
+	out.open("level.dat");
+	seed = 42;
+	goto skipInit;
+#endif
+	
+	if (argc != 3){
+		cerr << "Error: Wrong number of parameters" << endl << endl;
+		usage();
+		exit (1);
+	}
+	
+	out.open(argv[1]);
+	if (out.fail()){
+		cerr << "Error: Impossible to create output file" << endl << endl;
+		usage();
+		exit(2);
+	}
+	
+	seed = atoi(argv[2]);
+
+skipInit:
+	
+	//TODO: Generate pseudo random serie to have install independent random
+	srand(seed);
+	gen.seed(seed);
+	
+	init_library("/Users/lois/Documents/M1ENS/GAPLocalProject/GAPLocalProject/GAP/platform_file_list.txt", bibli);
+	
+	createWorld(out);
 }
 
 /*

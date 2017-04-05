@@ -128,12 +128,12 @@ ostream& operator<< (ostream& out, const PlatInstance& p){
 		out << p.posSortie[i]-p.pos.getPos() << endl;
 		out << p.sortie4D[i] << endl;
 	}
-	cout << p.pos4D.size() << endl;
+	out << p.pos4D.size() << endl;
 	for(int i=0; i<int(p.pos4D.size())-1; ++i){
-		cout << p.pos4D[i]-p.pos << endl;
+		out << p.pos4D[i]-p.pos << endl;
 	}
 	
-	cout << p.pos4D.back()-p.pos;
+	out << p.pos4D.back()-p.pos;
 	
 	return out;
 }

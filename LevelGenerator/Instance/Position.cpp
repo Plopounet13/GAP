@@ -52,7 +52,7 @@ ostream& operator<< (ostream& out, const Position& p){
 	
 	out << p.pos << endl;
 	if (p.k!=-1){
-		cout << p.k << endl;
+		out << p.k << endl;
 	}
 	
 	out << p.rot << endl;

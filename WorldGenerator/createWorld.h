@@ -1,5 +1,6 @@
 #include <map>
 #include <vector>
+#include <random>
 //#include "../LevelGenerator/Library/Point.h"
 #include "../LevelGenerator/Library/Platform.h"
 #include "../LevelGenerator/Library/Library.h"
@@ -20,13 +21,14 @@ extern double c_theta_0;
 extern Library bibli;
 extern Instance world;
 
+extern std::default_random_engine gen;
+
 void init_library(const std::string& listFileName, Library& lib);
 
 class Cuboid
 {
 public:
 	Cuboid(Point i, Vecteur d, double l, double h = c_height) : length(l), height(h), in(i), dir(d) {
-		//TODO: voir avec Thomas
 		dir.mult(1./dir.length());
 		out = in + dir*l;
 	}
@@ -38,7 +40,7 @@ public:
 	double length, height;
 };
 
-void createWorld();
+void createWorld(std::ofstream& out);
 
 /*
 move(Point in, Vector dir); takes the  entry point of the cuboid and the director vector and moves the cuboid from (0,0,0), (1,0,0) to point, dir

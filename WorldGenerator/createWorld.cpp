@@ -1,7 +1,6 @@
 #include <fstream>
 #include "../LevelGenerator/levelGenerator.h"
 #include "createWorld.h"
-#include <random>
 
 
 const uint32_t c_world_size = 400;
@@ -13,11 +12,10 @@ double c_theta_0 = 90./nb_angles;
 Library bibli;
 Instance world;
 
+std::default_random_engine gen;
+
 using namespace std;
 
-
-int seed=42;
-default_random_engine gen(seed);
 // Renvoie X et Y tirés aléatoirements tels que la proba de la paire X,Y soit donnée par probas[X][Y]
 void choose(const vector<vector<int>>& probas, int& x, int& y){
 	int total = 0;
@@ -85,9 +83,15 @@ void update_world(std::vector<std::vector<std::vector<int> > >& world_bin, const
 	}
 }
 
-void next_cuboid(std::vector<std::vector<std::vector<int> > >& world_bin, std::vector<Cuboid> &cuboids)
+Point randPoint(int maxy, int maxz){
+	uniform_int_distribution<int> rdy(0, maxy);
+	uniform_int_distribution<int> rdz(0, maxz);
+	return Point(0, rdy(gen), rdz(gen));
+}
+
+void next_cuboid(std::vector<std::vector<std::vector<int> > >& world_bin, std::vector<Cuboid> &cuboids, Point& inPoint)
 {
-	std::map<std::pair<int, int>, double> probas;
+	std::vector<std::vector<int>> probas(2*nb_angles, vector<int>(2*nb_angles));
 
 	const Cuboid &last_cuboid  = cuboids.back();
 	Vecteur v = last_cuboid.dir;
@@ -98,6 +102,7 @@ void next_cuboid(std::vector<std::vector<std::vector<int> > >& world_bin, std::v
 
 	Vecteur e_x, e_y, e_z;
 	make_base(v, e_z, e_x, e_y);
+	//TODO: Pourquoi pas <= ?
 	for(int i = -nb_angles; i < nb_angles; ++i) { 
 		for(int j = -nb_angles; j < nb_angles; ++j) {
 			Vecteur currVect =   i*e_x + j*e_y + nb_angles/2*e_x;
@@ -117,47 +122,61 @@ void next_cuboid(std::vector<std::vector<std::vector<int> > >& world_bin, std::v
 			}
 
 			end_browse:
-			probas[std::make_pair(i,j)] = compute_proba(length);
+			probas[i + nb_angles][j+nb_angles] = compute_proba(length);
 		}
 	}
 
-	//TODO: Va falloir discuter de vos typage les gars...
+	//TODO: Va falloir discuter de vos typage les gars... (edit: on a transformer probas en vector, voir avec Thomas la validité)
 	int theta_1_choose, theta_2_choose;
-	//choose(probas, theta_1_choose, theta_2_choose);
-	//length = reverse_proba(probas[theta_1_choose][theta_2_choose]));
-	length = 80;
+	choose(probas, theta_1_choose, theta_2_choose);
+	length = reverse_proba(probas[theta_1_choose][theta_2_choose]);
 
-	//TODO: La taille du sous niveau ne va pas le faire
+	//TODO: La taille du sous niveau ne va pas le faire (edit: pseudo corrigé par multiplication par 10 #HugoKnows)
 	auto pair = std::make_pair(1,1);
 	auto new_cuboid = Cuboid(out + shift, pair.first * e_y + pair.second * e_x +  length*e_z, length);
 
-	//TODO: Parler avec Thomas de cette partie
+	//TODO: Parler avec Thomas de cette partie (bien positionner les point de début et fin)
 	Instance new_instance;
-	generationLocale(bibli, new_cuboid.in, new_cuboid.out, new_cuboid.length, new_cuboid.height, new_cuboid.height, new_instance);
+	
+	Point newOut = randPoint(new_cuboid.height*10, new_cuboid.height*10);
+	
+	generationLocale(bibli, inPoint, newOut+Point(new_cuboid.length*10, 0, 0),
+					 new_cuboid.length*10, new_cuboid.height*10, new_cuboid.height*10,
+					 new_instance);
+	
 	//Si in = new_cuboid.in plein de problemes (move need coin inf et generation locale need être placé à 0/0/0 pas directement là où tu en as besoin
+	
+	//TODO: où sont les plateformes de transition ? (Il faut rajouter celles entre last_cuboid et new_cuboid)
+	
 	//new_instance.move(in, dir);
 	world += new_instance;
 	
-	//TODO: où sont les plateformes de transition ?
 
 	cuboids.push_back(new_cuboid);
+	inPoint = newOut;
 }
 
-void createWorld() {
-	init_library("/Users/lois/Documents/M1ENS/GAPLocalProject/GAPLocalProject/GAP/platform_file_list.txt", bibli);
+void createWorld(ofstream& out) {
 
 	std::vector<std::vector<std::vector<int>>> world_bin(c_world_size, std::vector<std::vector<int> > (c_world_size, std::vector<int> (c_world_size, 0)));
 	std::vector<Cuboid> cuboids;
 
-	/// Create first cuboid
-	cuboids.push_back(Cuboid(Point(0,0,0), Vecteur(1, 0, 0), c_length_max));
-
 	uint32_t n = 10;
+	
+	//Create first cuboid
+	cuboids.emplace_back(Point(0, 0, 0), Point(1, 0, 0), c_length_max*10);
+	Point inPoint = randPoint(c_height*10, c_height*10);
+	Point outPoint = randPoint(c_height*10, c_height*10);
+	
+	//TODO: Place initial platform at inPoint
+	Instance sousNiveau;
+	generationLocale(bibli, inPoint, outPoint + Point(c_length_max*10, 0, 0), c_length_max*10, c_height*10, c_height*10, sousNiveau);
+	world+=sousNiveau;
+	
 	for(uint32_t i = 0; i < n; ++i) {
-		next_cuboid(world_bin, cuboids);
+		next_cuboid(world_bin, cuboids, outPoint);
 	}
 
-	ofstream out("map.dat");
 	out << world;
 	out.close();
 }
