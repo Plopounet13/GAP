@@ -37,8 +37,9 @@ int main(int argc, const char* argv[]) {
 	}
 	
 	seed = atoi(argv[2]);
-
+	
 skipInit:
+	
 	
 	//TODO: Generate pseudo random serie to have install independent random
 	srand(seed);
