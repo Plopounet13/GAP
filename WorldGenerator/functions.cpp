@@ -2,9 +2,9 @@
 
 /// returns false if something went wrong, true otherwise
 bool make_base(Vecteur input, Vecteur& xout, Vecteur& yout, Vecteur& zout){
-    if(input.x() == 0 and input.y() == 0 and input.z() == 0)
+    if(input.x() == 0 && input.y() == 0 && input.z() == 0)
         return false;
-    if(input.x() != 0 and input.y() != 0 and input.z() != 0){
+    if(input.x() != 0 && input.y() != 0 && input.z() != 0){
         xout.set(input.x()/input.length(), input.y()/input.length(), input.z()/input.length());
         yout.set(-input.y(), input.x(), 0);
         yout.mult(1/yout.length());
