@@ -17,6 +17,13 @@ Vec3<T>::Vec3(const Vec3<T>& v){
 }
 
 template <class T>
+Vec3<T>::Vec3(const Point& p){
+	x = p.x();
+	y = p.y();
+	z = p.z();
+}
+
+template <class T>
 Vec3<T>::Vec3(T v){
 	x=v;
 	y=v;

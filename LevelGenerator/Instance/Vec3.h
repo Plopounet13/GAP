@@ -2,6 +2,8 @@
 #define Vec3_h
 
 #include <iostream>
+#include "../../WorldGenerator/geometrie.h"
+
 
 template <class T>
 class Vec3 {
@@ -12,6 +14,7 @@ class Vec3 {
 public:
 	Vec3();
 	Vec3(const Vec3<T>& v);
+	Vec3(const Point& p);
 	Vec3(T v);
 	Vec3(T mx, T my, T mz);
 	

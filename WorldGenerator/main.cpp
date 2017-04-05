@@ -4,7 +4,7 @@
 #include <math.h> 
 #include "createWorld.h"
 
-#define XCODE_DEBUG 0
+#define XCODE_DEBUG 1
 
 using namespace std;
 
