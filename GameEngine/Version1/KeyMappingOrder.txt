@@ -1,0 +1,12 @@
+Avancer
+Reculer
+Gauche
+Droite
+Saut
+Crouch
+Plus4D
+MOins4D
+Pause
+
+
+Pas de touche sur plusieurs actions, pas de combinaison de touche pour une action
