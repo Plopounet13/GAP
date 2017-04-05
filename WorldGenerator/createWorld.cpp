@@ -74,14 +74,16 @@ uint32_t  reverse_proba(uint32_t proba) {
 	return proba+c_length_min;
 }
 
-void update_world(std::vector<std::vector<std::vector<int> > >& world_bin, const Cuboid &cuboid)
+void update_world(std::vector<std::vector<std::vector<bool> > >& world_bin, const Cuboid &cuboid)
 {
  	Vecteur e_x, e_y, e_z;
 	make_base(cuboid.dir, e_z, e_x, e_y);
-	for(uint32_t k = -c_height; k < c_height; ++k) {
-		for(uint32_t l = -c_height; l < c_height; ++l) {
-			Point currPos =   cuboid.in + k*e_x + l*e_y + nb_angles/2*e_x;
-			world_bin[currPos.x()][currPos.y()][currPos.z()]  = 1;
+	for(uint32_t k = -cuboid.height; k < cuboid.height; ++k) {
+		for(uint32_t l = -cuboid.height; l < cuboid.height; ++l) {
+            for(uint32_t m = 0; m < cuboid.length+c_height; ++m) {
+                Point currPos =   cuboid.in + k*e_x + l*e_y + m*e_z;
+                world_bin[currPos.x()][currPos.y()][currPos.z()]  = 1;
+            }
 		}
 	}
 }
@@ -92,7 +94,7 @@ Point randPoint(int maxy, int maxz){
 	return Point(0, rdy(gen), rdz(gen));
 }
 
-void next_cuboid(std::vector<std::vector<std::vector<int> > >& world_bin, std::vector<Cuboid> &cuboids, Point& inPoint, bool lastSubLevel)
+void next_cuboid(std::vector<std::vector<std::vector<bool> > >& world_bin, std::vector<Cuboid> &cuboids, Point& inPoint, bool lastSubLevel)
 {
 	std::vector<std::vector<int>> probas(2*nb_angles + 1, vector<int>(2*nb_angles + 1));
 
@@ -106,7 +108,6 @@ void next_cuboid(std::vector<std::vector<std::vector<int> > >& world_bin, std::v
 
 	Vecteur e_x, e_y, e_z;
 	make_base(v, e_z, e_x, e_y);
-	//TODO: Pourquoi pas <= ?
 	for(int i = -nb_angles; i <= nb_angles; ++i) {
 		for(int j = -nb_angles; j <= nb_angles; ++j) {
 			Vecteur currVect =   i*e_x + j*e_y + nb_angles/2*e_x;
@@ -163,26 +164,31 @@ void next_cuboid(std::vector<std::vector<std::vector<int> > >& world_bin, std::v
         PlatInstance premierePlat(ID_transition_plat, posPremierePlat, posSorties, sortie4D, pos4D, (float)rand()/(float)RAND_MAX);
         new_instance.addPlatform(premierePlat);
     }
-    {
-        int ID_plat;
-        if (lastSubLevel)
-            ID_plat = ID_last_plat;
-        else
-            ID_plat = ID_transition_plat;
-
+    if (lastSubLevel){
         Position posDernierePlat(0, newOut+Point(new_cuboid.length*10, 0, 0), Vec3<float>(0, 0, 0), Vec3<float>(1, 1, 1));
         vector<Position> posOut4D(1, posDernierePlat);
         vector<Vec3<float>> posSorties;
         vector<float> sortie4D;
-        PlatInstance dernierePlat(ID_plat, posDernierePlat, posSorties, sortie4D, posOut4D, (float)rand()/(float)RAND_MAX);
+        PlatInstance dernierePlat(ID_last_plat, posDernierePlat, posSorties, sortie4D, posOut4D, (float)rand()/(float)RAND_MAX);
 
         new_instance.addPlatform(dernierePlat);
+    }
+    else{
+        for(int i = 0; i<c_height; ++i){
+            Position posTransPlat(0, newOut+Point((new_cuboid.length+i)*10, 0, 0), Vec3<float>(0, 0, 0), Vec3<float>(1, 1, 1));
+            vector<Position> posOut4D(1, posTransPlat);
+            vector<Vec3<float>> posSorties;
+            vector<float> sortie4D;
+            PlatInstance plat_trans(ID_transition_plat, posTransPlat, posSorties, sortie4D, posOut4D, (float)rand()/(float)RAND_MAX);
+
+            new_instance.addPlatform(plat_trans);
+        }
     }
 
     ///* <end> Plateforme de transition *///
 
-	new_instance.move(new_cuboid.in, new_cuboid.dir);
-
+    update_world(world_bin, new_cuboid);
+	new_instance.move(new_cuboid.in*10, new_cuboid.dir);
 	world += new_instance;
 
 	cuboids.push_back(new_cuboid);
@@ -191,7 +197,8 @@ void next_cuboid(std::vector<std::vector<std::vector<int> > >& world_bin, std::v
 
 void createWorld(ofstream& out) {
 
-	std::vector<std::vector<std::vector<int>>> world_bin(c_world_size, std::vector<std::vector<int> > (c_world_size, std::vector<int> (c_world_size, 0)));
+	std::vector<std::vector<std::vector<bool>>> world_bin(c_world_size, std::vector<std::vector<bool> > (c_world_size, std::vector<bool> (c_world_size, 0)));
+	//TODO: Remplir des cases dans world_bin pour donner une forme au niveau
 	std::vector<Cuboid> cuboids;
 
 	uint32_t n = 10;

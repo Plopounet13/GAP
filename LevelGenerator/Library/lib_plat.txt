@@ -1,3 +1,5 @@
+%Pourquoi aucune plateforme ne peut être rescale jusqu'à 0 ?
+
 %Basic plat
 ID = 0
 additiveAcceleration = 0 0 0 0
