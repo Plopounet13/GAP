@@ -13,3 +13,5 @@ Saved
 *.o
 *.obj
 *.exe
+*.user.dat
+generate_level
