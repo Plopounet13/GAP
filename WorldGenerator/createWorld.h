@@ -12,10 +12,10 @@
 #include "functions.h"
 
 //TODO: NOOOOOON !!!! pas de variable globale dans un .h
-extern const uint32_t c_world_size;
+extern const int32_t c_world_size;
 
-extern const uint32_t c_height, c_length_min, c_length_max, c_phi_max, c_theta_max;
-extern const uint32_t nb_angles;
+extern const int32_t c_height, c_length_min, c_length_max, c_phi_max, c_theta_max;
+extern const int32_t nb_angles;
 extern double c_theta_0;
 
 extern Library bibli;
@@ -34,10 +34,10 @@ public:
 	}
 
 //private:
+	double length, height;
 	Point in, out;
 	//double theta, phi, psi;
 	Vecteur dir;
-	double length, height;
 };
 
 void createWorld(std::ofstream& out);
