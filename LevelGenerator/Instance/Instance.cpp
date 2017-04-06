@@ -1,7 +1,5 @@
 #include "Instance.h"
 
-#define PI 3.14159265
-
 using namespace std;
 
 extern double PI_180;
