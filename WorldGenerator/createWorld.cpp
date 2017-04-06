@@ -145,7 +145,7 @@ void next_cuboid(std::vector<std::vector<std::vector<bool> > >& world_bin, std::
 	//TODO: Parler avec Thomas de cette partie (bien positionner les point de début et fin)
 	Instance new_instance;
 
-	Point newOut = Point(0, 0, 0);//randPoint(c_height, c_height);
+	Point newOut = Point(0, 5, 5);//randPoint(c_height, c_height);
 
 	generationLocale(bibli, inPoint*100, (newOut+Point(new_cuboid.length, 0, 0))*100,
 					 new_cuboid.length*100, new_cuboid.height*100, new_cuboid.height*100,
@@ -211,7 +211,7 @@ void createWorld(ofstream& out) {
 	//TODO: Remplir des cases dans world_bin pour donner une forme au niveau
 	std::vector<Cuboid> cuboids;
 
-	uint32_t n = 1;
+	uint32_t n = 10;
 
 	//Create first cuboid
 	cuboids.emplace_back(Point(0, 5, 5), Point(1, 0, 0), c_length_max);
