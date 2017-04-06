@@ -146,9 +146,9 @@ void next_cuboid(std::vector<std::vector<std::vector<bool> > >& world_bin, std::
 	auto pair = std::make_pair(theta_1_choose-nb_angles, theta_2_choose-nb_angles);
 	auto new_cuboid = Cuboid(out + shift, pair.first * e_x + pair.second * e_y + length * e_z, length);
 
-	//TODO: Parler avec Thomas de cette partie (bien positionner les point de début et fin)
 	Instance new_instance;
 
+	//TODO: Passer sur des points randoms ?
 	Point newOut = Point(0, 5, 5);//randPoint(c_height, c_height);
 
 	generationLocale(bibli, inPoint*100, (newOut+Point(new_cuboid.length, 0, 0))*100,
@@ -200,8 +200,6 @@ void next_cuboid(std::vector<std::vector<std::vector<bool> > >& world_bin, std::
 
     update_world(world_bin, new_cuboid);
 
-	//TODO: second parameter should be the new lowest corner position not the center position
-	//Currently solving by adding rotation center to move
 	new_instance.move(inPoint*100, new_cuboid.dir, (new_cuboid.in - inPoint)*100);
 	world += new_instance;
 

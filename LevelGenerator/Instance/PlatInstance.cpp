@@ -1,8 +1,13 @@
+#include <algorithm>
 #include "PlatInstance.h"
 
 extern double PI_180;
 
 using namespace std;
+
+bool compare4D(const Position& a, const Position& b){
+	return (a.k < b.k);
+}
 
 PlatInstance::PlatInstance(int id,
 						   const Position& p,
@@ -15,6 +20,7 @@ PlatInstance::PlatInstance(int id,
 	sortie4D.swap(s4D);
 	posSortie.swap(pS);
 	pos4D.swap(p4);
+	sort(pos4D.begin(), pos4D.end(), compare4D);
 	ID=id;
 	rand=r;
 	// On considère que la position donnée est la position de l'entrée de la plateforme
@@ -83,6 +89,8 @@ void PlatInstance::rotate(const Vec3<float>& c, const Vec3<float>& dr){
 		p.rotate(c, dr, cosx, cosy, cosz, sinx, siny, sinz);
 }
 
+
+//TODO: change output in order to allow no pos4D
 ostream& operator<< (ostream& out, const PlatInstance& p){
     //out << "________________" << endl;
 	out << p.ID << endl;
@@ -93,6 +101,7 @@ ostream& operator<< (ostream& out, const PlatInstance& p){
 		out << p.posSortie[i] << endl;
 		out << p.sortie4D[i] << endl;
 	}
+	
 	out << p.pos4D.size() << endl;
 	for(int i=0; i<int(p.pos4D.size())-1; ++i){
 		out << p.pos4D[i]-p.pos << endl;

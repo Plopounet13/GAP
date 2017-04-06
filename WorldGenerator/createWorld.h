@@ -11,7 +11,7 @@
 #include "../LevelGenerator/Polynome.h"
 #include "functions.h"
 
-//TODO: NOOOOOON !!!! pas de variable globale dans un .h
+
 extern const int32_t c_world_size;
 
 extern const int32_t c_height, c_length_min, c_length_max, c_phi_max, c_theta_max;

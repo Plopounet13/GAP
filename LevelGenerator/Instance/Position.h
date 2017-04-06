@@ -23,6 +23,7 @@ public:
 	Position(const Position& p);
 	Position();
 	
+	friend bool compare4D(const Position& a, const Position& b);
 	bool kset();
 	
 	/**
@@ -66,5 +67,6 @@ public:
 	 */
 	friend std::ostream& operator<< (std::ostream& out, const Position& p);
 };
+
 
 #endif /* Instance_h */

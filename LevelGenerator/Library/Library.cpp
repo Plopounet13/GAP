@@ -91,7 +91,6 @@ bool f_atteintPointViaI(const Platform& p, Point4 point, int i)
 }
 
 
-//TODO: On fait une belle fonction pour ça. (cercle intersecte carré ?)
 bool f_atteintPoint(const Platform& p, Point4 point)
 {
 	// retourne true si, avec rotation d'axe Z, une sortie permet d'atteindre le point 
