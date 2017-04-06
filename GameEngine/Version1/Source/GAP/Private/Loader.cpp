@@ -71,7 +71,7 @@ bool ULoader::Load(FString InFilename,
 		y = FCString::Atof(*in_strings[index]);
 		safe_pp(index,num, FString::FromInt(__LINE__));
 		z = FCString::Atof(*in_strings[index]);
-		rot_actor.Emplace(x, y, z);
+		rot_actor.Emplace(y, z, x);
 			
 
 		safe_pp(index, num, FString::FromInt(__LINE__));
@@ -125,7 +125,7 @@ bool ULoader::Load(FString InFilename,
 			y = FCString::Atof(*in_strings[index]);
 			safe_pp(index,num, FString::FromInt(__LINE__));
 			z = FCString::Atof(*in_strings[index]);
-			rot_4D.Emplace(x, y, z);
+			rot_4D.Emplace(y, z, x);
 				
 			safe_pp(index, num, FString::FromInt(__LINE__));
 			x = FCString::Atof(*in_strings[index]);
