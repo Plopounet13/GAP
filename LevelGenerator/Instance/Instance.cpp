@@ -42,7 +42,7 @@ void Instance::rescale(const Vec3<float>& c,const Vec3<float>& ds){
 	}
 }
 
-void Instance::move(const Vec3<float>& newX, const Vec3<float>& d){
+void Instance::move(const Vec3<float>& c, const Vec3<float>& newX, const Vec3<float>& d){
 	Vec3<float> tmp = newX;
 	float x,y,z;
 	
@@ -58,7 +58,7 @@ void Instance::move(const Vec3<float>& newX, const Vec3<float>& d){
 	
 	float norm1 = sqrt(x*x + y*y);
 	
-	if (norm1){
+	if (norm1 != 0){
 		cosz = x/norm1;
 		sinz = -y/norm1;
 	}
@@ -74,7 +74,7 @@ void Instance::move(const Vec3<float>& newX, const Vec3<float>& d){
 		siny = -z/norm2;
 	}
 	
-	Vec3<float> dr(0, ((siny>0)?acos(cosy) : -acos(cosy))*180./M_PI, -((sinz>0)?acos(cosz) : -acos(cosz))*180./M_PI), c(0,0,0);
+	Vec3<float> dr(0, ((siny>0)?acos(cosy) : -acos(cosy))*180./M_PI, -((sinz>0)?acos(cosz) : -acos(cosz))*180./M_PI);
 
 	rotate(c, dr, cosx, cosy, cosz, sinx, siny, -sinz);
 	translate(d);

@@ -53,7 +53,7 @@ int main(int argc, const char* argv[]) {
 #if XCODE_DEBUG != 0
 	out.open("level.dat");
 	seed = 42;
-	listFileName = "/Users/lois/Documents/M1ENS/GAPLocalProject/GAPLocalProject/GAP/platform_file_list.txt";
+	listFileName = "/Users/lois/Documents/M1ENS/GAPLocalProject/GAPLocalProject/GAP/my_platform_file_list.txt";
 	goto skipInit;
 #endif
 

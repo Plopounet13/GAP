@@ -23,8 +23,9 @@ public:
     void set(double a, double b, double c);
     void mult(double lambda);
     friend Point operator*(double lhs, const Point& rhs);
-    friend Point operator*(const Point& rhs, double lhs);
-    friend Point operator+(const Point& lhs, const Point& rhs);
+	friend Point operator*(const Point& rhs, double lhs);
+	friend Point operator+(const Point& lhs, const Point& rhs);
+	friend Point operator-(const Point& lhs, const Point& rhs);
 	friend void fromPoint(Point const& orig, Point4& out);
 
 private:
