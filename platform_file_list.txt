@@ -1,5 +1,5 @@
-LevelGenerator/Library/p0.txt
-LevelGenerator/Library/p4.txt
-LevelGenerator/Library/p5.txt
-LevelGenerator/Library/p6.txt
-LevelGenerator/Library/p7.txt
+Library/p0.txt
+Library/p4.txt
+Library/p5.txt
+Library/p6.txt
+Library/p7.txt

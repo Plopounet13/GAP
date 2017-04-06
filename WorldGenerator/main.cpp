@@ -2,7 +2,9 @@
 #include <fstream>
 #include <vector>
 #include <cstring>
+#include <cstdio>
 #include <math.h>
+#include <windows.h>
 #include "createWorld.h"
 
 #define XCODE_DEBUG 0
@@ -46,9 +48,11 @@ void usage(){
 
 
 int main(int argc, const char* argv[]) {
+
+	
 	ofstream out;
 	int seed;
-	string listFileName = "platform_file_list.txt";
+	string listFileName = "..\\/..\\/platform_file_list.txt";
 
 #if XCODE_DEBUG != 0
 	out.open("level.dat");
@@ -58,12 +62,12 @@ int main(int argc, const char* argv[]) {
 #endif
 
 	if (argc != 3){
-		cerr << "Error: Wrong number of parameters" << endl << endl;
+		cerr << "Error: Wrong number of parameters " << endl << endl;
 		usage();
 		exit (1);
 	}
 
-	out.open("GameEngine/Version1/Levels/"+(string)argv[1]+".user.dat");
+	out.open("..\\/..\\/Levels\\/" + (string)argv[1]+".user.dat");
 	if (out.fail()){
 		cerr << "Error: Impossible to create output file" << endl << endl;
 		usage();
@@ -80,8 +84,10 @@ skipInit:
 	gen.seed(seed);
 
 	init_library(listFileName, bibli);
-
+	out << seed << endl;
 	createWorld(out);
+	out.close();
+	return 0;
 }
 
 

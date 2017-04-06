@@ -45,13 +45,17 @@ void choose(const vector<vector<int>>& probas, int& x, int& y){
 
 
 void init_library(const string& listFileName, Library& lib){
+	ofstream foo;
+	foo.open("yop.txt");
+	foo << "etyuo " << endl;
 	ifstream fileList(listFileName);
 	if (fileList.fail()){
-		cerr << "Impossible d'ouvrir la liste de fichiers de plateforme " + listFileName << endl;
+		foo << "Impossible d'ouvrir la liste de fichiers de plateforme " + listFileName << endl;
 		exit(144*12);
 	}
 	string fileName;
 	while (fileList >> fileName){//getline(fileList, fileName)){
+		foo << fileName << endl;
 		ifstream platFile(fileName);
 
 		if (platFile.fail()){
