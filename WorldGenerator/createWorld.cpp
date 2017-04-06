@@ -144,15 +144,15 @@ void next_cuboid(std::vector<std::vector<std::vector<bool> > >& world_bin, std::
 	//TODO: Parler avec Thomas de cette partie (bien positionner les point de début et fin)
 	Instance new_instance;
 
-	Point newOut = Point(0, 0, 0);
+	Point newOut = Point(0, 0, 0);//randPoint(c_height, c_height);
 
-	generationLocale(bibli, inPoint*10, (newOut+Point(new_cuboid.length, 0, 0))*10,
-					 new_cuboid.length*10, new_cuboid.height*10, new_cuboid.height*10,
+	generationLocale(bibli, inPoint*100, (newOut+Point(new_cuboid.length, 0, 0))*100,
+					 new_cuboid.length*100, new_cuboid.height*100, new_cuboid.height*100,
 					 new_instance);
 
     ///* <begin> Plateforme de transition *///
     {
-        Position posPremierePlat(0, inPoint*10, Vec3<float>(0, 0, 0), Vec3<float>(1, 1, 1));
+        Position posPremierePlat(0, inPoint*100, Vec3<float>(0, 0, 0), Vec3<float>(1, 1, 1));
         vector<Vec3<float>> posSorties;
         vector<float> sortie4D;
         vector<Position> pos4D(1, posPremierePlat);
@@ -161,7 +161,7 @@ void next_cuboid(std::vector<std::vector<std::vector<bool> > >& world_bin, std::
         new_instance.addPlatform(premierePlat);
     }
     if (lastSubLevel){
-        Position posDernierePlat(0, (newOut+Point(new_cuboid.length, 0, 0))*10, Vec3<float>(0, 0, 0), Vec3<float>(1, 1, 1));
+        Position posDernierePlat(0, (newOut+Point(new_cuboid.length, 0, 0))*100, Vec3<float>(0, 0, 0), Vec3<float>(1, 1, 1));
         vector<Position> posOut4D(1, posDernierePlat);
         vector<Vec3<float>> posSorties;
         vector<float> sortie4D;
@@ -171,7 +171,7 @@ void next_cuboid(std::vector<std::vector<std::vector<bool> > >& world_bin, std::
     }
     else{
         for(int i = 0; i<c_height; ++i){
-            Position posTransPlat(0, (newOut+Point((new_cuboid.length+i), 0, 0))*10, Vec3<float>(0, 0, 0), Vec3<float>(1, 1, 1));
+            Position posTransPlat(0, (newOut+Point((new_cuboid.length+i), 0, 0))*100, Vec3<float>(0, 0, 0), Vec3<float>(1, 1, 1));
             vector<Position> posOut4D(1, posTransPlat);
             vector<Vec3<float>> posSorties;
             vector<float> sortie4D;
@@ -184,10 +184,10 @@ void next_cuboid(std::vector<std::vector<std::vector<bool> > >& world_bin, std::
     ///* <end> Plateforme de transition *///
 
     update_world(world_bin, new_cuboid);
-	
+
 	//TODO: second parameter should be the new lowest corner position not the center position
 	//Currently solving by adding rotation center to move
-	new_instance.move(inPoint*10, new_cuboid.dir, (new_cuboid.in - inPoint)*10);
+	new_instance.move(inPoint*100, new_cuboid.dir, (new_cuboid.in - inPoint)*100);
 	world += new_instance;
 
 	cuboids.push_back(new_cuboid);
@@ -200,15 +200,15 @@ void createWorld(ofstream& out) {
 	//TODO: Remplir des cases dans world_bin pour donner une forme au niveau
 	std::vector<Cuboid> cuboids;
 
-	uint32_t n = 1;
+	uint32_t n = 0;
 
 	//Create first cuboid
 	cuboids.emplace_back(Point(0, 5, 5), Point(1, 0, 0), c_length_max);
-	Point inPoint = Point(0, 0, 0);//randPoint(c_height*10, c_height*10);
-	Point outPoint = Point(0, 5, 5);//randPoint(c_height*10, c_height*10);
+	Point inPoint = Point(0, 0, -10);//randPoint(c_height, c_height);
+	Point outPoint = Point(0, 5, 5);//randPoint(c_height, c_height);
 
-	
-	Position posPremierePlat(0, inPoint*10, Vec3<float>(0, 0, 0), Vec3<float>(1, 1, 1));
+
+	Position posPremierePlat(0, inPoint*100, Vec3<float>(0, 0, 0), Vec3<float>(1, 1, 1));
 	vector<Vec3<float>> posSorties;
 	vector<float> sortie4D;
 	vector<Position> pos4D(1, posPremierePlat);
@@ -216,10 +216,10 @@ void createWorld(ofstream& out) {
 	PlatInstance premierePlat(ID_first_plat, posPremierePlat, posSorties, sortie4D, pos4D, (float)rand());
 
 	Instance sousNiveau;
-	generationLocale(bibli, inPoint*10, (outPoint+ Point(c_length_max, 0, 0))*10, c_length_max*10, c_height*10, c_height*10, sousNiveau);
-	//sousNiveau.addPlatform(premierePlat);
-    for(int i = 0; i<c_height and n>0; ++i){
-        Position posTransPlat(0, (outPoint+Point((c_length_max+i), 0, 0))*10, Vec3<float>(0, 0, 0), Vec3<float>(1, 1, 1));
+	generationLocale(bibli, inPoint*100, (outPoint+ Point(c_length_max, 0, 0))*100, c_length_max*100, c_height*100, c_height*100, sousNiveau);
+	sousNiveau.addPlatform(premierePlat);
+    for(int i = 0; i<c_height; ++i){
+        Position posTransPlat(0, (outPoint+Point((c_length_max+i), 0, 0))*100, Vec3<float>(0, 0, 0), Vec3<float>(1, 1, 1));
         vector<Position> posOut4D(1, posTransPlat);
         vector<Vec3<float>> posSorties;
         vector<float> sortie4D;
@@ -227,7 +227,7 @@ void createWorld(ofstream& out) {
 
         sousNiveau.addPlatform(plat_trans);
     }
-	
+
 	world+=sousNiveau;
 
 	for(uint32_t i = 0; i < n; ++i) {

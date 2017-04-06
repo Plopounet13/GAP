@@ -76,12 +76,12 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
 {
 	// input : liste de platformes, un rectangle avec entree et sortie
 	// output : une liste d'instance de platformes (sauf entree et sortie)
-	
+
 	// largeur -> x ; profondeur -> y ; hauteur -> z
-	
-	
-	
-	
+
+
+
+
 	int** pasc = (int**) malloc((nbPointBezier+1)*sizeof(int*)) ;
 	for (int i = 0 ; i <= nbPointBezier ; i++) {
 		pasc[i] = (int*) malloc((i+1)*sizeof(int)) ;
@@ -93,7 +93,7 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
 			pasc[i][j] = pasc[i-1][j-1] + pasc[i-1][j] ;
 		}
 	}
-	
+
 	// Pt Bezier temporaires
 	Point4 temp ;
 	vector<Point4> tempBezier ;
@@ -105,7 +105,7 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
 			tempBezier.push_back(temp) ;
 		// 5000 pour que le baryncentre se passe bien pour une dimension torique, on repasse plus tard entre  0 et 1000.
 	}
-	
+
 	// tri
 	pointBezier[0] = entree ;
 	sort(tempBezier.begin(), tempBezier.end(), bind(triBezier,placeholders::_1,placeholders::_2,entree,sortie));
@@ -113,16 +113,16 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
 		pointBezier[i] = tempBezier[i-1] ;
 	}
 	pointBezier[nbPointBezier-1] = sortie ;
-	
-	
+
+
 	//// Ecartement pour remplir le pave (peut theoriquement fail... mais bon en pratique...)
-	
+
 	// min et max atteints par courbe actuelle
-	
+
 	long double minX=entree.getX(), maxX=entree.getX(), minY=entree.getY(), maxY=entree.getY(), minZ=entree.getZ(), maxZ=entree.getZ() ;
 	//pas de 0.02 ok (50* ancien BezierT) ? faire avec polynomes (3*durandkerner + recalcul polynomes) ?
 	for (int i = 1 ; i<=50 ; i++) {
-		
+
 		//ancien BezierT
 		long double x=0,y=0,z=0,k=0 ;
 		long double t = i/50 ;
@@ -133,31 +133,31 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
 			z += coef * pointBezier[j].getZ() ;
 			k += coef * pointBezier[j].getK() ;
 		}
-		
+
 		minX = min(minX,x) ;
 		maxX = max(maxX,x) ;
 		minY = min(minY,y) ;
 		maxY = max(maxY,y) ;
 		minZ = min(minZ,z) ;
 		maxZ = max(maxZ,z) ;
-		
+
 	}
-	
+
 	//ratio d'ecartement (laisse 0.05 de marge de chaque cote)
-	
+
 	long double resizeX = 0.9*largeur/(maxX - minX) ;
 	long double resizeY = 0.9*profondeur/(maxY - minY) ;
 	long double resizeZ = 0.9*hauteur/(maxZ - minZ) ;
-	
+
 	//ecartement
-	
+
 	for (int i = 1; i < nbPointBezier-1 ; i++) {
 		Point4 temp = pointBezier[i] ;
 		int x = temp.getX() , y = temp.getY() , z = temp.getZ() , k = temp.getK() ;
 		pointBezier[i] =   Point4((x-minX+0.05*largeur)*resizeX, (y-minY+0.05*profondeur)*resizeY, (z-minZ+0.05*hauteur)*resizeZ, k) ;
 	}
-	
-	
+
+
 	/*
 	 // utilise comme demo en mi-rendu
 	 pointBezier[0] = entree ;
@@ -167,10 +167,10 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
 	 pointBezier[4] = Point4(8000,25000,-200,-100) ;
 	 pointBezier[nbPointBezier-1] = sortie ;
 	 */
-	
-	
+
+
 	//// Calcul des polynomes de Bezier
-	
+
 	vector<long double> Vx, Vy, Vz, Vk ;
 	Vx.resize(nbPointBezier+1) ;
 	Vy.resize(nbPointBezier+1) ;
@@ -195,34 +195,34 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
 	By = Vy ;
 	Bz = Vz ;
 	Bk = Vk ;
-	
-	
+
+
 	for (int i = 0 ; i <= nbPointBezier ; i++)
 		free(pasc[i]) ;
 	free(pasc) ;
-	
+
 	ConstructionHeaviside(largeur, profondeur, hauteur);
-	
+
 	// reduire la librairie ?
 	//Library lib = subLibrary(bibli, entree, sortie) ;
-	
-	
+
+
 	//Instance karabonga ; // contiendra la liste des instance de platformes
 	long double t = 0.0 ; // parametre actuel (suppose)
 	Point4 position = entree ; // position actuelle
 	Point4 vitesse = Vitmin ; // vitesse actuelle
-	
+
 	Point4 acceleration;
 	long double diminution = 0.4;
         PlatInstance* pi ;
         bool ponctuelle = false;
 	bool firstplat = true ;
-        
+
 	while(t<1.0){
-		
+
 		Point4 debutplat = arrival(position, vitesse+acceleration, t) ; // debut platforme suivante (modifie t)
 		vitesse = bound(vitesse+Point4(2,2,2,2),Vitmin,Vitmax) ; // vitesse pour la platforme suivante (pifometre ?)
-		
+
                 if (!firstplat && ponctuelle) {
                         int x1=position.getX(), y1=position.getY() ; // position plateforme ponctuelle
                         int x2=debutplat.getX(), y2=debutplat.getY() ; // debut plat suivante
@@ -233,16 +233,16 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
                 }
                 else
                         firstplat = false ;
-                
+
 		position = debutplat ;
-		
+
 		int id ;
 		float rotation ;
 		long double t_fin ;
 		Point4 finPlat ;
 		Point4 acc;
 		ponctuelle = choixPlatforme(bibli, position, t, id, rotation, t_fin, finPlat, acc) ;
-		
+
 		if (ponctuelle) {
 			rotation=0 ;
 			finPlat = position ;
@@ -250,17 +250,17 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
 		else {
 			t = t_fin ;
 		}
-		
+
 		int x = position.getX() , y = position.getY(), z = position.getZ() , k = position.getK() ;
 		Position pos = Position(k, // entree 4D
 								Vec3<float>(x,y,z),// position d'entree
 								Vec3<float>(0.0,0.0,rotation), // rotation
 								Vec3<float>(1.0,1.0,1.0)) ;  // scale
-		
+
 		vector<Vec3<float>> posSortie ; // position de la sortie (on en met qu'une ?)
 		vector<float> sortie4D ;
 		vector<Position> pos4D ;
-		
+
 		if (! ponctuelle) {
 			// sortie donne relatif a la platforme, donc doit inverser la rotation
 			int xtemp = finPlat.getX() , ytemp = finPlat.getY() ;
@@ -297,7 +297,7 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
                         pos4D.push_back(pos3) ;
                         pos4D.push_back(pos4) ;
                 }
-		
+
 		pi = new PlatInstance(id,pos,posSortie,sortie4D,pos4D,rand()) ;
                 if (! ponctuelle) {
                         karabonga.addPlatform(*pi) ;
@@ -306,7 +306,7 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
 		acceleration = acceleration+acc;
 		position = finPlat ;
 	}
-        
+
         if (ponctuelle) {
                 int x1=position.getX(), y1=position.getY() ; // position derniere plateforme
                 int x2=sortie.getX(), y2=sortie.getY() ; // position de fin
@@ -315,12 +315,12 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
                 pi->rotate(Vec3<float>(0,0,rot)) ;
                 karabonga.addPlatform(*pi) ;
         }
-	
+
 	//posttraitement
-	
-	
+
+
 	//return karabonga ;
-	
+
 }
 
 void ConstructionHeaviside(int largeur, int profondeur, int hauteur){
@@ -405,7 +405,7 @@ void ConstructionHeaviside(int largeur, int profondeur, int hauteur){
 			}
 		}
 	}
-	
+
 }
 
 Point4 HeavT(long double t){
@@ -424,13 +424,13 @@ bool choixPlatforme(const Library& bibli, Point4 position, long double t, int& i
 	// warning : id, rotation, t_fin, finPlat, acc sont modifiés
 	// input : bibli, position de debut de platforme, avec parametre estime t, + parametres modifiables
 	// output : booleen true si platforme ponctuelle, les autres informations seront dans les parametres modifiés
-	
+
 	bool ponctuelle ;
-	
+
 	if ((((float)rand()/(float)RAND_MAX)<probaPonctuelle)||t > LAST_T) { // proba de base
 		ponctuelle = true ;
 	}
-	
+
 	else {
 		// calculs de derivees, donnant la direction locale
 		long double hsaut = Vitmin.norm2()*2*Vitmin.getZ()/G ;
@@ -448,7 +448,7 @@ bool choixPlatforme(const Library& bibli, Point4 position, long double t, int& i
 			finPlat = royalT(t_fin) ; // Point4 de fin de platforme souhaite
 			bibli.select(bind(f_atteintPoint,placeholders::_1,finPlat-position),temp) ; // platformes pouvant atteindre le point souhaite
 		}
-		
+
 		if (temp.size()!=0) {
 			// on recupere une platformes random parmis celle possibles
 			int poidstotal = 0 ;
@@ -461,7 +461,7 @@ bool choixPlatforme(const Library& bibli, Point4 position, long double t, int& i
 				r=r-temp[k]->getApparitionWeight()-1 ;
 				k++ ;
 			}
-			
+
 			Platform* PF = temp[k] ;
 			id = PF->getID() ; // recupere ID
 			acc = PF->getAddAcceleration();
@@ -520,7 +520,7 @@ bool choixPlatforme(const Library& bibli, Point4 position, long double t, int& i
 			ponctuelle = true ;
 		}
 	}
-	
+
 	if (ponctuelle) {
 		// on recupere une platforme ponctuelle aleatoirement
 		vector<Platform *> temp ;
@@ -540,7 +540,7 @@ bool choixPlatforme(const Library& bibli, Point4 position, long double t, int& i
 		id = temp[k]->getID() ; // recupere ID
 		acc = temp[k]->getAddAcceleration();
 	}
-	
+
 	return ponctuelle ;
 }
 
@@ -549,7 +549,7 @@ Library subLibrary(Library const& bibli, Point4 entree, Point4 sortie)
 {
 	// choisi 8 plateformes dans la librairie, permet d'eviter les sous-niveaux trop heterogenes
 	// a reecrire (fct f_monte etc.)
-	
+
 	int nbMonte = 1 ;
 	int nbPlat = 4 ;
 	int nbDescend = 1 ;
@@ -558,7 +558,7 @@ Library subLibrary(Library const& bibli, Point4 entree, Point4 sortie)
 	long double l = normse.norm3();
 	long double z = normse.getZ() ;
 	long double sinus = z/l;
-	
+
 	if (sinus >= 0.5) {
 		nbMonte += 2 ;
 	}
@@ -576,10 +576,10 @@ Library subLibrary(Library const& bibli, Point4 entree, Point4 sortie)
 	else {
 		nbDescend += 2 ;
 	}
-	
+
 	Library ret = Library() ;
 	vector<Platform *> temp ;
-	
+
 	bibli.select(f_monte,temp) ;
 	if (temp.size()==0)
 		bibli.select(f_true,temp) ;
@@ -587,7 +587,7 @@ Library subLibrary(Library const& bibli, Point4 entree, Point4 sortie)
 		x = rand() % temp.size() ;
 		ret.push(temp[x]) ;
 	}
-	
+
 	temp.clear() ;
 	bibli.select(f_plat,temp) ;
 	if (temp.size()==0)
@@ -596,7 +596,7 @@ Library subLibrary(Library const& bibli, Point4 entree, Point4 sortie)
 		x = rand() % temp.size() ;
 		ret.push(temp[x]) ;
 	}
-	
+
 	temp.clear() ;
 	bibli.select(f_descend,temp) ;
 	if (temp.size()==0)
@@ -605,7 +605,7 @@ Library subLibrary(Library const& bibli, Point4 entree, Point4 sortie)
 		x = rand() % temp.size() ;
 		ret.push(temp[x]) ;
 	}
-	
+
 	return ret ;
 }
 
@@ -633,7 +633,7 @@ Point4 arrivalJump(Point4 depart, Point4 direction, Point4 vitesse)
 {
 	// fonction utilisee par la fonction arrival
 	// renvoie le point correspondant au debut de la prochaine platforme, avec pour objectif un point que l'on espere valide mais faisant les corrections pour satisfaire la physique et la vitesse
-	
+
 	direction = direction - depart;
 	long double x = direction.getX();
 	long double y = direction.getY();
@@ -730,7 +730,7 @@ Point4 arrival(Point4 depart, Point4 vitesse, long double& t0)
 	// input : position actuelle de la generation (fin de platforme), proche du parametre t0 de la courbe royale, et vitesse possible du joueur
 	// output : calcul le debut souhaité de la prochaine platforme, puis appelle arrivalJump
 	// warning : modifie t0
-	
+
 	Point4 arrive ;
 	long double t = 1.0;
 	long double pas = t-t0 ;
@@ -791,14 +791,14 @@ Point4 arrival(Point4 depart, Point4 vitesse, long double& t0)
 long double findT (Point4 position, long double epsilon)
 {
 	// trouve t€[0,1] minimisant |B(t)-position|²
-	
+
 	Polynome Px, Py, Pz, D ;
 	long double x=position.getX(), y=position.getY(), z=position.getZ() ;
 	Px = Bx + Polynome(-x) ;
 	Py = By + Polynome(-y) ;
 	Pz = Bz + Polynome(-z) ;
 	D = Px*Px + Py*Py + Pz*Pz ;
-	
+
 	vector<long double> extremum = derive(D).durandkerner(epsilon) ;
 	extremum.push_back(0) ;
 	extremum.push_back(1) ;
