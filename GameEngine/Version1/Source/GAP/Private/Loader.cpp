@@ -42,6 +42,8 @@ bool ULoader::Load(FString InFilename,
 	begin_4D.Add(0);
 	NbPlatOut = 0;
 	int32 num = in_strings.Num()-1;
+	safe_pp(index, num, FString::FromInt(__LINE__));
+	//ignore first line -> seed
 	while (index < num){
 		++NbPlatOut;
 		float x, y, z;
@@ -233,8 +235,12 @@ bool ULoader::Scan(TArray<FString> &LevelList) {
 	return true;
 }
 
-bool ULoader::LaunchGenerator() {
-	FPlatformProcess::CreateProc(TEXT("C:\\Windows\\notepad.exe"), nullptr, true, false, false, nullptr, 0, nullptr, nullptr);
-	print("plop");
+bool ULoader::LaunchGenerator(const FString LevelName, const FString Seed) {
+	FString Executable = (FPaths::GameDir() + "/generator.exe");
+	
+	FString arguments = LevelName + " " + Seed;
+	
+	FProcHandle Pid = FPlatformProcess::CreateProc(*Executable, *arguments, true, false, false, nullptr, 0, nullptr, nullptr);
+	FPlatformProcess::WaitForProc(Pid);
 	return true;
 }

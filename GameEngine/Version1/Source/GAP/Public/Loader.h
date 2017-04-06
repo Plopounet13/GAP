@@ -46,5 +46,5 @@ public:
 	static bool Scan(TArray<FString> &LevelList);
 
 	UFUNCTION(BlueprintCallable, Category = "LevelLoader")
-	static bool LaunchGenerator();
+	static bool LaunchGenerator(const FString LevelName, const FString Seed);
 };
