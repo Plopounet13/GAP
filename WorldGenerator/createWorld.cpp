@@ -64,12 +64,12 @@ void init_library(const string& listFileName, Library& lib){
 	}
 }
 
-uint32_t  compute_proba(uint32_t length) {
+uint32_t compute_proba(uint32_t length) {
 	if(length < c_length_min) return 0;
 	else return length-c_length_min;
 }
 
-uint32_t  reverse_proba(uint32_t proba) {
+uint32_t reverse_proba(uint32_t proba) {
 	return proba+c_length_min;
 }
 
@@ -109,7 +109,7 @@ void next_cuboid(std::vector<std::vector<std::vector<bool> > >& world_bin, std::
 	make_base(v, e_z, e_x, e_y);
 	for(int i = -nb_angles; i <= nb_angles; ++i) {
 		for(int j = -nb_angles; j <= nb_angles; ++j) {
-			Vecteur currVect =   i*e_x + j*e_y + nb_angles/2*e_x;
+			Vecteur currVect =   i*e_x + j*e_y + nb_angles/2*e_z;
 			Vecteur f_x, f_y, f_z;
 			make_base(currVect, f_z, f_x, f_y);
 
@@ -118,8 +118,8 @@ void next_cuboid(std::vector<std::vector<std::vector<bool> > >& world_bin, std::
 				for(uint32_t k = -c_height; k < c_height; ++k) {
 					for(uint32_t l = -c_height; l < c_height; ++l) {
 
-						Vecteur currPos = out + shift + k * e_y + l * e_x +  length*e_z ;
-						if(world_bin[currPos.x()][currPos.y()][currPos.z()]  != 0) {
+						Vecteur currPos = out + shift + k * e_x + l * e_y +  length*e_z ;
+						if(world_bin[currPos.x()][currPos.y()][currPos.z()]) {
 							goto end_browse;
 						}
 
@@ -138,21 +138,18 @@ void next_cuboid(std::vector<std::vector<std::vector<bool> > >& world_bin, std::
 	length = reverse_proba(probas[theta_1_choose][theta_2_choose]);
 
 
-	auto pair = std::make_pair(theta_1_choose, theta_2_choose);
-	auto new_cuboid = Cuboid(out + shift, pair.first * e_y + pair.second * e_x +  length * e_z, length);
+	auto pair = std::make_pair(theta_1_choose-nb_angles, theta_2_choose-nb_angles);
+	auto new_cuboid = Cuboid(out + shift, pair.first * e_x + pair.second * e_y + length * e_z, length);
 
 	//TODO: Parler avec Thomas de cette partie (bien positionner les point de début et fin)
 	Instance new_instance;
 
-	Point newOut = randPoint(new_cuboid.height*10, new_cuboid.height*10);
+	Point newOut = Point(0, 0, 0);
 
-	generationLocale(bibli, inPoint, newOut+Point(new_cuboid.length*10, 0, 0),
+	generationLocale(bibli, inPoint*10, newOut*10+Point(new_cuboid.length*10, 0, 0),
 					 new_cuboid.length*10, new_cuboid.height*10, new_cuboid.height*10,
 					 new_instance);
 
-	//Si in = new_cuboid.in plein de problemes (move need coin inf et generation locale need être placé à 0/0/0 pas directement là où tu en as besoin
-
-	//TODO: où sont les plateformes de transition ? (Il faut rajouter celles entre last_cuboid et new_cuboid)
     ///* <begin> Plateforme de transition *///
     {
         Position posPremierePlat(0, Vec3<float>(0, 50, 50), Vec3<float>(0, 0, 0), Vec3<float>(1, 1, 1));
@@ -187,7 +184,7 @@ void next_cuboid(std::vector<std::vector<std::vector<bool> > >& world_bin, std::
     ///* <end> Plateforme de transition *///
 
     update_world(world_bin, new_cuboid);
-	new_instance.move(new_cuboid.in*10, new_cuboid.dir);
+	//new_instance.move(new_cuboid.in*10, new_cuboid.dir);
 	world += new_instance;
 
 	cuboids.push_back(new_cuboid);
@@ -200,15 +197,15 @@ void createWorld(ofstream& out) {
 	//TODO: Remplir des cases dans world_bin pour donner une forme au niveau
 	std::vector<Cuboid> cuboids;
 
-	uint32_t n = 10;
+	uint32_t n = 0;
 
 	//Create first cuboid
 	cuboids.emplace_back(Point(0, 5, 5), Point(1, 0, 0), c_length_max);
-	Point inPoint = Point(0, 50, 50);//randPoint(c_height*10, c_height*10);
-	Point outPoint = Point(0, 50, 50);//randPoint(c_height*10, c_height*10);
+	Point inPoint = Point(0, 0, 0);//randPoint(c_height*10, c_height*10);
+	Point outPoint = Point(0, 5, 5);//randPoint(c_height*10, c_height*10);
 
 	//TODO: Place initial platform at inPoint
-	Position posPremierePlat(0, Vec3<float>(0, 50, 50), Vec3<float>(0, 0, 0), Vec3<float>(1, 1, 1));
+	Position posPremierePlat(0, Vec3<float>(0, 0, 0), Vec3<float>(0, 0, 0), Vec3<float>(1, 1, 1));
 	vector<Vec3<float>> posSorties;
 	vector<float> sortie4D;
 	vector<Position> pos4D(1, posPremierePlat);
@@ -216,9 +213,9 @@ void createWorld(ofstream& out) {
 	PlatInstance premierePlat(ID_first_plat, posPremierePlat, posSorties, sortie4D, pos4D, (float)rand());
 
 	Instance sousNiveau;
-	generationLocale(bibli, inPoint, outPoint + Point(c_length_max*10, 0, 0), c_length_max*10, c_height*10, c_height*10, sousNiveau);
-	sousNiveau.addPlatform(premierePlat);
-    for(int i = 0; i<c_height and n>1; ++i){
+	generationLocale(bibli, inPoint*10, outPoint*10 + Point(c_length_max*10, 0, 0), c_length_max*10, c_height*10, c_height*10, sousNiveau);
+	//sousNiveau.addPlatform(premierePlat);
+    for(int i = 0; i<c_height and n>0; ++i){
         Position posTransPlat(0, outPoint+Point((c_length_max+i)*10, 0, 0), Vec3<float>(0, 0, 0), Vec3<float>(1, 1, 1));
         vector<Position> posOut4D(1, posTransPlat);
         vector<Vec3<float>> posSorties;
