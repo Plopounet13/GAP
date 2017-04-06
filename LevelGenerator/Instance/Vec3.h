@@ -17,6 +17,8 @@ public:
 	Vec3(const Point& p);
 	Vec3(T v);
 	Vec3(T mx, T my, T mz);
+	void rotate(const Vec3<float>& dr);
+	void rotate(float cosx, float cosy, float cosz, float sinx, float siny, float sinz);
 	
 	T getx() const{
 		return x;
