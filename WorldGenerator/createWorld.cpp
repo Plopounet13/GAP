@@ -5,7 +5,7 @@
 
 const int32_t c_world_size = 400;
 
-const int32_t c_height = 10, c_length_min = 40, c_length_max = 80, c_phi_max = 90, c_theta_max = 90;
+const int32_t c_height = 15, c_length_min = 40, c_length_max = 80, c_phi_max = 90, c_theta_max = 90;
 const int32_t nb_angles = 20;
 double c_theta_0 = 90./nb_angles;
 
