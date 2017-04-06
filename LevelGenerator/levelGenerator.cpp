@@ -25,22 +25,22 @@ using namespace std;
 
 // constantes globales
 const int nbPointBezier = 6 ;
-const long double G = 9.81;
-const long double Vk = 10.0;
-const Point4 Vitmin = Point4(24,24,50,2) ;
-const Point4 Vitmax = Point4(36,36,50,8);
+const long double G = 38.81;
+const long double Vk = 75.0;
+const Point4 Vitmin = Point4(140,140,85,2) ;
+const Point4 Vitmax = Point4(140,140,85,2);
 const long double EPSILON = 0.0001;
-const long double probaPonctuelle = 0.6 ;
+const long double probaPonctuelle = 0.1 ;
 const long double LAST_T = 0.992;
 
 
 // prototypes
 bool triBezier(const Point4& a, const Point4& b, Point4 entree, Point4 sortie) ;
 void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int largeur, int profondeur, int hauteur, Instance& karabonga) ;
-bool choixPlatforme(const Library& bibli, Point4 position, long double t, int& id, float& rotation, long double& t_fin, Point4& finPlat, Point4& acc) ;
+void choixPlatforme(const Library& bibli, Point4 position, long double t, int& id, float& rotation, long double& t_fin, Point4& finPlat, Point4& acc, bool& ponctuelle) ;
 Library subLibrary(Library const& bibli, Point4 entree, Point4 sortie) ;
 Point4 bezierT(long double t) ;
-Point4 royalT(long double t, long double coeff = 84) ;
+Point4 royalT(long double t, long double coeff = 85) ;
 Point4 arrivalJump(Point4 depart, Point4 direction, Point4 vitesse) ;
 Point4 arrival(Point4 depart, Point4 vitesse, long double& t0) ;
 long double findT (Point4 position, long double epsilon = EPSILON) ;
@@ -114,18 +114,17 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
 	}
 	pointBezier[nbPointBezier-1] = sortie ;
 
-
 	//// Ecartement pour remplir le pave (peut theoriquement fail... mais bon en pratique...)
 
 	// min et max atteints par courbe actuelle
-
+        
 	long double minX=entree.getX(), maxX=entree.getX(), minY=entree.getY(), maxY=entree.getY(), minZ=entree.getZ(), maxZ=entree.getZ() ;
 	//pas de 0.02 ok (50* ancien BezierT) ? faire avec polynomes (3*durandkerner + recalcul polynomes) ?
 	for (int i = 1 ; i<=50 ; i++) {
 
 		//ancien BezierT
 		long double x=0,y=0,z=0,k=0 ;
-		long double t = i/50. ;
+		long double t = i*1.0/50 ;
 		for (int j = 0; j < nbPointBezier ; j++) {
 			long double coef = pasc[nbPointBezier-1][j]*pow(t,j)*pow(1-t,nbPointBezier-j-1) ;
 			x += coef * pointBezier[j].getX() ;
@@ -133,7 +132,6 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
 			z += coef * pointBezier[j].getZ() ;
 			k += coef * pointBezier[j].getK() ;
 		}
-
 		minX = min(minX,x) ;
 		maxX = max(maxX,x) ;
 		minY = min(minY,y) ;
@@ -168,7 +166,6 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
 	 pointBezier[nbPointBezier-1] = sortie ;
 	 */
 
-
 	//// Calcul des polynomes de Bezier
 
 	vector<long double> Vx, Vy, Vz, Vk ;
@@ -200,8 +197,11 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
 	for (int i = 0 ; i <= nbPointBezier ; i++)
 		free(pasc[i]) ;
 	free(pasc) ;
-
-	ConstructionHeaviside(largeur, profondeur, hauteur);
+        
+        //for (float tt=0.0;tt<1;tt+=0.01)
+          //  cout<<royalT(tt).getX()<<endl<<royalT(tt).getZ()<<endl;
+     
+	//ConstructionHeaviside(largeur, profondeur, hauteur);
 
 	// reduire la librairie ?
 	//Library lib = subLibrary(bibli, entree, sortie) ;
@@ -211,11 +211,11 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
 	long double t = 0.0 ; // parametre actuel (suppose)
 	Point4 position = entree ; // position actuelle
 	Point4 vitesse = Vitmin ; // vitesse actuelle
-
+        
 	Point4 acceleration;
-	long double diminution = 0.4;
+	long double diminution = 0.2;
         PlatInstance* pi ;
-        bool ponctuelle = false;
+        bool ponctuelle = true;
 	bool firstplat = true ;
 
 	while(t<1.0){
@@ -241,8 +241,8 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
 		long double t_fin ;
 		Point4 finPlat ;
 		Point4 acc;
-		ponctuelle = choixPlatforme(bibli, position, t, id, rotation, t_fin, finPlat, acc) ;
-
+		choixPlatforme(bibli, position, t, id, rotation, t_fin, finPlat, acc, ponctuelle) ;
+                acc = Point4(acc.getX()*4,acc.getY()*4,acc.getZ()*4,acc.getK()*4);
 		if (ponctuelle) {
 			rotation=0 ;
 			finPlat = position ;
@@ -252,6 +252,7 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
 		}
 
 		int x = position.getX() , y = position.getY(), z = position.getZ() , k = position.getK() ;
+                cerr << "plat : " << x << " " << y  << " " << z << " " << k << endl ;
 		Position pos = Position(k, // entree 4D
 								Vec3<float>(x,y,z),// position d'entree
 								Vec3<float>(0.0,0.0,rotation), // rotation
@@ -263,12 +264,16 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
 
 		if (! ponctuelle) {
 			// sortie donne relatif a la platforme, donc doit inverser la rotation
-			int xtemp = finPlat.getX() , ytemp = finPlat.getY() ;
+                        //cerr << "debut gestion longue : " << position << "  " << finPlat << "  " << rotation << endl ;
+                        int xtemp = finPlat.getX()-position.getX() , ytemp = finPlat.getY()-position.getY() ;
 			long double r = sqrt(xtemp*xtemp+ytemp*ytemp) ;
 			long double theta = atan2(ytemp,xtemp) *180/PI ;
 			long double theta2 = theta - rotation*1.0 ;
 			long double x2 = r*cos(theta2*PI/180) ;
 			long double y2 = r*sin(theta2*PI/180) ;
+                        if(abs(y2)<EPSILON)
+                            y2 = 0 ;
+                        //cerr << "fin gestion longue : " << x2 << "  " << y2 << endl ;
 			posSortie.push_back(Vec3<float>(x2,y2,(float)finPlat.getZ())) ;
 			sortie4D.push_back((float)finPlat.getK()) ;
                         // pos4D parce que voila...
@@ -276,19 +281,19 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
 		}
 		else {
                         // pos4D pour faire apparaitre et disparaitre dans la 4D
-                        Position pos1 = Position((k-75+1000)%1000, // debut apparition
+                        Position pos1 = Position((k-350+1000)%1000, // debut apparition
 								Vec3<float>(x,y,z),
 								Vec3<float>(0.0,0.0,0.0),
 								Vec3<float>(0.0,0.0,0.0)) ;
-                        Position pos2 = Position((k-25+1000)%1000, // fin appartition, debut plein
+                        Position pos2 = Position((k-180+1000)%1000, // fin appartition, debut plein
 								Vec3<float>(x,y,z),
 								Vec3<float>(0.0,0.0,0.0),
 								Vec3<float>(1.0,1.0,1.0)) ;
-                        Position pos3 = Position((k+25+1000)%1000, // fin plein, debut disparition
+                        Position pos3 = Position((k+180+1000)%1000, // fin plein, debut disparition
 								Vec3<float>(x,y,z),
 								Vec3<float>(0.0,0.0,0.0),
 								Vec3<float>(1.0,1.0,1.0)) ;
-                        Position pos4 = Position((k+75+1000)%1000, // disparu
+                        Position pos4 = Position((k+350+1000)%1000, // disparu
 								Vec3<float>(x,y,z),
 								Vec3<float>(0.0,0.0,0.0),
 								Vec3<float>(0.0,0.0,0.0)) ;
@@ -313,7 +318,8 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
                 int dx = x2-x1, dy = y2-y1 ;
                 float rot = atan2(dy,dx)*180/PI ;
                 pi->rotate(Vec3<float>(0,0,rot)) ;
-                karabonga.addPlatform(*pi) ;
+                if (t<0.1)
+                    karabonga.addPlatform(*pi) ;
         }
 
 	//posttraitement
@@ -366,7 +372,7 @@ void ConstructionHeaviside(int largeur, int profondeur, int hauteur){
 			Polynome Dx = derive(Bx) , Dy = derive(By);
 			long double dx = Dx.evalreel(t1), dy = Dy.evalreel(t1);
 			long double dirx,diry; // On cherche à prendre un vecteur othogonal
-			if (dy < 0.1 && dy > -0.1){
+			if (dy > 0.1 || dy < -0.1){
 				dirx = 1;
 				diry = - (dx/dy);
 			}
@@ -418,20 +424,20 @@ Point4 HeavT(long double t){
 	return Heav;
 }
 
-bool choixPlatforme(const Library& bibli, Point4 position, long double t, int& id, float& rotation, long double& t_fin, Point4& finPlat, Point4& acc)
+void choixPlatforme(const Library& bibli, Point4 position, long double t, int& id, float& rotation, long double& t_fin, Point4& finPlat, Point4& acc, bool& ponctuelle)
 {
 	// choisi la prochaine platforme a utiliser
 	// warning : id, rotation, t_fin, finPlat, acc sont modifiés
 	// input : bibli, position de debut de platforme, avec parametre estime t, + parametres modifiables
 	// output : booleen true si platforme ponctuelle, les autres informations seront dans les parametres modifiés
 
-	bool ponctuelle ;
 
-	if ((((float)rand()/(float)RAND_MAX)<probaPonctuelle)||t > LAST_T) { // proba de base
+	if (!ponctuelle || (((float)rand()/(float)RAND_MAX)<probaPonctuelle)||t > LAST_T) { // proba de base
 		ponctuelle = true ;
 	}
 
 	else {
+            //cerr << "tentative platforme longue" << endl ;
 		// calculs de derivees, donnant la direction locale
 		long double hsaut = Vitmin.norm2()*2*Vitmin.getZ()/G ;
 		Polynome Dx = derive(Bx) , Dy = derive(By) , Dz = derive(Bz) , Dk = derive(Bk) ;
@@ -439,7 +445,7 @@ bool choixPlatforme(const Library& bibli, Point4 position, long double t, int& i
 		long double d = sqrt(dx*dx+dy*dy+dz*dz) ;
 		vector<Platform *> temp ;
 		for (int i = 0 ; i<5 && temp.size()==0 ; i++) {
-			long double h = ((float)rand()/(float)RAND_MAX*5+3)*hsaut ;
+			long double h = ((float)rand()/(float)RAND_MAX*3+2)*hsaut ;
 			long double x=dx*h/d,y=dy*h/d,z=dz*h/d,k=dk*h/d ;
 			Point4 finPlat1 = Point4(int(x+0.5),int(y+0.5),int(z+0.5),int(k+0.5)) + position ; // on part un peu loin en direction de la derivee
 			t_fin = findT(finPlat1) ; // on revient sur la courbe
@@ -447,9 +453,13 @@ bool choixPlatforme(const Library& bibli, Point4 position, long double t, int& i
 				t_fin = LAST_T;
 			finPlat = royalT(t_fin) ; // Point4 de fin de platforme souhaite
 			bibli.select(bind(f_atteintPoint,placeholders::_1,finPlat-position),temp) ; // platformes pouvant atteindre le point souhaite
+                        //cerr << "dk : " << finPlat.getK()-position.getK() << endl ;
+                        //cerr << "i : " << i << endl ;
 		}
 
 		if (temp.size()!=0) {
+                        //cerr << "reussite platforme longue" << endl ;
+                        ponctuelle = false ;
 			// on recupere une platformes random parmis celle possibles
 			int poidstotal = 0 ;
 			for(unsigned int k=0 ; k<temp.size() ; k++){
@@ -541,7 +551,7 @@ bool choixPlatforme(const Library& bibli, Point4 position, long double t, int& i
 		acc = temp[k]->getAddAcceleration();
 	}
 
-	return ponctuelle ;
+	
 }
 
 
@@ -622,10 +632,26 @@ Point4 royalT(long double t,long double coef)
 {
 	// renvoie le point de la courbe royale de parametre t
 	long double x=Bx.evalreel(t),y=By.evalreel(t),z=Bz.evalreel(t),k=Bk.evalreel(t) ;
-	x+=coef*sin(t*450);
-	y+=coef*sin(t*501);
-	z+=coef*sin(t*549);
-	return Point4(int(x+0.5),int(y+0.5),int(z+0.5),int(k+0.5)%1000)+HeavT(t) ;
+        Polynome Dx = derive(Bx) , Dy = derive(By);
+	long double dx = Dx.evalreel(t), dy = Dy.evalreel(t);
+	long double dirx,diry; // On cherche à prendre un vecteur othogonal
+	if (dy > 0.1 || dy < -0.1){
+            dirx = 1;
+            diry = - (dx/dy);
+	}
+        else{
+            dirx = 0;
+            diry = 1;
+	}
+        dirx = 1;
+        diry = -(dx/dy);
+        long double Znorm = dirx+abs(diry);
+	dirx = dirx/Znorm;
+        diry = diry/Znorm;
+	x+=dirx*coef*sin(t*241);
+	y+=diry*coef*sin(t*108);
+	z+=0.2*coef*sin(t*107);
+	return Point4(int(x+0.5),int(y+0.5),int(z+0.5),int(k+0.5)%1000) ;
 }
 
 
@@ -673,6 +699,7 @@ Point4 arrivalJump(Point4 depart, Point4 direction, Point4 vitesse)
 			//cas où on est au-dessus du maxima de la cloche :
 			// Donc sous-niveau probablement trop pentu choisir quoi renvoyer :
 			//Pour le moment on renvoie le sommet de la cloche :
+                        //cerr << "cas pas cool" << endl ;
 			long double zmax = vz*vz/(2*G)+depart.getZ();
 			t = vz/G;
 			if (abs(Vk*t)>abs(direction.getK())){
@@ -693,6 +720,7 @@ Point4 arrivalJump(Point4 depart, Point4 direction, Point4 vitesse)
 			long double t1 = ((2/G)*vz-sqrtdelta)/2;
 			long double x21 = vh*t1;
 			if (x21>x2){
+                                //cerr << "cas trop proche" << endl ;
 				if (abs(Vk*t1)>abs(direction.getK())){
 					return Point4(int(depart.getX()+x21*cosa),int(depart.getY()+x21*sina),z+depart.getZ(),depart.getK()+direction.getK());
 				}
@@ -706,6 +734,8 @@ Point4 arrivalJump(Point4 depart, Point4 direction, Point4 vitesse)
 				}
 			}
 			else{
+                                
+                                //cerr << "cas trop loin" << endl ;
 				long double t2 = ((2/G)*vz+sqrtdelta)/2;
 				long double x22 = vh*t2;
 				if (abs(Vk*t2)>abs(direction.getK())){
@@ -740,11 +770,11 @@ Point4 arrival(Point4 depart, Point4 vitesse, long double& t0)
 	long double hmax = vitesse.norm2()*2*vz/G ;
 	long double zmax = vz*vz/(2*G) ;
 	bool cont = false ;
-	while (! cont && pas > 0.001) {
+	while (! cont) {
 		dirDestination = royalT(t)-depart ;
 		long double z = dirDestination.getZ() ;
 		long double h = dirDestination.norm2() ;
-		if (z>0.6*zmax||z<-0.9*zmax||h>0.7*hmax||h<-0.7*hmax) {   // distance suffisemment grande
+		if (z>0.6*zmax||z<-0.9*zmax||h>0.85*hmax||h<-0.7*hmax) {   // distance suffisemment grande
 			if (z>0.8*zmax||z<-2.0*zmax||h>0.95*hmax||h<-0.95*hmax) {   // distance trop grande
 				pas = pas/2 ;
 				t = t - pas ;
