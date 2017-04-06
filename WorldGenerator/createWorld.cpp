@@ -13,6 +13,7 @@ Library bibli;
 Instance world;
 int ID_first_plat = 1;
 int ID_last_plat = 2;
+int ID_checkpoint_plat = 3;
 int ID_transition_plat = 9;
 
 std::default_random_engine gen;
@@ -160,17 +161,18 @@ void next_cuboid(std::vector<std::vector<std::vector<bool> > >& world_bin, std::
         PlatInstance premierePlat(ID_transition_plat, posPremierePlat, posSorties, sortie4D, pos4D, (float)rand());
         new_instance.addPlatform(premierePlat);
     }
-    if (lastSubLevel){
-        Position posDernierePlat(0, (newOut+Point(new_cuboid.length, 0, 0))*100, Vec3<float>(0, 0, 0), Vec3<float>(1, 1, 1));
-        vector<Position> posOut4D(1, posDernierePlat);
-        vector<Vec3<float>> posSorties;
-        vector<float> sortie4D;
-        PlatInstance dernierePlat(ID_last_plat, posDernierePlat, posSorties, sortie4D, posOut4D, (float)rand());
+    {
+        int i=5;
+        {
+            Position posCpPlat(0, (newOut+Point((new_cuboid.length+i), 0, 0))*100, Vec3<float>(0, 0, 0), Vec3<float>(1, 1, 1));
+            vector<Position> posOut4D(1, posCpPlat);
+            vector<Vec3<float>> posSorties;
+            vector<float> sortie4D;
+            PlatInstance plat_Cp(ID_checkpoint_plat, posCpPlat, posSorties, sortie4D, posOut4D, (float)rand());
 
-        new_instance.addPlatform(dernierePlat);
-    }
-    else{
-        for(int i = 0; i<c_height; ++i){
+            new_instance.addPlatform(plat_Cp);
+        }
+        for(i = 10; i<c_height; i+=5){
             Position posTransPlat(0, (newOut+Point((new_cuboid.length+i), 0, 0))*100, Vec3<float>(0, 0, 0), Vec3<float>(1, 1, 1));
             vector<Position> posOut4D(1, posTransPlat);
             vector<Vec3<float>> posSorties;
@@ -178,6 +180,15 @@ void next_cuboid(std::vector<std::vector<std::vector<bool> > >& world_bin, std::
             PlatInstance plat_trans(ID_transition_plat, posTransPlat, posSorties, sortie4D, posOut4D, (float)rand());
 
             new_instance.addPlatform(plat_trans);
+        }
+        if (lastSubLevel){
+            Position posDernierePlat(0, (newOut+Point(new_cuboid.length+i, 0, 0))*100, Vec3<float>(0, 0, 0), Vec3<float>(1, 1, 1));
+            vector<Position> posOut4D(1, posDernierePlat);
+            vector<Vec3<float>> posSorties;
+            vector<float> sortie4D;
+            PlatInstance dernierePlat(ID_last_plat, posDernierePlat, posSorties, sortie4D, posOut4D, (float)rand());
+
+            new_instance.addPlatform(dernierePlat);
         }
     }
 
@@ -200,11 +211,11 @@ void createWorld(ofstream& out) {
 	//TODO: Remplir des cases dans world_bin pour donner une forme au niveau
 	std::vector<Cuboid> cuboids;
 
-	uint32_t n = 0;
+	uint32_t n = 1;
 
 	//Create first cuboid
 	cuboids.emplace_back(Point(0, 5, 5), Point(1, 0, 0), c_length_max);
-	Point inPoint = Point(0, 0, -10);//randPoint(c_height, c_height);
+	Point inPoint = Point(0, 0, -1);//randPoint(c_height, c_height);
 	Point outPoint = Point(0, 5, 5);//randPoint(c_height, c_height);
 
 
@@ -218,7 +229,27 @@ void createWorld(ofstream& out) {
 	Instance sousNiveau;
 	generationLocale(bibli, inPoint*100, (outPoint+ Point(c_length_max, 0, 0))*100, c_length_max*100, c_height*100, c_height*100, sousNiveau);
 	sousNiveau.addPlatform(premierePlat);
-    for(int i = 0; i<c_height; ++i){
+
+    int i=5;
+    {
+        Position posCpPlat(0, (outPoint+Point((c_length_max+i), 0, 0))*100, Vec3<float>(0, 0, 0), Vec3<float>(1, 1, 1));
+        vector<Position> posOut4D(1, posCpPlat);
+        vector<Vec3<float>> posSorties;
+        vector<float> sortie4D;
+        PlatInstance plat_Cp(ID_checkpoint_plat, posCpPlat, posSorties, sortie4D, posOut4D, (float)rand());
+
+        sousNiveau.addPlatform(plat_Cp);
+    }
+    for(i = 10; i<c_height; i+=5){
+        Position posTransPlat(0, (outPoint+Point((c_length_max+i), 0, 0))*100, Vec3<float>(0, 0, 0), Vec3<float>(1, 1, 1));
+        vector<Position> posOut4D(1, posTransPlat);
+        vector<Vec3<float>> posSorties;
+        vector<float> sortie4D;
+        PlatInstance plat_trans(ID_transition_plat, posTransPlat, posSorties, sortie4D, posOut4D, (float)rand());
+
+        sousNiveau.addPlatform(plat_trans);
+    }
+    /*for(int i = 0; i<c_height; i+=5){
         Position posTransPlat(0, (outPoint+Point((c_length_max+i), 0, 0))*100, Vec3<float>(0, 0, 0), Vec3<float>(1, 1, 1));
         vector<Position> posOut4D(1, posTransPlat);
         vector<Vec3<float>> posSorties;
@@ -226,7 +257,7 @@ void createWorld(ofstream& out) {
         PlatInstance plat_trans(ID_transition_plat, posTransPlat, posSorties, sortie4D, posOut4D, rand());
 
         sousNiveau.addPlatform(plat_trans);
-    }
+    }*/
 
 	world+=sousNiveau;
 

@@ -26,7 +26,7 @@ using namespace std;
 // constantes globales
 const int nbPointBezier = 6 ;
 const long double G = 9.81;
-const long double Vk = 100.0;
+const long double Vk = 10.0;
 const Point4 Vitmin = Point4(24,24,50,2) ;
 const Point4 Vitmax = Point4(36,36,50,8);
 const long double EPSILON = 0.0001;
