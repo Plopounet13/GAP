@@ -32,10 +32,6 @@ void PlatInstance::rotate(const Vec3<float>& dr){
 void PlatInstance::translate(const Vec3<float>& d){
 	pos.translate(d);
 
-	for (auto& p:posSortie){
-		p+=d;
-	}
-
 	for (auto& p:pos4D){
 		p.translate(d);
 	}
@@ -49,7 +45,7 @@ void PlatInstance::rescale(const Vec3<float>& c, const Vec3<float>& ds){
 	pos.rescale(c, ds);
 
 	for (auto& p:posSortie)
-		p+=(p-c)*(ds-1);
+		p *= ds;
 
 	for (auto& p:pos4D)
 		p.rescale(c, ds);
@@ -61,23 +57,7 @@ void PlatInstance::rotate(const Vec3<float>& c, const Vec3<float>& dr, float cos
 	pos.rotate(c, dr, cosx, cosy, cosz, sinx, siny, sinz);
 
 	for (auto& p:posSortie){
-		Vec3<float> d;
-		d = p-c;
-
-		float nx, ny, nz;
-		float x=cosz*d.getx()-sinz*d.gety();
-		float y=cosz*d.gety()+sinz*d.getx();
-		float z=d.getz();
-
-		nx=x;
-		ny=cosx*y-sinx*z;
-		nz=cosx*z+sinx*y;
-
-		x=cosy*nx+siny*nz;
-		y=ny;
-		z=cosy*nz-siny*nx;
-
-		p= c+Vec3<float>(x,y,z);
+		p.rotate(cosx, cosy, cosz, sinx, siny, sinz);
 	}
 
 	for (auto& p:pos4D)
@@ -96,23 +76,7 @@ void PlatInstance::rotate(const Vec3<float>& c, const Vec3<float>& dr){
 	pos.rotate(c, dr, cosx, cosy, cosz, sinx, siny, sinz);
 
 	for (auto& p:posSortie){
-		Vec3<float> d;
-		d = p-c;
-
-		float nx, ny, nz;
-		float x=cosz*d.getx()-sinz*d.gety();
-		float y=cosz*d.gety()+sinz*d.getx();
-		float z=d.getz();
-
-		nx=x;
-		ny=cosx*y-sinx*z;
-		nz=cosx*z+sinx*y;
-
-		x=cosy*nx+siny*nz;
-		y=ny;
-		z=cosy*nz-siny*nx;
-
-		p= c+Vec3<float>(x,y,z);
+		p.rotate(cosx, cosy, cosz, sinx, siny, sinz);
 	}
 
 	for (auto& p:pos4D)
@@ -126,7 +90,7 @@ ostream& operator<< (ostream& out, const PlatInstance& p){
 	out << p.pos << endl;
 	out << p.posSortie.size() << endl;
 	for(int i=0; i < int(p.posSortie.size()); ++i){
-		out << p.posSortie[i]-p.pos.getPos() << endl;
+		out << p.posSortie[i] << endl;
 		out << p.sortie4D[i] << endl;
 	}
 	out << p.pos4D.size() << endl;
