@@ -14,6 +14,37 @@ void usage(){
 	cerr << "\t./generate_level outputFile seed" << endl;
 }
 
+/*int main(){
+	Position posPremierePlat(0, Vec3<float>(0, 0, 5), Vec3<float>(0, 0, 0), Vec3<float>(1, 1, 1));
+	vector<Vec3<float>> posSorties;
+	vector<float> sortie4D;
+	vector<Position> pos4D(1, posPremierePlat);
+	
+	PlatInstance premierePlat(0, posPremierePlat, posSorties, sortie4D, pos4D, (float)rand());
+	
+	
+	Position posPremierePlat2(0, Vec3<float>(0, 0, 0), Vec3<float>(0, 0, 0), Vec3<float>(1, 1, 1));
+	vector<Vec3<float>> posSorties2;
+	vector<float> sortie4D2;
+	vector<Position> pos4D2(1, posPremierePlat2);
+	
+	PlatInstance premierePlat2(0, posPremierePlat2, posSorties2, sortie4D2, pos4D2, (float)rand());
+	
+	Vec3<float> v(1,1,1), v2(1,1,1);
+	v.rotate(Vec3<float>(0, 0, 90));
+	v2.rotate(Vec3<float>(0, 0, 45));
+	
+	
+	Instance i;
+	i.addPlatform(premierePlat);
+	i.addPlatform(premierePlat2);
+	
+	i.move(Vec3<float>(0, 1, 1), Vec3<float>(0, 0, 0));
+	
+	cout << i << endl;
+}*/
+
+
 int main(int argc, const char* argv[]) {
 	ofstream out;
 	int seed;
@@ -22,8 +53,8 @@ int main(int argc, const char* argv[]) {
 #if XCODE_DEBUG != 0
 	out.open("level.dat");
 	seed = 42;
-	goto skipInit;
 	listFileName = "/Users/lois/Documents/M1ENS/GAPLocalProject/GAPLocalProject/GAP/platform_file_list.txt";
+	goto skipInit;
 #endif
 
 	if (argc != 3){
@@ -53,173 +84,13 @@ skipInit:
 	createWorld(out);
 }
 
-/*
-// Width needs to be odd, nbDirections needs to be even
-const int slvlLengthMin = 40, slvlLengthMax = 80, slvlWidth = 11, lvlSize = 200;
-const short nbDirections = 4;
-short world[lvlSize][lvlSize][lvlSize];
-
-// Implement vectors and points
-struct Point
-{
-	double x, y, z;
-};
-
-std::ostream& operator<< (std::ostream &o, const Point &p)
-{
-  o << "x: " << p.x << "\ty: " << p.y << "\tz: " << p.z << endl;
-  return o;
-}
 
 
 
-double randomReal(double max = 1)
-{
-	return (static_cast<float> (rand()) / static_cast<float> (RAND_MAX)) * max;
-}
-
-int randomInt(int a, int b) {
-	return (rand() % (b-a+1)) + a;
-}
-
-int discreteProba(vector<double> proba, double max = 1)
-{
-	double x = randomReal(max);
-
-	double p = 0;
-	for(size_t i = 0; i < proba.size(); ++i) {
-		p += proba[i];
-		if(x <= p)
-			return i;
-	}
-}
-
-
-Point pointFromSpheric(Point p, double tilt, double length, double orientation)
-{
-	double rho = length, theta = orientation, phi = M_PI/2-tilt;
-	cout << endl << rho << " " << theta << " " << phi << endl;
-	return {p.x + rho * sin(phi) * cos(theta), p.y + rho * sin(phi) * sin(theta), p.z + rho * cos(phi)};
-}
-
-void printToPython(vector<Point> points)
-{
-	string str;
-	ostringstream oss;
-
-	oss << "[";
-	for(auto &p: points)
-		oss << p.x << ", ";
-	oss << "],";
-	oss << "[";
-	for(auto &p: points)
-		oss << p.y << ", ";
-	oss << "],";
-	oss << "[";
-	for(auto &p: points)
-		oss << p.z << ", ";
-	oss << "]" << endl;
-
-	str = oss.str();
-
-	system((string("echo '") + str + "' | python plot.py").c_str());
-}
-
-bool inLevel(size_t x, size_t y, size_t z) {
-	return (x < lvlSize) && (x >= 0) && (y < lvlSize) && (y >= 0) && (z < lvlSize) && (z >= 0);
-}
-
-bool isFree(size_t x, size_t y, size_t z) {
-	return inLevel(x, y, z) && level[x][y][z] == 0;
-}
-
-bool generateSubLevel(const Point &p)
-{
-	float probaDirections[nbDirections][nbDirection/2];
-	int sumCoefs;
-
-	for(size_t i = 0; i < nbDirections; ++i) {
-		for(size_t j = 0; j < nbDirections/2; ++j) {
-			short dx = 0, dy = 0, dz = 0;
-			if(j == 0) { // Horizontal movement
-				if(i%2 == 0)
-					dx = -1;
-				else
-					dy = -1;
-			}
-			else { // Vertical movement
-				if(i%2 == 0)
-					dz = -1;
-				else
-					dy = -1;
-			}
-
-			if(i < 2) {
-				dx *= dx;
-				dy *= dy;
-				dz *= dz;
-			}
-
-			// We browse the direction
-			bool bExit = false;
-			for(size_t k = 0; k < slvlLengthMax && !bExit; ++k) {
-				for(size_t l = -slvlWidth/2; l < slvlWidth/2 && !bExit; ++l) {
-					for(size_t m = -slvlWidth/2; m < slvlWidth/2 && !bExit; ++m) {
-						int x = p.x + k*dx + l*abs(dy) + m*abs(dz),
-							y = p.y * k*dy + l*abs(dx) + m*abs(dz),
-							z = p.z + k*dz + l*abs(dx) + m*abs(dy);
-
-
-						if(!isFree(x, y, z)) {
-							if(k < slvlLengthMin)
-								probaDirections[i][j] = 0;
-							else
-								probaDirections[i][j] = i;
-							sumCoefs += probaDirections[i][j];
-							bExit = true;
-						}
-				}
-			}
-		}
-	}
-
-	if(sumCoefs == 0)
-		return false;
-
-	int
-
-	return true;
-}
 
 
 
-int main()
-{
-	srand(time(NULL));
 
-	Point startPoint = {lvlSize/2, lvlSize/2, lvlSize/2};
 
-	vector<Point> points =  {start_point};
-	vector<Cuboid> level = {};
 
-	cout << start_point << endl;
-	for(size_t i = 0; i < 10; ++i) {
-		createSubLevel();
-		int tf = discrete_proba(proba_orientation);
-		double tilt = random_tilt(tf);
 
-		double length = 8 + 4*random_real();
-		double orientation = 360*random_real()/180*M_PI;
-		//cout << tf;
-
-		Point new_point = pointFromSpheric(points.back(), tf, length, orientation);
-		points.push_back(new_point);
-		//cout << new_point;
-	}
-
-	printToPython(points);
-
-	return 0;
-}startPoint
-
-*/

@@ -62,6 +62,7 @@ ostream& operator<< (ostream& out, const Position& p){
 	return out;
 }
 
+//TODO: Faut pas rêver bébé (la composition n'est pas si simple -> générer base puis rotater puis générer angles)
 void Position::rotate(const Vec3<float>& dr){
 	rot+=dr;
 }
@@ -78,27 +79,9 @@ void Position::rotate(const Vec3<float>& c, const Vec3<float>& dr){
 	Vec3<float> d;
 	d = pos-c;
 	
-	float cosx = cos(dr.getx()* PI_180);
-	float cosy = cos(dr.gety()* PI_180);
-	float cosz = cos(dr.getz()* PI_180);
-	float sinx = sin(dr.getx()* PI_180);
-	float siny = sin(dr.gety()* PI_180);
-	float sinz = sin(dr.getz()* PI_180);
+	d.rotate(dr);
 	
-	float nx, ny, nz;
-	float x=cosz*d.getx()-sinz*d.gety();
-	float y=cosz*d.gety()+sinz*d.getx();
-	float z=d.getz();
-	
-	nx=x;
-	ny=cosx*y-sinx*z;
-	nz=cosx*z+sinx*y;
-	
-	x=cosy*nx+siny*nz;
-	y=ny;
-	z=cosy*nz-siny*nx;
-	
-	pos= c+Vec3<float>(x,y,z);
+	pos=c+d;
 	
 	rot+=dr;
 }
@@ -107,22 +90,11 @@ void Position::rotate(const Vec3<float>& c, const Vec3<float>& dr, float cosx, f
 	Vec3<float> d;
 	d = pos-c;
 	
-	float nx, ny, nz;
-	float x=cosz*d.getx()-sinz*d.gety();
-	float y=cosz*d.gety()+sinz*d.getx();
-	float z=d.getz();
+	d.rotate(cosx, cosy, cosz, sinx, siny, sinz);
 	
-	nx=x;
-	ny=cosx*y-sinx*z;
-	nz=cosx*z+sinx*y;
+	pos = c+d;
 	
-	x=cosy*nx+siny*nz;
-	y=ny;
-	z=cosy*nz-siny*nx;
-	
-	pos= c+Vec3<float>(x,y,z);
-	
-	rot+=dr;
+	rot += dr;
 }
 
 void Position::rescale(const Vec3<float>& c, const Vec3<float>& ds){
