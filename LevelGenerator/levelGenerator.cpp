@@ -125,7 +125,7 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
 
 		//ancien BezierT
 		long double x=0,y=0,z=0,k=0 ;
-		long double t = i/50 ;
+		long double t = i/50. ;
 		for (int j = 0; j < nbPointBezier ; j++) {
 			long double coef = pasc[nbPointBezier-1][j]*pow(t,j)*pow(1-t,nbPointBezier-j-1) ;
 			x += coef * pointBezier[j].getX() ;
