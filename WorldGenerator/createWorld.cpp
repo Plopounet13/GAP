@@ -211,7 +211,7 @@ void createWorld(ofstream& out) {
 	//TODO: Remplir des cases dans world_bin pour donner une forme au niveau
 	std::vector<Cuboid> cuboids;
 
-	uint32_t n = 10;
+	uint32_t n = 2;
 
 	//Create first cuboid
 	cuboids.emplace_back(Point(0, 5, 5), Point(1, 0, 0), c_length_max);
