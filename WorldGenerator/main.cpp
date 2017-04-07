@@ -3,7 +3,7 @@
 #include <vector>
 #include <cstring>
 #include <cstdio>
-#include <math.h>
+#include <cmath>
 #include <windows.h>
 #include "createWorld.h"
 

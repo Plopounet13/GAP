@@ -1,6 +1,10 @@
+#ifndef createWorld_h
+#define createWorld_h
+
 #include <map>
 #include <vector>
 #include <random>
+#include <cmath>
 //#include "../LevelGenerator/Library/Point.h"
 #include "../LevelGenerator/Library/Platform.h"
 #include "../LevelGenerator/Library/Library.h"
@@ -45,3 +49,5 @@ void createWorld(std::ofstream& out);
 /*
 move(Point in, Vector dir); takes the  entry point of the cuboid and the director vector and moves the cuboid from (0,0,0), (1,0,0) to point, dir
 */
+
+#endif
