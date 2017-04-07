@@ -173,7 +173,7 @@ bool next_cuboid(std::vector<std::vector<std::vector<bool> > >& world_bin, std::
         new_instance.addPlatform(premierePlat);
     }
     {
-        int i=5;
+        int i=0;
         {
             Position posCpPlat(0, (newOut+Point((new_cuboid.length+i), 0, 0))*100, Vec3<float>(0, 0, 0), Vec3<float>(1, 1, 1));
             vector<Position> posOut4D(1, posCpPlat);
@@ -183,7 +183,7 @@ bool next_cuboid(std::vector<std::vector<std::vector<bool> > >& world_bin, std::
 
             new_instance.addPlatform(plat_Cp);
         }
-        for(i = 10; i<c_height; i+=5){
+        for(i+=5; i<c_height; i+=5){
             Position posTransPlat(0, (newOut+Point((new_cuboid.length+i), 0, 0))*100, Vec3<float>(0, 0, 0), Vec3<float>(1, 1, 1));
             vector<Position> posOut4D(1, posTransPlat);
             vector<Vec3<float>> posSorties;
@@ -231,7 +231,7 @@ void createWorld(ofstream& out) {
 	generationLocale(bibli, inPoint*100, (outPoint+ Point(c_length_max, 0, 0))*100, c_length_max*100, c_height*100, c_height*100, sousNiveau);
 	sousNiveau.addPlatform(premierePlat);
 
-    int i=5;
+    int i=0;
     {
         Position posCpPlat(0, (outPoint+Point((c_length_max+i), 0, 0))*100, Vec3<float>(0, 0, 0), Vec3<float>(1, 1, 1));
         vector<Position> posOut4D(1, posCpPlat);
@@ -241,7 +241,7 @@ void createWorld(ofstream& out) {
 
         sousNiveau.addPlatform(plat_Cp);
     }
-    for(i = 10; i<c_height; i+=5){
+    for(i+=5 ; i<c_height; i+=5){
         Position posTransPlat(0, (outPoint+Point((c_length_max+i), 0, 0))*100, Vec3<float>(0, 0, 0), Vec3<float>(1, 1, 1));
         vector<Position> posOut4D(1, posTransPlat);
         vector<Vec3<float>> posSorties;
