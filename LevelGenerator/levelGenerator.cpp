@@ -217,6 +217,9 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
         PlatInstance* pi ;
         bool ponctuelle = true;
 	bool firstplat = true ;
+        
+        vector<Platform *> vectAscen ;
+	bibli.select(bind(f_ascen,placeholders::_1,hauteur),vectAscen) ;
 
 	while(t<1.0){
 
@@ -241,7 +244,28 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
 		long double t_fin ;
 		Point4 finPlat ;
 		Point4 acc;
-		choixPlatforme(bibli, position, t, id, rotation, t_fin, finPlat, acc, ponctuelle) ;
+                
+                //ascenseur si necessaire
+                Polynome Dx = derive(Bx), Dy = derive(By), Dz = derive(Bz) ;
+                long double dx = Dx.evalreel(t), dy = Dy.evalreel(t), dz = Dz.evalreel(t) ;
+                long double pente = dz / sqrt(dx*dx+dy*dy) ;
+                if (pente > 3 && (int)vectAscen.size() > 0 && t < LAST_T) {
+                    Platform* PF = vectAscen[0] ;
+                    id = PF->getID() ;
+                    acc = PF->getAddAcceleration();
+                    rotation = 0.0 ;
+                    ponctuelle = false ;
+                    long double t0 ;
+                    for (t0 = t ; t0 < LAST_T && pente > 2.5 ; t0 += 0.005) {
+                        dx = Dx.evalreel(t), dy = Dy.evalreel(t), dz = Dz.evalreel(t) ;
+                        pente = dz / sqrt(dx*dx+dy*dy) ;
+                    }
+                    finPlat = position + Point4(0,0,royalT(t0).getZ()-position.getZ(),100) ;
+                    t_fin = findT(t) ;
+                }
+                else // choix normal
+                    choixPlatforme(bibli, position, t, id, rotation, t_fin, finPlat, acc, ponctuelle) ;
+                
                 acc = Point4(acc.getX()*4,acc.getY()*4,acc.getZ()*4,acc.getK()*4);
 		if (ponctuelle) {
 			rotation=0 ;

@@ -28,5 +28,6 @@ bool f_true(const Platform& p) ;
 bool f_ponctuelle(const Platform& p) ;
 bool f_atteintPointViaI(const Platform& p, Point4 point, int i) ;
 bool f_atteintPoint(const Platform& p, Point4 point) ;
+bool f_ascen(const Platform& p, int zmax) ;
 
 #endif /* LIBRARY_H */
