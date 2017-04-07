@@ -90,7 +90,6 @@ bool f_atteintPointViaI(const Platform& p, Point4 point, int i)
 	return false;
 }
 
-
 bool f_atteintPoint(const Platform& p, Point4 point)
 {
 	// retourne true si, avec rotation d'axe Z, une sortie permet d'atteindre le point 
@@ -115,4 +114,16 @@ bool f_atteintPoint(const Platform& p, Point4 point)
             }
 	}
 	return false;
+}
+
+bool f_ascen(const Platform& p, int zmax)
+{
+    vector<Point4> sortieMin = p.getSortieMin() ;
+    vector<Point4> sortieMax = p.getSortieMax() ;
+    int n = (int)sortieMin.size() ;
+    for (int i = 0 ; i<n ; i++) {
+        if (sortieMin[i].getZ() <= 0 && sortieMax[i].getZ() >= zmax && sortieMin[i].getX() <= 0 && sortieMax[i].getX() >= 0  && sortieMin[i].getY() <= 0 && sortieMax[i].getY() >= 0)
+            return true ;
+    }
+    return false ;
 }
