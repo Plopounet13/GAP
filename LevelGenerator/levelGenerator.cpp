@@ -249,14 +249,14 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
                 Polynome Dx = derive(Bx), Dy = derive(By), Dz = derive(Bz) ;
                 long double dx = Dx.evalreel(t), dy = Dy.evalreel(t), dz = Dz.evalreel(t) ;
                 long double pente = dz / sqrt(dx*dx+dy*dy) ;
-                if (pente > 0.7 && (int)vectAscen.size() > 0 && t < LAST_T) {
+                if (pente > 1.2 && (int)vectAscen.size() > 0 && t < LAST_T) {
                     Platform* PF = vectAscen[0] ;
                     id = PF->getID() ;
                     acc = PF->getAddAcceleration();
                     rotation = 0.0 ;
                     ponctuelle = false ;
                     long double t0 ;
-                    for (t0 = t ; t0 < LAST_T && pente > 0 ; t0 += 0.005) {
+                    for (t0 = t ; t0 < LAST_T && pente > 0.5 ; t0 += 0.005) {
                         dx = Dx.evalreel(t), dy = Dy.evalreel(t), dz = Dz.evalreel(t) ;
                         pente = dz / sqrt(dx*dx+dy*dy) ;
                     }

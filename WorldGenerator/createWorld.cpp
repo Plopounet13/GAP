@@ -49,17 +49,14 @@ bool choose(const vector<vector<int>>& probas, int& x, int& y){
 
 
 void init_library(const string& listFileName, Library& lib){
-	ofstream foo;
-	foo.open("yop.txt");
-	foo << "etyuo " << endl;
 	ifstream fileList(listFileName);
 	if (fileList.fail()){
-		foo << "Impossible d'ouvrir la liste de fichiers de plateforme " + listFileName << endl;
+		cerr << "Impossible d'ouvrir la liste de fichiers de plateforme " + listFileName << endl;
 		exit(144*12);
 	}
 	string fileName;
 	while (fileList >> fileName){//getline(fileList, fileName)){
-		foo << fileName << endl;
+		cerr << fileName << endl;
 		ifstream platFile(fileName);
 
 		if (platFile.fail()){
@@ -150,6 +147,10 @@ bool next_cuboid(std::vector<std::vector<std::vector<bool> > >& world_bin, std::
 
 
 	auto pair = std::make_pair(theta_1_choose-nb_angles, theta_2_choose-nb_angles);
+	fstream foo;
+	foo.open("yop.txt", std::fstream::app);
+	foo << pair.first << " " << pair.second << endl;
+	foo.close();
 	auto new_cuboid = Cuboid(out + shift, pair.first * e_x + pair.second * e_y + length * e_z, length);
 
 	Instance new_instance;
