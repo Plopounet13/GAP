@@ -794,7 +794,7 @@ Point4 arrival(Point4 depart, Point4 vitesse, long double& t0)
 	long double hmax = vitesse.norm2()*2*vz/G ;
 	long double zmax = vz*vz/(2*G) ;
 	bool cont = false ;
-	while (! cont) {
+	while (! cont || pas > 0.0005) {
 		dirDestination = royalT(t)-depart ;
 		long double z = dirDestination.getZ() ;
 		long double h = dirDestination.norm2() ;
