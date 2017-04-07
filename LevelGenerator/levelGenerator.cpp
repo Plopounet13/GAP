@@ -30,7 +30,7 @@ const long double Vk = 75.0;
 const Point4 Vitmin = Point4(140,140,85,2) ;
 const Point4 Vitmax = Point4(140,140,85,2);
 const long double EPSILON = 0.0001;
-const long double probaPonctuelle = 0.1 ;
+const long double probaPonctuelle = 1 ;
 const long double LAST_T = 0.992;
 
 
