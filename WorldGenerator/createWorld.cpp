@@ -122,8 +122,9 @@ bool next_cuboid(std::vector<std::vector<std::vector<bool> > >& world_bin, std::
 			Vecteur f_x, f_y, f_z;
 			make_base(currVect, f_z, f_x, f_y);
 
-
 			for(length = 0; length < c_length_renderdistance; ++length) {
+                if(abs(i)<nb_angles/5 || abs(j)<nb_angles/5)
+                    goto end_browse;
 				for(uint32_t k = -c_height; k < c_height; ++k) {
 					for(uint32_t l = -c_height; l < c_height; ++l) {
 
