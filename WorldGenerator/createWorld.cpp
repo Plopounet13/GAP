@@ -118,7 +118,7 @@ bool next_cuboid(std::vector<std::vector<std::vector<bool> > >& world_bin, std::
 	make_base(v, e_z, e_x, e_y);
 	for(int i = -nb_angles; i <= nb_angles; ++i) {
 		for(int j = -nb_angles; j <= nb_angles; ++j) {
-			Vecteur currVect =   i*e_x + j*e_y + nb_angles/2*e_z;
+			Vecteur currVect =   i*e_x + j*e_y + nb_angles/5*e_z;
 			Vecteur f_x, f_y, f_z;
 			make_base(currVect, f_z, f_x, f_y);
 
@@ -275,6 +275,7 @@ void createWorld(ofstream& out) {
         new_instance.addPlatform(dernierePlat);
         inPoint = Point(0, 5, 5); /// ATTENTION TEMPORAIRE
         new_instance.move(inPoint*100, last_cuboid.dir, (last_cuboid.in - inPoint)*100);
+        world += new_instance;
     }
 
 	out << world;
