@@ -1,11 +1,11 @@
 #include <fstream>
 #include "../LevelGenerator/levelGenerator.h"
 #include "createWorld.h"
+#define valid(p) (0 <= p.x() and p.x() < c_world_size and 0 <= p.y() and p.y() < c_world_size and 0 <= p.z() and p.z() < c_world_size)
 
+const int32_t c_world_size = 200;
 
-const int32_t c_world_size = 400;
-
-const int32_t c_height = 15, c_length_min = 40, c_length_max = 80, c_phi_max = 90, c_theta_max = 90;
+const int32_t c_height = 15, c_length_min = 40, c_length_max = 80, c_length_renderdistance = 200, c_phi_max = 90, c_theta_max = 90;
 const int32_t nb_angles = 20;
 double c_theta_0 = 90./nb_angles;
 
@@ -119,12 +119,12 @@ void next_cuboid(std::vector<std::vector<std::vector<bool> > >& world_bin, std::
 			make_base(currVect, f_z, f_x, f_y);
 
 
-			for(length = 0; length < c_length_max; ++length) {
+			for(length = 0; length < c_length_renderdistance; ++length) {
 				for(uint32_t k = -c_height; k < c_height; ++k) {
 					for(uint32_t l = -c_height; l < c_height; ++l) {
 
 						Vecteur currPos = out + shift + k * e_x + l * e_y +  length*e_z ;
-						if(world_bin[currPos.x()][currPos.y()][currPos.z()]) {
+						if(valid(currPos) and world_bin[currPos.x()][currPos.y()][currPos.z()]) {
 							goto end_browse;
 						}
 
