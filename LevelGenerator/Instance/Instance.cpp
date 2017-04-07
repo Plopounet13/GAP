@@ -76,7 +76,7 @@ void Instance::move(const Vec3<float>& c, const Vec3<float>& newX, const Vec3<fl
 
 	Vec3<float> dr(0, ((siny>0)?acos(cosy) : -acos(cosy))/PI_180, -((sinz>0)?acos(cosz) : -acos(cosz))/PI_180);
 
-	rotate(c, dr, cosx, cosy, cosz, sinx, siny, sinz);
+	rotate(c, dr, cosx, cosy, cosz, sinx, -siny, sinz);
 	translate(d);
 }
 
