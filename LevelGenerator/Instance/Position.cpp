@@ -1,5 +1,5 @@
 #include "Position.h"
-
+#include <fstream>
 using namespace std;
 
 
@@ -103,7 +103,11 @@ void Position::rotate(const Vec3<float>& dr){
     alpha = atan2(Mnew[1][0], Mnew[0][0]);
     beta = atan2(-Mnew[2][0], sqrt(Mnew[2][1]*Mnew[2][1]+Mnew[2][2]*Mnew[2][2]));
     gamma = atan2(Mnew[2][1], Mnew[2][2]);
-    rot = Vec3<float>(gamma, beta, alpha);
+    rot = Vec3<float>(gamma/PI_180, beta/PI_180, alpha/PI_180);
+	fstream foo;
+	foo.open("yop.txt", std::fstream::app);
+	foo << gamma << " " << beta << " " << alpha << endl;
+	foo.close();
 }
 
 void Position::translate(const Vec3<float>& d){
