@@ -1,7 +1,7 @@
 #include <fstream>
 #include "../LevelGenerator/levelGenerator.h"
 #include "createWorld.h"
-#define valid(p) (0 <= p.x() and p.x() < c_world_size and 0 <= p.y() and p.y() < c_world_size and 0 <= p.z() and p.z() < c_world_size)
+#define valid(p) (0 <= p.x() && p.x() < c_world_size && 0 <= p.y() && p.y() < c_world_size && 0 <= p.z() && p.z() < c_world_size)
 
 const int32_t c_world_size = 200;
 
@@ -21,7 +21,7 @@ std::default_random_engine gen;
 using namespace std;
 
 // Renvoie X et Y tirés aléatoirements tels que la proba de la paire X,Y soit donnée par probas[X][Y]
-void choose(const vector<vector<int>>& probas, int& x, int& y){
+bool choose(const vector<vector<int>>& probas, int& x, int& y){
 	int total = 0;
 	vector<int> totaux(probas.size());
 	for (int i = 0; i < (int)probas.size(); ++i){
@@ -29,6 +29,9 @@ void choose(const vector<vector<int>>& probas, int& x, int& y){
 			total += v;
 		}
 		totaux[i] = total;
+	}
+	if(total == 0){
+        return false;
 	}
 	uniform_int_distribution<int> rd(0, total-1);
 	int r =rd(gen);
@@ -40,6 +43,7 @@ void choose(const vector<vector<int>>& probas, int& x, int& y){
 		r -= probas[x][y];
 	}
 	--y;
+	return true;
 }
 
 
@@ -98,7 +102,7 @@ Point randPoint(int maxy, int maxz){
 	return Point(0, rdy(gen), rdz(gen));
 }
 
-void next_cuboid(std::vector<std::vector<std::vector<bool> > >& world_bin, std::vector<Cuboid> &cuboids, Point& inPoint, bool lastSubLevel)
+bool next_cuboid(std::vector<std::vector<std::vector<bool> > >& world_bin, std::vector<Cuboid> &cuboids, Point& inPoint, bool lastSubLevel)
 {
 	std::vector<std::vector<int>> probas(2*nb_angles + 1, vector<int>(2*nb_angles + 1));
 
@@ -124,7 +128,7 @@ void next_cuboid(std::vector<std::vector<std::vector<bool> > >& world_bin, std::
 					for(uint32_t l = -c_height; l < c_height; ++l) {
 
 						Vecteur currPos = out + shift + k * e_x + l * e_y +  length*e_z ;
-						if(valid(currPos) and world_bin[currPos.x()][currPos.y()][currPos.z()]) {
+						if(valid(currPos) && world_bin[currPos.x()][currPos.y()][currPos.z()]) {
 							goto end_browse;
 						}
 
@@ -139,7 +143,8 @@ void next_cuboid(std::vector<std::vector<std::vector<bool> > >& world_bin, std::
 
 
 	int theta_1_choose, theta_2_choose;
-	choose(probas, theta_1_choose, theta_2_choose);
+	if(!choose(probas, theta_1_choose, theta_2_choose))
+        return false;
 	length = reverse_proba(probas[theta_1_choose][theta_2_choose]);
 
 
@@ -185,15 +190,6 @@ void next_cuboid(std::vector<std::vector<std::vector<bool> > >& world_bin, std::
 
             new_instance.addPlatform(plat_trans);
         }
-        if (lastSubLevel){
-            Position posDernierePlat(0, (newOut+Point(new_cuboid.length+i, 0, 0))*100, Vec3<float>(0, 0, 0), Vec3<float>(1, 1, 1));
-            vector<Position> posOut4D(1, posDernierePlat);
-            vector<Vec3<float>> posSorties;
-            vector<float> sortie4D;
-            PlatInstance dernierePlat(ID_last_plat, posDernierePlat, posSorties, sortie4D, posOut4D, (float)rand());
-
-            new_instance.addPlatform(dernierePlat);
-        }
     }
 
     ///* <end> Plateforme de transition *///
@@ -205,6 +201,7 @@ void next_cuboid(std::vector<std::vector<std::vector<bool> > >& world_bin, std::
 
 	cuboids.push_back(new_cuboid);
 	inPoint = newOut;
+	return true;
 }
 
 void createWorld(ofstream& out) {
@@ -262,11 +259,23 @@ void createWorld(ofstream& out) {
     }*/
 
 	world+=sousNiveau;
-
-	for(uint32_t i = 0; i < n; ++i) {
-		next_cuboid(world_bin, cuboids, outPoint, (i==n-1));
+    bool still_running = true;
+	for(uint32_t i = 0; i < n && still_running; ++i) {
+		still_running = next_cuboid(world_bin, cuboids, outPoint, (i==n-1));
 	}
+    {
+        Instance new_instance;
+        const Cuboid &last_cuboid  = cuboids.back();
+        Position posDernierePlat(0, (outPoint+Point(last_cuboid.length+c_height, 0, 0))*100, Vec3<float>(0, 0, 0), Vec3<float>(1, 1, 1));
+        vector<Position> posOut4D(1, posDernierePlat);
+        vector<Vec3<float>> posSorties;
+        vector<float> sortie4D;
+        PlatInstance dernierePlat(ID_last_plat, posDernierePlat, posSorties, sortie4D, posOut4D, (float)rand());
 
+        new_instance.addPlatform(dernierePlat);
+        inPoint = Point(0, 5, 5); /// ATTENTION TEMPORAIRE
+        new_instance.move(inPoint*100, last_cuboid.dir, (last_cuboid.in - inPoint)*100);
+    }
 
 	out << world;
 	out.close();
