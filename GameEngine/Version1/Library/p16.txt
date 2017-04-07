@@ -1,5 +1,5 @@
 %Basic plat
-ID = 0
+ID = 17
 additiveAcceleration = 0 0 0 0
 multiplicativeAcceleration = 1 1 1 1
 nbSortie = 0

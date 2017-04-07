@@ -14,7 +14,7 @@ Instance world;
 int ID_first_plat = 1;
 int ID_last_plat = 2;
 int ID_checkpoint_plat = 3;
-int ID_transition_plat = 9;
+int ID_transition_plat = 18;
 
 std::default_random_engine gen;
 

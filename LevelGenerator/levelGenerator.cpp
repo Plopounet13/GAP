@@ -27,10 +27,10 @@ using namespace std;
 const int nbPointBezier = 6 ;
 const long double G = 38.81;
 const long double Vk = 75.0;
-const Point4 Vitmin = Point4(140,140,85,2) ;
-const Point4 Vitmax = Point4(140,140,85,2);
+const Point4 Vitmin = Point4(100,100,85,2) ;
+const Point4 Vitmax = Point4(100,100,85,2);
 const long double EPSILON = 0.0001;
-const long double probaPonctuelle = 1 ;
+const long double probaPonctuelle = 0.9 ;
 const long double LAST_T = 0.992;
 
 
@@ -249,14 +249,14 @@ void generationLocale(const Library& bibli, Point4 entree, Point4 sortie, int la
                 Polynome Dx = derive(Bx), Dy = derive(By), Dz = derive(Bz) ;
                 long double dx = Dx.evalreel(t), dy = Dy.evalreel(t), dz = Dz.evalreel(t) ;
                 long double pente = dz / sqrt(dx*dx+dy*dy) ;
-                if (pente > 3 && (int)vectAscen.size() > 0 && t < LAST_T) {
+                if (pente > 0.7 && (int)vectAscen.size() > 0 && t < LAST_T) {
                     Platform* PF = vectAscen[0] ;
                     id = PF->getID() ;
                     acc = PF->getAddAcceleration();
                     rotation = 0.0 ;
                     ponctuelle = false ;
                     long double t0 ;
-                    for (t0 = t ; t0 < LAST_T && pente > 2.5 ; t0 += 0.005) {
+                    for (t0 = t ; t0 < LAST_T && pente > 0 ; t0 += 0.005) {
                         dx = Dx.evalreel(t), dy = Dy.evalreel(t), dz = Dz.evalreel(t) ;
                         pente = dz / sqrt(dx*dx+dy*dy) ;
                     }
@@ -794,7 +794,7 @@ Point4 arrival(Point4 depart, Point4 vitesse, long double& t0)
 	long double hmax = vitesse.norm2()*2*vz/G ;
 	long double zmax = vz*vz/(2*G) ;
 	bool cont = false ;
-	while (! cont || pas > 0.0005) {
+	while (! cont && pas > 0.0005) {
 		dirDestination = royalT(t)-depart ;
 		long double z = dirDestination.getZ() ;
 		long double h = dirDestination.norm2() ;

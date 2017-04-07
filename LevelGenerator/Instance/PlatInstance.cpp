@@ -23,12 +23,6 @@ PlatInstance::PlatInstance(int id,
 	sort(pos4D.begin(), pos4D.end(), compare4D);
 	ID=id;
 	rand=r;
-	// On considère que la position donnée est la position de l'entrée de la plateforme
-	// On doit donc décaler la position pour qu'elle soit celle du centre.
-	// Le centre est considéré comme le milieu entre l'entrée et la première sortie.
-	if (posSortie.size()){
-		pos.translate((posSortie.front()-pos.getPos())/2);
-	}
 }
 
 void PlatInstance::rotate(const Vec3<float>& dr){
