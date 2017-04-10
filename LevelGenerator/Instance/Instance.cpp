@@ -70,13 +70,13 @@ void Instance::move(const Vec3<float>& c, const Vec3<float>& newX, const Vec3<fl
 	float norm2 = sqrt(x*x+z*z);
 
 	if (norm2){
-		cosy = z/norm2;
-		siny = -x/norm2;
+		cosy = x/norm2;
+		siny = z/norm2;
 	}
 
 	Vec3<float> dr(0, ((siny>0)?acos(cosy) : -acos(cosy))/PI_180, -((sinz>0)?acos(cosz) : -acos(cosz))/PI_180);
 
-	rotate(c, dr, cosx, cosy, cosz, sinx, -siny, sinz);
+	rotate(c, dr, cosx, cosy, cosz, sinx, -siny, -sinz);
 	translate(d);
 }
 
