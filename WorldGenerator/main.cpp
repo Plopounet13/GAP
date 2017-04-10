@@ -1,10 +1,13 @@
+#ifdef _WIN32
+	#include <windows.h>
+#endif
+
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <cstring>
 #include <cstdio>
 #include <cmath>
-#include <windows.h>
 #include "createWorld.h"
 
 #define XCODE_DEBUG 0
