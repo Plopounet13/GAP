@@ -31,6 +31,3 @@ cl -c WorldGenerator/main.cpp /EHsc
 
 
 cl -o generator.exe createWorld.obj Library.obj Platform.obj Point4.obj Polynome.obj Instance.obj PlatInstance.obj Position.obj Vec3.obj functions.obj geometrie.obj main.obj levelGenerator.obj /EHsc 
-
-del GameEngine\Version1\generator.exe
-move generator.exe GameEngine\Version1\generator.exe
