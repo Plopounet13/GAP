@@ -18,7 +18,7 @@ void usage(){
 	cerr << "usage:" << endl;
 	cerr << "\t./generate_level outputFile seed" << endl;
 }
-
+/*
 int main(){
 	Position posPremierePlat(0, Vec3<float>(0, 5, 0), Vec3<float>(0, 0, 0), Vec3<float>(1, 1, 1));
 	vector<Vec3<float>> posSorties;
@@ -47,8 +47,8 @@ int main(){
 	i.move(Vec3<float>(0,0,0), Vec3<float>(1, 1, 1), Vec3<float>(0, 0, 3));
 
 	cout << i << endl;
-}
-/*
+}*/
+
 
 int main(int argc, const char* argv[]) {
 
@@ -95,7 +95,7 @@ skipInit:
 
 
 
-*/
+
 
 
 
